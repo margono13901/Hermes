@@ -17,7 +17,43 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [Parse setApplicationId:parseApplicationId
+                  clientKey:parseClientId];
+    // Set the client ID
+    [self setUp];
+    [self setUpLocation];
     return YES;
+}
+
+-(void)setUpLocation{
+    
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    [self.locationManager startUpdatingLocation];
+}
+
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+    CLLocation * newLocation = [locations lastObject];
+    self.location = newLocation;
+}
+
+
+-(void)setUp{
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *viewController;
+    if (![PFUser currentUser]) {
+        viewController = [storyboard instantiateViewControllerWithIdentifier:@"loginView"];
+    }else{
+        viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
+    }
+    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
+    self.window.rootViewController = nav;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

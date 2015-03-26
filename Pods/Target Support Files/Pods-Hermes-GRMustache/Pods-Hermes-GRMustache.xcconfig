@@ -1,0 +1,1 @@
+PODS_HERMES_GRMUSTACHE_OTHER_LDFLAGS = -framework "Foundation"

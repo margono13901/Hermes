@@ -7,9 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
+
 
 @interface ViewController : UIViewController
 
+@property (strong, nonatomic) IBOutlet UITextField *usernameField;
+@property (strong, nonatomic) IBOutlet UITextField *passwordField;
+- (IBAction)login:(id)sender;
+- (IBAction)signup:(id)sender;
 
 @end
 
