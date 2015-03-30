@@ -625,14 +625,18 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     upload[@"likes"] = num;
     upload[@"uber"] =num;
     [upload saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        PFRelation *relation = [currentUser relationForKey:@"mediaPosts"];
-        [relation addObject:upload];
-        [currentUser saveInBackground];
+        if (succeeded) {
+            //save media post to user
+            PFRelation *relation = [currentUser relationForKey:@"mediaPosts"];
+            [relation addObject:upload];
+            //add post to unseen class in user's friends
+            [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            }];
+        }else{
+            NSLog(@"%@",error);
+        }
     }];
-    
     [self back:self];
-
-    
 }
 - (IBAction)back:(id)sender {
     [self.navigationController popToRootViewControllerAnimated:YES];
@@ -723,6 +727,7 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 
 
 - (IBAction)uploadMedia:(id)sender {
+    self.sendbutton.hidden=YES;
     [self send];
 }
 
@@ -735,6 +740,7 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     
     UIGraphicsEndImageContext();
     self.mediaBackButton.hidden = NO;
+
     return myImage;
 }
 @end

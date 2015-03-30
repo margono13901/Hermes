@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Mapbox-iOS-SDK/Mapbox.h>
 
 @interface mapView : UIViewController
 
-@property (strong, nonatomic) IBOutlet AGSMapView *mapView;
+@property (strong, nonatomic) IBOutlet RMMapView *mapView;
 
 @end

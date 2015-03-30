@@ -19,14 +19,48 @@
     // Override point for customization after application launch.
     [Parse setApplicationId:parseApplicationId
                   clientKey:parseClientId];
-    // Set the client ID
+    //setup Push
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                    UIUserNotificationTypeBadge |
+                                                    UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
+                                                                             categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
     [self setUp];
     [self setUpLocation];
     return YES;
 }
 
+
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    // Store the deviceToken in the current installation and save it to Parse.
+    if([PFUser currentUser]){
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        [currentInstallation setDeviceTokenFromData:deviceToken];
+        currentInstallation.channels = @[ @"global" ];
+        [currentInstallation setObject: [PFUser currentUser] forKey: @"owner"];
+        [currentInstallation saveInBackground];
+    }
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    if ([PFUser currentUser]) {
+        [PFPush handlePush:userInfo];
+        NSDictionary *payload = [userInfo objectForKey:@"custom"];
+        NSString *type = [payload objectForKey:@"type"];
+        if ([type isEqualToString:@"post"]) {
+            PFObject *temp = [payload objectForKey:@"post"];
+            NSString *objectID = [temp objectForKey:@"objectId"];
+            self.incomingPost = objectID;
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingPost" object:nil];
+        }
+
+    }
+}
+
 -(void)setUpLocation{
-    
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
     // Check for iOS 8. Without this guard the code will crash with "unknown selector" on iOS 7.

@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
+#import "friendCell.h"
+@interface searchViewController : UITableViewController<UISearchBarDelegate,UISearchControllerDelegate,UISearchDisplayDelegate,UISearchResultsUpdating>
 
-@interface searchViewController : UITableViewController
-
+@property(strong,nonatomic) NSArray *friendArray;
+@property(strong,nonatomic) NSArray *searchResults;
+@property (strong, nonatomic) UISearchController *searchController;
+@property (strong, nonatomic) IBOutlet UISearchBar *searchbar;
+@property (strong,nonatomic) NSArray *userArray;
 @end

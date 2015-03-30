@@ -10,4 +10,5 @@
 
 @interface CollectionViewCell : UICollectionViewCell
 @property(strong,nonatomic)UIImageView *imageView;
+@property(strong,nonatomic)UITextField *newPostField;
 @end

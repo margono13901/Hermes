@@ -21,7 +21,11 @@
 		2290B0871ABF675A008317C3 /* UIGridViewRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0841ABF675A008317C3 /* UIGridViewRow.m */; };
 		2290B09E1ABF9714008317C3 /* CollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B09D1ABF9714008317C3 /* CollectionViewCell.m */; };
 		2290B0A41AC45649008317C3 /* searchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0A31AC45649008317C3 /* searchViewController.m */; };
-		22BD24481ABCE65700049159 /* mapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24471ABCE65700049159 /* mapView.m */; };
+		2290B0A71AC45F16008317C3 /* friendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0A61AC45F16008317C3 /* friendCell.m */; };
+		2290B0AD1AC4CD38008317C3 /* NSQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0AC1AC4CD38008317C3 /* NSQueue.m */; };
+		229F59D11AC794F600D557D2 /* userInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59D01AC794F600D557D2 /* userInteractionView.m */; };
+		229F59D71AC85EE600D557D2 /* friendCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59D61AC85EE600D557D2 /* friendCollectionView.m */; };
+		229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59DA1AC8D13A00D557D2 /* NSStack.m */; };
 		22BD24531ABDC7C500049159 /* AVCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24501ABDC7C500049159 /* AVCamViewController.m */; };
 		22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24521ABDC7C500049159 /* AVCamPreviewView.m */; };
 		22BD24561ABE069600049159 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BD24551ABE069600049159 /* MapKit.framework */; };
@@ -64,12 +68,20 @@
 		2290B0821ABF675A008317C3 /* UIGridViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGridViewDelegate.h; sourceTree = "<group>"; };
 		2290B0831ABF675A008317C3 /* UIGridViewRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGridViewRow.h; sourceTree = "<group>"; };
 		2290B0841ABF675A008317C3 /* UIGridViewRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIGridViewRow.m; sourceTree = "<group>"; };
-		2290B09C1ABF9714008317C3 /* CollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionViewCell.h; sourceTree = "<group>"; };
-		2290B09D1ABF9714008317C3 /* CollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionViewCell.m; sourceTree = "<group>"; };
+		2290B09C1ABF9714008317C3 /* CollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionViewCell.h; path = ../CollectionViewCell.h; sourceTree = "<group>"; };
+		2290B09D1ABF9714008317C3 /* CollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionViewCell.m; path = ../CollectionViewCell.m; sourceTree = "<group>"; };
 		2290B0A21AC45649008317C3 /* searchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = searchViewController.h; sourceTree = "<group>"; };
 		2290B0A31AC45649008317C3 /* searchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = searchViewController.m; sourceTree = "<group>"; };
-		22BD24461ABCE65700049159 /* mapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapView.h; path = ../../../../.Trash/mapView.h; sourceTree = "<group>"; };
-		22BD24471ABCE65700049159 /* mapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mapView.m; path = ../../../../.Trash/mapView.m; sourceTree = "<group>"; };
+		2290B0A51AC45F16008317C3 /* friendCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = friendCell.h; sourceTree = "<group>"; };
+		2290B0A61AC45F16008317C3 /* friendCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = friendCell.m; sourceTree = "<group>"; };
+		2290B0AB1AC4CD38008317C3 /* NSQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSQueue.h; path = ../NSQueue.h; sourceTree = "<group>"; };
+		2290B0AC1AC4CD38008317C3 /* NSQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSQueue.m; path = ../NSQueue.m; sourceTree = "<group>"; };
+		229F59CF1AC794F600D557D2 /* userInteractionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = userInteractionView.h; path = ../../../../../.Trash/userInteractionView.h; sourceTree = "<group>"; };
+		229F59D01AC794F600D557D2 /* userInteractionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = userInteractionView.m; path = ../../../../../.Trash/userInteractionView.m; sourceTree = "<group>"; };
+		229F59D51AC85EE600D557D2 /* friendCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = friendCollectionView.h; path = ../friendCollectionView.h; sourceTree = "<group>"; };
+		229F59D61AC85EE600D557D2 /* friendCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = friendCollectionView.m; path = ../friendCollectionView.m; sourceTree = "<group>"; };
+		229F59D91AC8D13A00D557D2 /* NSStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStack.h; sourceTree = "<group>"; };
+		229F59DA1AC8D13A00D557D2 /* NSStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStack.m; sourceTree = "<group>"; };
 		22BD244F1ABDC7C500049159 /* AVCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamViewController.h; sourceTree = "<group>"; };
 		22BD24501ABDC7C500049159 /* AVCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamViewController.m; sourceTree = "<group>"; };
 		22BD24511ABDC7C500049159 /* AVCamPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamPreviewView.h; sourceTree = "<group>"; };
@@ -137,10 +149,7 @@
 				223A18B91ABCC99F00D983D4 /* AppDelegate.m */,
 				223A18BB1ABCC99F00D983D4 /* ViewController.h */,
 				223A18BC1ABCC99F00D983D4 /* ViewController.m */,
-				22BD24461ABCE65700049159 /* mapView.h */,
-				22BD24471ABCE65700049159 /* mapView.m */,
-				2290B09C1ABF9714008317C3 /* CollectionViewCell.h */,
-				2290B09D1ABF9714008317C3 /* CollectionViewCell.m */,
+				229F59D81AC86EB800D557D2 /* userInteractionClasses */,
 				2290B04B1ABE3524008317C3 /* mediaButton.h */,
 				2290B04C1ABE3524008317C3 /* mediaButton.m */,
 				22BD244F1ABDC7C500049159 /* AVCamViewController.h */,
@@ -148,6 +157,8 @@
 				22BD24511ABDC7C500049159 /* AVCamPreviewView.h */,
 				22BD24521ABDC7C500049159 /* AVCamPreviewView.m */,
 				223A18BE1ABCC99F00D983D4 /* Main.storyboard */,
+				2290B0A51AC45F16008317C3 /* friendCell.h */,
+				2290B0A61AC45F16008317C3 /* friendCell.m */,
 				2290B0A21AC45649008317C3 /* searchViewController.h */,
 				2290B0A31AC45649008317C3 /* searchViewController.m */,
 				2290B04E1ABE470C008317C3 /* profileViewController.h */,
@@ -199,6 +210,23 @@
 			);
 			name = UIGridView;
 			path = "../../UIGridView-master/Classes/UIGridView";
+			sourceTree = "<group>";
+		};
+		229F59D81AC86EB800D557D2 /* userInteractionClasses */ = {
+			isa = PBXGroup;
+			children = (
+				229F59CF1AC794F600D557D2 /* userInteractionView.h */,
+				229F59D01AC794F600D557D2 /* userInteractionView.m */,
+				229F59D51AC85EE600D557D2 /* friendCollectionView.h */,
+				229F59D61AC85EE600D557D2 /* friendCollectionView.m */,
+				2290B09C1ABF9714008317C3 /* CollectionViewCell.h */,
+				2290B09D1ABF9714008317C3 /* CollectionViewCell.m */,
+				2290B0AB1AC4CD38008317C3 /* NSQueue.h */,
+				2290B0AC1AC4CD38008317C3 /* NSQueue.m */,
+				229F59D91AC8D13A00D557D2 /* NSStack.h */,
+				229F59DA1AC8D13A00D557D2 /* NSStack.m */,
+			);
+			path = userInteractionClasses;
 			sourceTree = "<group>";
 		};
 		23EC67782163E1F6826AC6F6 /* Pods */ = {
@@ -261,6 +289,7 @@
 				TargetAttributes = {
 					223A18B01ABCC99F00D983D4 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 9M238DU2FS;
 					};
 					223A18C91ABCC99F00D983D4 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -346,19 +375,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				229F59D71AC85EE600D557D2 /* friendCollectionView.m in Sources */,
 				22BD24531ABDC7C500049159 /* AVCamViewController.m in Sources */,
 				223A18BD1ABCC99F00D983D4 /* ViewController.m in Sources */,
+				2290B0AD1AC4CD38008317C3 /* NSQueue.m in Sources */,
 				2290B0501ABE470C008317C3 /* profileViewController.m in Sources */,
 				2290B0A41AC45649008317C3 /* searchViewController.m in Sources */,
 				2290B0871ABF675A008317C3 /* UIGridViewRow.m in Sources */,
 				22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */,
 				2290B0851ABF675A008317C3 /* UIGridView.m in Sources */,
+				229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */,
 				2290B09E1ABF9714008317C3 /* CollectionViewCell.m in Sources */,
-				22BD24481ABCE65700049159 /* mapView.m in Sources */,
+				229F59D11AC794F600D557D2 /* userInteractionView.m in Sources */,
 				2290B04D1ABE3524008317C3 /* mediaButton.m in Sources */,
 				223A18BA1ABCC99F00D983D4 /* AppDelegate.m in Sources */,
 				2290B0861ABF675A008317C3 /* UIGridViewCell.m in Sources */,
 				223A18B71ABCC99F00D983D4 /* main.m in Sources */,
+				2290B0A71AC45F16008317C3 /* friendCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +450,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -458,6 +492,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -481,6 +516,8 @@
 			baseConfigurationReference = 2985C95F7673E7D011223044 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Hermes/parse-library-1.6.3",
@@ -490,6 +527,7 @@
 				INFOPLIST_FILE = Hermes/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -498,6 +536,8 @@
 			baseConfigurationReference = 63A567DCAE9F9D7F2F7352D0 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Hermes/parse-library-1.6.3",
@@ -507,6 +547,7 @@
 				INFOPLIST_FILE = Hermes/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

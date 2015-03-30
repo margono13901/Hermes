@@ -61,13 +61,10 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.navigationController.navigationBar.barTintColor = [UIColor purpleColor];
-
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
-    self.navigationController.navigationBar.hidden = YES;
+    self.navigationController.navigationBarHidden = YES;
 }
 
 
@@ -106,6 +103,7 @@
         PFUser *user = [PFUser currentUser];
         user[@"profilePhoto"] = media;
         [user saveInBackground];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"changeProfilePhoto" object:nil];
         self.navigationController.navigationBar.hidden = NO;
 
     }];
