@@ -88,7 +88,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ews-5C-QOS">
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ews-5C-QOS" customClass="RMMapView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D8w-Qe-K5j">
@@ -110,7 +110,7 @@
                                                     <rect key="frame" x="224" y="25" width="100" height="100"/>
                                                 </variation>
                                                 <connections>
-                                                    <action selector="findFriends:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="Aw0-CX-PcZ"/>
+                                                    <action selector="findFriends:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="hi8-ub-4dd"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oBy-Q9-ity">
@@ -122,7 +122,7 @@
                                                     <rect key="frame" x="8" y="25" width="100" height="100"/>
                                                 </variation>
                                                 <connections>
-                                                    <action selector="profileButton:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="EG9-CB-avE"/>
+                                                    <action selector="profileButton:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="JTX-tY-rDT"/>
                                                     <segue destination="f03-Jh-J2A" kind="show" id="9ay-y1-lnJ"/>
                                                 </connections>
                                             </button>
@@ -136,7 +136,7 @@
                                                     <rect key="frame" x="116" y="25" width="100" height="100"/>
                                                 </variation>
                                                 <connections>
-                                                    <action selector="camera:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="NER-Mg-ORm"/>
+                                                    <action selector="camera:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="dYk-4j-mjr"/>
                                                 </connections>
                                             </button>
                                             <textField hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3VL-bR-Ru7">
@@ -150,7 +150,7 @@
                                                 </variation>
                                             </textField>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <variation key="default">
                                             <mask key="subviews">
                                                 <exclude reference="Fcq-hH-Ns3"/>
@@ -190,7 +190,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="zoomToAnnotation:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="wjd-1J-SWN"/>
+                                    <action selector="zoomToAnnotation:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="Xo3-NI-Glh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -232,11 +232,10 @@
                     </view>
                     <navigationItem key="navigationItem" id="hT7-OV-gWW"/>
                     <connections>
-                        <outlet property="notifications" destination="3VL-bR-Ru7" id="72C-oE-W5u"/>
-                        <outlet property="optionContainers" destination="D8w-Qe-K5j" id="kGI-WG-3pI"/>
-                        <outlet property="previewView" destination="Ews-5C-QOS" id="kzS-mG-muO"/>
-                        <outlet property="profile" destination="oBy-Q9-ity" id="VRA-Jv-E6M"/>
-                        <outlet property="profileView" destination="Fcq-hH-Ns3" id="g5f-KW-hpQ"/>
+                        <outlet property="mapView" destination="Ews-5C-QOS" id="hmQ-QA-tqc"/>
+                        <outlet property="notifications" destination="3VL-bR-Ru7" id="ZKI-hh-p93"/>
+                        <outlet property="optionContainers" destination="D8w-Qe-K5j" id="7QD-cc-kIk"/>
+                        <outlet property="profileView" destination="Fcq-hH-Ns3" id="djM-ox-Ryb"/>
                         <segue destination="128-48-wfj" kind="show" identifier="camera" id="QVW-QQ-8cF"/>
                         <segue destination="dbw-rV-vBt" kind="show" identifier="searchFriendsSegue" id="3xz-il-hCw"/>
                     </connections>

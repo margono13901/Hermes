@@ -14,7 +14,6 @@
 		223A18C21ABCC99F00D983D4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 223A18C11ABCC99F00D983D4 /* Images.xcassets */; };
 		223A18C51ABCC99F00D983D4 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 223A18C31ABCC99F00D983D4 /* LaunchScreen.xib */; };
 		223A18D11ABCC99F00D983D4 /* HermesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18D01ABCC99F00D983D4 /* HermesTests.m */; };
-		2290B04D1ABE3524008317C3 /* mediaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B04C1ABE3524008317C3 /* mediaButton.m */; };
 		2290B0501ABE470C008317C3 /* profileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B04F1ABE470C008317C3 /* profileViewController.m */; };
 		2290B0851ABF675A008317C3 /* UIGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B07F1ABF675A008317C3 /* UIGridView.m */; };
 		2290B0861ABF675A008317C3 /* UIGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0811ABF675A008317C3 /* UIGridViewCell.m */; };
@@ -23,9 +22,11 @@
 		2290B0A41AC45649008317C3 /* searchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0A31AC45649008317C3 /* searchViewController.m */; };
 		2290B0A71AC45F16008317C3 /* friendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0A61AC45F16008317C3 /* friendCell.m */; };
 		2290B0AD1AC4CD38008317C3 /* NSQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0AC1AC4CD38008317C3 /* NSQueue.m */; };
-		229F59D11AC794F600D557D2 /* userInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59D01AC794F600D557D2 /* userInteractionView.m */; };
 		229F59D71AC85EE600D557D2 /* friendCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59D61AC85EE600D557D2 /* friendCollectionView.m */; };
 		229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59DA1AC8D13A00D557D2 /* NSStack.m */; };
+		229F5A231ACB66C200D557D2 /* userPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A221ACB66C200D557D2 /* userPostView.m */; };
+		229F5A261ACB70F400D557D2 /* userInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A251ACB70F400D557D2 /* userInteractionView.m */; };
+		22BCD8031ACB982600864FA2 /* mediaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8021ACB982600864FA2 /* mediaButton.m */; };
 		22BD24531ABDC7C500049159 /* AVCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24501ABDC7C500049159 /* AVCamViewController.m */; };
 		22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24521ABDC7C500049159 /* AVCamPreviewView.m */; };
 		22BD24561ABE069600049159 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BD24551ABE069600049159 /* MapKit.framework */; };
@@ -57,8 +58,6 @@
 		223A18CF1ABCC99F00D983D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223A18D01ABCC99F00D983D4 /* HermesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HermesTests.m; sourceTree = "<group>"; };
 		223A18DA1ABCC9CA00D983D4 /* keys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../keys.h; sourceTree = "<group>"; };
-		2290B04B1ABE3524008317C3 /* mediaButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mediaButton.h; sourceTree = "<group>"; };
-		2290B04C1ABE3524008317C3 /* mediaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mediaButton.m; sourceTree = "<group>"; };
 		2290B04E1ABE470C008317C3 /* profileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profileViewController.h; sourceTree = "<group>"; };
 		2290B04F1ABE470C008317C3 /* profileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = profileViewController.m; sourceTree = "<group>"; };
 		2290B07E1ABF675A008317C3 /* UIGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGridView.h; sourceTree = "<group>"; };
@@ -76,12 +75,16 @@
 		2290B0A61AC45F16008317C3 /* friendCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = friendCell.m; sourceTree = "<group>"; };
 		2290B0AB1AC4CD38008317C3 /* NSQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSQueue.h; path = ../NSQueue.h; sourceTree = "<group>"; };
 		2290B0AC1AC4CD38008317C3 /* NSQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSQueue.m; path = ../NSQueue.m; sourceTree = "<group>"; };
-		229F59CF1AC794F600D557D2 /* userInteractionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = userInteractionView.h; path = ../../../../../.Trash/userInteractionView.h; sourceTree = "<group>"; };
-		229F59D01AC794F600D557D2 /* userInteractionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = userInteractionView.m; path = ../../../../../.Trash/userInteractionView.m; sourceTree = "<group>"; };
 		229F59D51AC85EE600D557D2 /* friendCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = friendCollectionView.h; path = ../friendCollectionView.h; sourceTree = "<group>"; };
 		229F59D61AC85EE600D557D2 /* friendCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = friendCollectionView.m; path = ../friendCollectionView.m; sourceTree = "<group>"; };
 		229F59D91AC8D13A00D557D2 /* NSStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStack.h; sourceTree = "<group>"; };
 		229F59DA1AC8D13A00D557D2 /* NSStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStack.m; sourceTree = "<group>"; };
+		229F5A211ACB66C200D557D2 /* userPostView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = userPostView.h; sourceTree = "<group>"; };
+		229F5A221ACB66C200D557D2 /* userPostView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = userPostView.m; sourceTree = "<group>"; };
+		229F5A241ACB70F400D557D2 /* userInteractionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = userInteractionView.h; sourceTree = "<group>"; };
+		229F5A251ACB70F400D557D2 /* userInteractionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = userInteractionView.m; sourceTree = "<group>"; };
+		22BCD8011ACB982600864FA2 /* mediaButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mediaButton.h; sourceTree = "<group>"; };
+		22BCD8021ACB982600864FA2 /* mediaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mediaButton.m; sourceTree = "<group>"; };
 		22BD244F1ABDC7C500049159 /* AVCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamViewController.h; sourceTree = "<group>"; };
 		22BD24501ABDC7C500049159 /* AVCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamViewController.m; sourceTree = "<group>"; };
 		22BD24511ABDC7C500049159 /* AVCamPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamPreviewView.h; sourceTree = "<group>"; };
@@ -150,8 +153,6 @@
 				223A18BB1ABCC99F00D983D4 /* ViewController.h */,
 				223A18BC1ABCC99F00D983D4 /* ViewController.m */,
 				229F59D81AC86EB800D557D2 /* userInteractionClasses */,
-				2290B04B1ABE3524008317C3 /* mediaButton.h */,
-				2290B04C1ABE3524008317C3 /* mediaButton.m */,
 				22BD244F1ABDC7C500049159 /* AVCamViewController.h */,
 				22BD24501ABDC7C500049159 /* AVCamViewController.m */,
 				22BD24511ABDC7C500049159 /* AVCamPreviewView.h */,
@@ -215,8 +216,8 @@
 		229F59D81AC86EB800D557D2 /* userInteractionClasses */ = {
 			isa = PBXGroup;
 			children = (
-				229F59CF1AC794F600D557D2 /* userInteractionView.h */,
-				229F59D01AC794F600D557D2 /* userInteractionView.m */,
+				229F5A241ACB70F400D557D2 /* userInteractionView.h */,
+				229F5A251ACB70F400D557D2 /* userInteractionView.m */,
 				229F59D51AC85EE600D557D2 /* friendCollectionView.h */,
 				229F59D61AC85EE600D557D2 /* friendCollectionView.m */,
 				2290B09C1ABF9714008317C3 /* CollectionViewCell.h */,
@@ -225,6 +226,10 @@
 				2290B0AC1AC4CD38008317C3 /* NSQueue.m */,
 				229F59D91AC8D13A00D557D2 /* NSStack.h */,
 				229F59DA1AC8D13A00D557D2 /* NSStack.m */,
+				229F5A211ACB66C200D557D2 /* userPostView.h */,
+				229F5A221ACB66C200D557D2 /* userPostView.m */,
+				22BCD8011ACB982600864FA2 /* mediaButton.h */,
+				22BCD8021ACB982600864FA2 /* mediaButton.m */,
 			);
 			path = userInteractionClasses;
 			sourceTree = "<group>";
@@ -386,12 +391,13 @@
 				2290B0851ABF675A008317C3 /* UIGridView.m in Sources */,
 				229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */,
 				2290B09E1ABF9714008317C3 /* CollectionViewCell.m in Sources */,
-				229F59D11AC794F600D557D2 /* userInteractionView.m in Sources */,
-				2290B04D1ABE3524008317C3 /* mediaButton.m in Sources */,
 				223A18BA1ABCC99F00D983D4 /* AppDelegate.m in Sources */,
 				2290B0861ABF675A008317C3 /* UIGridViewCell.m in Sources */,
+				229F5A231ACB66C200D557D2 /* userPostView.m in Sources */,
 				223A18B71ABCC99F00D983D4 /* main.m in Sources */,
 				2290B0A71AC45F16008317C3 /* friendCell.m in Sources */,
+				22BCD8031ACB982600864FA2 /* mediaButton.m in Sources */,
+				229F5A261ACB70F400D557D2 /* userInteractionView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

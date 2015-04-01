@@ -53,6 +53,9 @@
     user.password = self.passwordField.text;
     [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if(!error){
+            PFRelation *relation = [[PFUser currentUser]relationForKey:@"friends"];
+            [relation addObject:[PFUser currentUser]];
+            [[PFUser currentUser]saveInBackground];
             [self performSegueWithIdentifier:@"userLoginSegue" sender:self];
         }else{
             NSLog(@"%@",error);

@@ -39,6 +39,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
+    [query whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.friendArray = objects;
         [self.tableView reloadData];
@@ -132,6 +133,7 @@
     
     PFQuery *userQuery = [PFUser query];
     [userQuery whereKey:@"username" matchesRegex:searchText modifiers:@"i"];
+    [userQuery whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];
     [userQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.searchResults = objects;
         [self.tableView reloadData];

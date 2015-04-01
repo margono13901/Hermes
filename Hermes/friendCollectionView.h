@@ -18,7 +18,6 @@
 @property(strong,nonatomic)UIButton *friendButton;
 @property(strong,nonatomic)NSMutableDictionary *friendUnseenPosts;
 -(void)setUpFriendUnseenPost:(NSMutableDictionary *)dictionary;
--(void)setUpSelector:(SEL)method;
 @property(strong,nonatomic)PFUser *user;
 @property(strong,nonatomic)UIImageView *blurMask;
 -(void)reloadData;

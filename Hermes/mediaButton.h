@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import "NSStack.h"
 
 @interface mediaButton : UIButton
 
-@property(nonatomic,strong) PFFile *media;
+@property(nonatomic,strong) NSStack *stack;
 
 @end

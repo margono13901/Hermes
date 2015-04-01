@@ -44,13 +44,13 @@
     [friendText setFont:[UIFont boldSystemFontOfSize:25]];
     [friendText setEnabled:NO];
     friendText.backgroundColor = [UIColor clearColor];
-    [friendText setTextColor:[UIColor blueColor]];
+    [friendText setTextColor:[UIColor blackColor]];
     //set up friend button
     self.friendButton = [[UIButton alloc]initWithFrame:CGRectMake(self.frame.size.width-80, 45, 50, 50)];
     [self.friendButton setTitle:@"+" forState:UIControlStateNormal];
     [self.friendButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
     [self.friendButton.titleLabel setFont:[UIFont boldSystemFontOfSize:25]];
-    [self.friendButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [self.friendButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [self.friendButton addTarget:self action:@selector(segueToFriendSearch:) forControlEvents:UIControlEventTouchUpInside];
 
     //setup collectionview
@@ -72,22 +72,26 @@
     //query all of users friends
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
+    [query orderByAscending:@"createdAt"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSMutableArray *temp = [[NSMutableArray alloc]init];
-        //iterate through all friends
-        //see if friends have user as part of their friend list
-        for (PFUser *user in objects) {
-            PFRelation *relation = [user relationForKey:@"friends"];
-            PFQuery *query = [relation query];
-            [query getObjectInBackgroundWithId:[PFUser currentUser].objectId block:^(PFObject *object, NSError *error) {
-                //if found then add friend to array
-                if (object) {
-                    [temp addObject:user];
-                    [self.collectionView reloadData];
-                }
-            }];
-        }
-        self.users = temp;
+        NSLog(@"%@",objects);
+
+//        NSMutableArray *temp = [[NSMutableArray alloc]init];
+//        //iterate through all friends
+//        //see if friends have user as part of their friend list
+//        for (PFUser *user in objects) {
+//            PFRelation *relation = [user relationForKey:@"friends"];
+//            PFQuery *query = [relation query];
+//            [query getObjectInBackgroundWithId:[PFUser currentUser].objectId block:^(PFObject *object, NSError *error) {
+//                //if found then add friend to array
+//                if (object) {
+//                    [temp addObject:user];
+//                    [self.collectionView reloadData];
+//                }
+//            }];
+//        }
+        self.users = [[NSMutableArray alloc]initWithArray:objects];
+        [self.collectionView reloadData];
     }];
 }
 

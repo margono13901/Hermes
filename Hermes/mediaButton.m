@@ -18,10 +18,15 @@
 }
 */
 
--(id)initWithMedia{
-    self = [super init];
-    self.media = nil;
-    return self;
++ (instancetype)buttonWithType:(UIButtonType)buttonType :(NSStack *)stack{
+    mediaButton *button = [super buttonWithType:buttonType];
+    [button selfInit];
+    return button;
 }
+
+-(void)selfInit{
+    [self setTitle:@"!" forState:UIControlStateNormal];
+}
+
 
 @end
