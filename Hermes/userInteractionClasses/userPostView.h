@@ -9,13 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "NSStack.h"
 #import <Parse/Parse.h>
+#import "AppDelegate.h"
 
 @interface userPostView : UIImageView
 
 @property(strong,nonatomic)UILabel *previewText;
 @property(strong,nonatomic)NSStack *previewStack;
-@property(strong,nonatomic)NSDictionary *friendUnseenPosts;
 -(id)initWithFrame:(CGRect)frame withStack:(NSStack *)stack;
-
+@property(strong,nonatomic)AppDelegate *delegate;
 
 @end

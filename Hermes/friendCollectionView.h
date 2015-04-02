@@ -10,15 +10,16 @@
 #import <Parse/Parse.h>
 #import "CollectionViewCell.h"
 #import "userInteractionView.h"
+#import "AppDelegate.h"
 
 @interface friendCollectionView : UIView<UICollectionViewDataSource,UICollectionViewDelegate>
 @property(strong,nonatomic)UICollectionView *collectionView;
 @property(strong,nonatomic)UIImage *background;
 @property(strong,nonatomic)NSMutableArray *users;
 @property(strong,nonatomic)UIButton *friendButton;
-@property(strong,nonatomic)NSMutableDictionary *friendUnseenPosts;
--(void)setUpFriendUnseenPost:(NSMutableDictionary *)dictionary;
+@property(strong,nonatomic)AppDelegate *delegate;
 @property(strong,nonatomic)PFUser *user;
 @property(strong,nonatomic)UIImageView *blurMask;
 -(void)reloadData;
+-(void)moveToView:(id)sender;
 @end

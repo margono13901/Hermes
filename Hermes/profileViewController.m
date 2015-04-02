@@ -61,6 +61,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
+    self.navigationController.navigationItem.title = @"Profile";
 }
 
 -(void)viewWillDisappear:(BOOL)animated{

@@ -122,8 +122,7 @@
                                                     <rect key="frame" x="8" y="25" width="100" height="100"/>
                                                 </variation>
                                                 <connections>
-                                                    <action selector="profileButton:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="JTX-tY-rDT"/>
-                                                    <segue destination="f03-Jh-J2A" kind="show" id="9ay-y1-lnJ"/>
+                                                    <segue destination="f03-Jh-J2A" kind="show" id="Xx0-SF-PJt"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gl5-6c-vYk">

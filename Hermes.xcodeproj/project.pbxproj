@@ -27,6 +27,7 @@
 		229F5A231ACB66C200D557D2 /* userPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A221ACB66C200D557D2 /* userPostView.m */; };
 		229F5A261ACB70F400D557D2 /* userInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A251ACB70F400D557D2 /* userInteractionView.m */; };
 		22BCD8031ACB982600864FA2 /* mediaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8021ACB982600864FA2 /* mediaButton.m */; };
+		22BCD8061ACC69A200864FA2 /* annotationsLinkedList.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8051ACC69A200864FA2 /* annotationsLinkedList.m */; };
 		22BD24531ABDC7C500049159 /* AVCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24501ABDC7C500049159 /* AVCamViewController.m */; };
 		22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24521ABDC7C500049159 /* AVCamPreviewView.m */; };
 		22BD24561ABE069600049159 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BD24551ABE069600049159 /* MapKit.framework */; };
@@ -85,6 +86,8 @@
 		229F5A251ACB70F400D557D2 /* userInteractionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = userInteractionView.m; sourceTree = "<group>"; };
 		22BCD8011ACB982600864FA2 /* mediaButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mediaButton.h; sourceTree = "<group>"; };
 		22BCD8021ACB982600864FA2 /* mediaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mediaButton.m; sourceTree = "<group>"; };
+		22BCD8041ACC69A200864FA2 /* annotationsLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = annotationsLinkedList.h; sourceTree = "<group>"; };
+		22BCD8051ACC69A200864FA2 /* annotationsLinkedList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = annotationsLinkedList.m; sourceTree = "<group>"; };
 		22BD244F1ABDC7C500049159 /* AVCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamViewController.h; sourceTree = "<group>"; };
 		22BD24501ABDC7C500049159 /* AVCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamViewController.m; sourceTree = "<group>"; };
 		22BD24511ABDC7C500049159 /* AVCamPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamPreviewView.h; sourceTree = "<group>"; };
@@ -230,6 +233,8 @@
 				229F5A221ACB66C200D557D2 /* userPostView.m */,
 				22BCD8011ACB982600864FA2 /* mediaButton.h */,
 				22BCD8021ACB982600864FA2 /* mediaButton.m */,
+				22BCD8041ACC69A200864FA2 /* annotationsLinkedList.h */,
+				22BCD8051ACC69A200864FA2 /* annotationsLinkedList.m */,
 			);
 			path = userInteractionClasses;
 			sourceTree = "<group>";
@@ -390,6 +395,7 @@
 				22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */,
 				2290B0851ABF675A008317C3 /* UIGridView.m in Sources */,
 				229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */,
+				22BCD8061ACC69A200864FA2 /* annotationsLinkedList.m in Sources */,
 				2290B09E1ABF9714008317C3 /* CollectionViewCell.m in Sources */,
 				223A18BA1ABCC99F00D983D4 /* AppDelegate.m in Sources */,
 				2290B0861ABF675A008317C3 /* UIGridViewCell.m in Sources */,

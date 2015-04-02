@@ -22,6 +22,7 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.searchResultsUpdater = self;
     self.searchController.dimsBackgroundDuringPresentation = NO;
@@ -37,6 +38,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    self.navigationController.navigationBarHidden = NO;
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
     [query whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];

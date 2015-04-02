@@ -13,7 +13,10 @@
 #import "NSStack.h"
 #import "mediaButton.h"
 #import "userPostView.h"
-
+#import "AppDelegate.h"
+#import "friendCollectionView.h"
+#import "annotationsLinkedList.h"
+@class friendCollectionView;
 @interface userInteractionView : UIViewController<RMMapViewDelegate>
 
 #pragma view interface
@@ -22,13 +25,14 @@
 @property (strong, nonatomic) IBOutlet UIView *optionContainers;
 @property (strong, nonatomic) IBOutlet RMMapView *mapView;
 - (IBAction)camera:(id)sender;
-- (IBAction)profileButton:(id)sender;
 - (IBAction)findFriends:(id)sender;
 - (IBAction)zoomToAnnotation:(id)sender;
 
 #pragma interface interaction data
 @property(strong,nonatomic) PFUser *currentUserOnDisplay;
-@property(strong,nonatomic) NSMutableDictionary *unseenPostCenter;
-@property(strong,nonatomic) NSArray *currentUserPosts;
+@property(strong,nonatomic) AppDelegate *delegate;
+@property(strong,nonatomic) NSMutableArray *currentUserPosts;
+@property(strong,nonatomic) friendCollectionView *friendPane;
+@property(strong,nonatomic) annotationsLinkedList *annotationLink;
 
 @end

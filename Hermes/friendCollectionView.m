@@ -21,14 +21,15 @@
 -(id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
+        self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [self initialization];
+        self.frame = CGRectMake(0, -800, self.bounds.size.width, self.bounds.size.height);
     }
     
     return self;
 }
 
 -(void)initialization{
-    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
@@ -74,8 +75,6 @@
     PFQuery *query = [relation query];
     [query orderByAscending:@"createdAt"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSLog(@"%@",objects);
-
 //        NSMutableArray *temp = [[NSMutableArray alloc]init];
 //        //iterate through all friends
 //        //see if friends have user as part of their friend list
@@ -114,11 +113,10 @@
             UIImage *image = [UIImage imageWithData:data];
             // image can now be set on a UIImageView
             cell.imageView.image = image;
-            NSMutableArray *array = [self.friendUnseenPosts objectForKey:user.objectId];
+            NSMutableArray *array = [self.delegate.unseenPostCenter objectForKey:user.objectId];
             if (array.count>0) {
                 cell.newPostField.hidden= NO;
-                NSMutableArray *temp = [self.friendUnseenPosts objectForKey:user.objectId];
-                
+                NSMutableArray *temp = [self.delegate.unseenPostCenter objectForKey:user.objectId];
                 cell.newPostField.text = [NSString stringWithFormat:@"%lu",(unsigned long)temp.count];
             }
             
@@ -128,20 +126,19 @@
     return cell;
 }
 
--(void)setUpFriendUnseenPost:(NSMutableDictionary *)dictionary{
-    self.friendUnseenPosts = dictionary;
-    [self.collectionView reloadData];
-}
-
-
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
     return CGSizeMake(100, 100);
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    PFUser *user = self.users[indexPath.row];
-    self.user = user;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"newUser" object:nil];
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
+        self.frame = CGRectMake(0, -800, self.bounds.size.width, self.bounds.size.height);
+    }completion:^(BOOL finished) {
+        PFUser *user = self.users[indexPath.row];
+        self.user = user;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"newUser" object:nil];
+    }];
+   
 
 }
 
@@ -157,7 +154,15 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"segueToFriendSearch" object:nil];
 }
 
-
+-(void)moveToView:(id)sender{
+    
+    self.blurMask.image = (UIImage *)sender;
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
+        self.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
+    }completion:^(BOOL finished) {
+        NSLog(@"Animation is complete");
+    }];
+}
 
 
 @end

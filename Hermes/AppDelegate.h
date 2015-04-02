@@ -16,9 +16,10 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong,nonatomic) CLLocationManager *locationManager;
 @property(strong,nonatomic) CLLocation *location;
-@property(strong,nonatomic) NSMutableDictionary *friendUnseenPosts;
 @property(strong,nonatomic) NSNumber *notifications;
 @property(strong,nonatomic) userInteractionView *userInteractionView;
-@property(strong,nonatomic) NSString *incomingPost;
+@property(strong,nonatomic) NSString *incomingPostId;
+@property(strong,nonatomic) NSMutableDictionary *unseenPostCenter;
+
 @end
 

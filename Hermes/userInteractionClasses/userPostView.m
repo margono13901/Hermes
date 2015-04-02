@@ -22,6 +22,7 @@
     self = [super initWithFrame:frame];
     self.previewStack = stack;
     if (self) {
+        self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
         [self initialization];
     }
     return self;
@@ -54,13 +55,13 @@
         PFObject *post = [self.previewStack pop];
         [self setUpImage:post];
         PFUser *author = post[@"author"];
-        NSMutableArray *authorUnseenPosts = [self.friendUnseenPosts objectForKey:author.objectId];
+        NSMutableArray *authorUnseenPosts = [self.delegate.unseenPostCenter objectForKey:author.objectId];
         for (int i = 0 ; i<authorUnseenPosts.count; i++) {
             PFObject *unseenPost = [authorUnseenPosts objectAtIndex:i];
             [self removeUnSeenPost:unseenPost withCompareTo:post :authorUnseenPosts];
         }
         
-        [self.friendUnseenPosts setValue:authorUnseenPosts forKey:author.objectId];
+        [self.delegate.unseenPostCenter setValue:authorUnseenPosts forKey:author.objectId];
     }
 }
 
@@ -76,12 +77,15 @@
         [authorUnseenPosts removeObject:unseenpost];
         PFRelation *relation = [[PFUser currentUser]relationForKey:@"unseenPosts"];
         [relation removeObject:unseenpost];
+        [self decrementBadge];
         [[PFUser currentUser]saveInBackground];
     }
 }
 
--(void)passInUnseenPosts:(NSDictionary *)dictionary{
-    self.friendUnseenPosts = dictionary;
+-(void)decrementBadge{
+        NSInteger numberOfBadges = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        numberOfBadges -=1;
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:numberOfBadges];
 }
 
 @end

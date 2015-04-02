@@ -51,7 +51,6 @@
     if ([PFUser currentUser]) {
         NSDictionary *payload = [userInfo objectForKey:@"custom"];
         NSString *senderId = [payload objectForKey:@"senderId"];
-        
         if (![senderId isEqual:[PFUser currentUser].objectId]) {
             NSString *type = [payload objectForKey:@"type"];
             if ([type isEqualToString:@"post"]) {
@@ -75,7 +74,7 @@
     [self displayBanner:[NSString stringWithFormat:@"New Post By %@",sender]];
     PFObject *temp = [payload objectForKey:@"post"];
     NSString *objectID = [temp objectForKey:@"objectId"];
-    self.incomingPost = objectID;
+    self.incomingPostId = objectID;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingPost" object:nil];
 }
 
@@ -93,27 +92,33 @@
     //Add the alertView to your view
     [self.window addSubview:alertview];
     
-    //Create the ending frame or where you want it to end up on screen, in this case 0 y origin
+    //Animate it in
+    [self showBanner:alertview];
+}
+
+-(void)showBanner:(UIView *)alertview{
     CGRect newFrm = alertview.frame;
     newFrm.origin.y = 0;
-    
-    //Animate it in
-    
     [UIView animateWithDuration:1.0f animations:^{
         alertview.frame = newFrm;
     } completion:^(BOOL finished) {
-        CGRect endFrm = alertview.frame;
-        endFrm.origin.y = -100;
-        [UIView animateWithDuration:1.0f
-                              delay:3.0f
-                            options: UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-                             alertview.frame = endFrm;
-                         }
-                         completion:^(BOOL finished){
-                         }];
-        
+        [self hideBanner:alertview];
     }];
+
+}
+
+-(void)hideBanner:(UIView *)alertview{
+    CGRect endFrm = alertview.frame;
+    endFrm.origin.y = -100;
+    [UIView animateWithDuration:1.0f
+                          delay:3.0f
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         alertview.frame = endFrm;
+                     }
+                     completion:^(BOOL finished){
+                     }];
+
 }
 
 -(void)setUpLocation{
