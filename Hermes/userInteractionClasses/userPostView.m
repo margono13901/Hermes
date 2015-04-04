@@ -18,9 +18,9 @@
 }
 */
 
--(id)initWithFrame:(CGRect)frame withStack:(NSStack *)stack{
+-(id)initWithFrame:(CGRect)frame withQueue:(NSQueue *)queue{
     self = [super initWithFrame:frame];
-    self.previewStack = stack;
+    self.previewQueue = queue;
     if (self) {
         self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
         [self initialization];
@@ -29,30 +29,38 @@
 }
 
 -(void)initialization{
-    self.previewText = [[UILabel alloc]initWithFrame:CGRectMake(230, 30, 50, 50)];
+    self.previewText = [[UILabel alloc]initWithFrame:CGRectMake(260, 30, 40, 50)];
     self.previewText.textAlignment = NSTextAlignmentCenter;
-    self.previewText.textColor = [[UIColor blackColor]colorWithAlphaComponent:0.8f];
+    self.previewText.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5f];
     [self.previewText.layer setBorderColor:[UIColor whiteColor].CGColor];
-    [self.previewText.layer setBorderWidth:5.0f];
+    [self.previewText.layer setBorderWidth:2.0f];
     self.previewText.textColor = [UIColor whiteColor];
+    self.previewText.layer.cornerRadius = 10;
+    self.previewText.clipsToBounds = YES;
     self.userInteractionEnabled = YES;
     UITapGestureRecognizer *singleFingerTap =
     [[UITapGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(cycleThroughPost:)];
     [self addGestureRecognizer:singleFingerTap];
+    UIButton *backButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 30, 50, 50)];
+    [backButton setTitle:@"X" forState:UIControlStateNormal];
+    [backButton setTintColor:[UIColor whiteColor]];
+    [backButton addTarget:self action:@selector(exitView:) forControlEvents:UIControlEventTouchUpInside];
+    backButton.titleLabel.font = [UIFont systemFontOfSize:23.0f];
     [self addSubview:self.previewText];
+    [self addSubview:backButton];
     [self cycleThroughPost:self];
 }
 
 //work on this
 -(void)cycleThroughPost:(id)sender{
-    if ([self.previewStack isEmpty]){
+    if ([self.previewQueue isEmpty]){
         [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
-        [self removeFromSuperview];
+        [self exitView:self];
     }else{
-        self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewStack.storage.count];
+        self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewQueue.storage.count];
 
-        PFObject *post = [self.previewStack pop];
+        PFObject *post = [self.previewQueue dequeue];
         [self setUpImage:post];
         PFUser *author = post[@"author"];
         NSMutableArray *authorUnseenPosts = [self.delegate.unseenPostCenter objectForKey:author.objectId];
@@ -65,6 +73,11 @@
     }
 }
 
+-(void)exitView:(id)sender{
+    [self removeFromSuperview];
+
+}
+
 -(void)setUpImage:(PFObject *)post{
     [post[@"media"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         UIImage *image = [UIImage imageWithData:data];
@@ -74,10 +87,10 @@
 
 -(void)removeUnSeenPost:(PFObject *)unseenpost withCompareTo:(PFObject *)post :(NSMutableArray *)authorUnseenPosts{
     if ([unseenpost.objectId isEqual:post.objectId]) {
+        [self decrementBadge];
         [authorUnseenPosts removeObject:unseenpost];
         PFRelation *relation = [[PFUser currentUser]relationForKey:@"unseenPosts"];
         [relation removeObject:unseenpost];
-        [self decrementBadge];
         [[PFUser currentUser]saveInBackground];
     }
 }

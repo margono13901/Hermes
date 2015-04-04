@@ -28,6 +28,8 @@
 		229F5A261ACB70F400D557D2 /* userInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A251ACB70F400D557D2 /* userInteractionView.m */; };
 		22BCD8031ACB982600864FA2 /* mediaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8021ACB982600864FA2 /* mediaButton.m */; };
 		22BCD8061ACC69A200864FA2 /* annotationsLinkedList.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8051ACC69A200864FA2 /* annotationsLinkedList.m */; };
+		22BCD8091ACDFAE700864FA2 /* projectColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8081ACDFAE700864FA2 /* projectColor.m */; };
+		22BCD80C1ACE2DC600864FA2 /* registrationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD80B1ACE2DC600864FA2 /* registrationView.m */; };
 		22BD24531ABDC7C500049159 /* AVCamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24501ABDC7C500049159 /* AVCamViewController.m */; };
 		22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BD24521ABDC7C500049159 /* AVCamPreviewView.m */; };
 		22BD24561ABE069600049159 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22BD24551ABE069600049159 /* MapKit.framework */; };
@@ -48,17 +50,17 @@
 		223A18B11ABCC99F00D983D4 /* Hermes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hermes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		223A18B51ABCC99F00D983D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223A18B61ABCC99F00D983D4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		223A18B81ABCC99F00D983D4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		223A18B91ABCC99F00D983D4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		223A18BB1ABCC99F00D983D4 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		223A18BC1ABCC99F00D983D4 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		223A18B81ABCC99F00D983D4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ../AppDelegate.h; sourceTree = "<group>"; };
+		223A18B91ABCC99F00D983D4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ../AppDelegate.m; sourceTree = "<group>"; };
+		223A18BB1ABCC99F00D983D4 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewController.h; path = ../ViewController.h; sourceTree = "<group>"; };
+		223A18BC1ABCC99F00D983D4 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ViewController.m; path = ../ViewController.m; sourceTree = "<group>"; };
 		223A18BF1ABCC99F00D983D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		223A18C11ABCC99F00D983D4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		223A18C41ABCC99F00D983D4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		223A18CA1ABCC99F00D983D4 /* HermesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HermesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		223A18CF1ABCC99F00D983D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223A18D01ABCC99F00D983D4 /* HermesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HermesTests.m; sourceTree = "<group>"; };
-		223A18DA1ABCC9CA00D983D4 /* keys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../keys.h; sourceTree = "<group>"; };
+		223A18DA1ABCC9CA00D983D4 /* keys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../keys.h; sourceTree = "<group>"; };
 		2290B04E1ABE470C008317C3 /* profileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profileViewController.h; sourceTree = "<group>"; };
 		2290B04F1ABE470C008317C3 /* profileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = profileViewController.m; sourceTree = "<group>"; };
 		2290B07E1ABF675A008317C3 /* UIGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGridView.h; sourceTree = "<group>"; };
@@ -88,10 +90,14 @@
 		22BCD8021ACB982600864FA2 /* mediaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mediaButton.m; sourceTree = "<group>"; };
 		22BCD8041ACC69A200864FA2 /* annotationsLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = annotationsLinkedList.h; sourceTree = "<group>"; };
 		22BCD8051ACC69A200864FA2 /* annotationsLinkedList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = annotationsLinkedList.m; sourceTree = "<group>"; };
-		22BD244F1ABDC7C500049159 /* AVCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamViewController.h; sourceTree = "<group>"; };
-		22BD24501ABDC7C500049159 /* AVCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamViewController.m; sourceTree = "<group>"; };
-		22BD24511ABDC7C500049159 /* AVCamPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamPreviewView.h; sourceTree = "<group>"; };
-		22BD24521ABDC7C500049159 /* AVCamPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamPreviewView.m; sourceTree = "<group>"; };
+		22BCD8071ACDFAE600864FA2 /* projectColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = projectColor.h; path = ../userInteractionClasses/projectColor.h; sourceTree = "<group>"; };
+		22BCD8081ACDFAE700864FA2 /* projectColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = projectColor.m; path = ../userInteractionClasses/projectColor.m; sourceTree = "<group>"; };
+		22BCD80A1ACE2DC600864FA2 /* registrationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = registrationView.h; path = Hermes/registrationView.h; sourceTree = SOURCE_ROOT; };
+		22BCD80B1ACE2DC600864FA2 /* registrationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = registrationView.m; path = Hermes/registrationView.m; sourceTree = SOURCE_ROOT; };
+		22BD244F1ABDC7C500049159 /* AVCamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVCamViewController.h; path = ../AVCamViewController.h; sourceTree = "<group>"; };
+		22BD24501ABDC7C500049159 /* AVCamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AVCamViewController.m; path = ../AVCamViewController.m; sourceTree = "<group>"; };
+		22BD24511ABDC7C500049159 /* AVCamPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVCamPreviewView.h; path = ../AVCamPreviewView.h; sourceTree = "<group>"; };
+		22BD24521ABDC7C500049159 /* AVCamPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AVCamPreviewView.m; path = ../AVCamPreviewView.m; sourceTree = "<group>"; };
 		22BD24551ABE069600049159 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		2985C95F7673E7D011223044 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		63A567DCAE9F9D7F2F7352D0 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -150,16 +156,10 @@
 		223A18B31ABCC99F00D983D4 /* Hermes */ = {
 			isa = PBXGroup;
 			children = (
+				22BCD80E1ACE2F3600864FA2 /* camera */,
 				2290B07D1ABF675A008317C3 /* UIGridView */,
-				223A18B81ABCC99F00D983D4 /* AppDelegate.h */,
-				223A18B91ABCC99F00D983D4 /* AppDelegate.m */,
-				223A18BB1ABCC99F00D983D4 /* ViewController.h */,
-				223A18BC1ABCC99F00D983D4 /* ViewController.m */,
+				22BCD80D1ACE2E7700864FA2 /* registration */,
 				229F59D81AC86EB800D557D2 /* userInteractionClasses */,
-				22BD244F1ABDC7C500049159 /* AVCamViewController.h */,
-				22BD24501ABDC7C500049159 /* AVCamViewController.m */,
-				22BD24511ABDC7C500049159 /* AVCamPreviewView.h */,
-				22BD24521ABDC7C500049159 /* AVCamPreviewView.m */,
 				223A18BE1ABCC99F00D983D4 /* Main.storyboard */,
 				2290B0A51AC45F16008317C3 /* friendCell.h */,
 				2290B0A61AC45F16008317C3 /* friendCell.m */,
@@ -167,7 +167,7 @@
 				2290B0A31AC45649008317C3 /* searchViewController.m */,
 				2290B04E1ABE470C008317C3 /* profileViewController.h */,
 				2290B04F1ABE470C008317C3 /* profileViewController.m */,
-				223A18DA1ABCC9CA00D983D4 /* keys.h */,
+				22BCD80F1ACF6CC400864FA2 /* projectFiles */,
 				223A18C11ABCC99F00D983D4 /* Images.xcassets */,
 				223A18C31ABCC99F00D983D4 /* LaunchScreen.xib */,
 				223A18B41ABCC99F00D983D4 /* Supporting Files */,
@@ -239,6 +239,40 @@
 			path = userInteractionClasses;
 			sourceTree = "<group>";
 		};
+		22BCD80D1ACE2E7700864FA2 /* registration */ = {
+			isa = PBXGroup;
+			children = (
+				223A18BB1ABCC99F00D983D4 /* ViewController.h */,
+				223A18BC1ABCC99F00D983D4 /* ViewController.m */,
+				22BCD80A1ACE2DC600864FA2 /* registrationView.h */,
+				22BCD80B1ACE2DC600864FA2 /* registrationView.m */,
+			);
+			path = registration;
+			sourceTree = "<group>";
+		};
+		22BCD80E1ACE2F3600864FA2 /* camera */ = {
+			isa = PBXGroup;
+			children = (
+				22BD244F1ABDC7C500049159 /* AVCamViewController.h */,
+				22BD24501ABDC7C500049159 /* AVCamViewController.m */,
+				22BD24511ABDC7C500049159 /* AVCamPreviewView.h */,
+				22BD24521ABDC7C500049159 /* AVCamPreviewView.m */,
+			);
+			path = camera;
+			sourceTree = "<group>";
+		};
+		22BCD80F1ACF6CC400864FA2 /* projectFiles */ = {
+			isa = PBXGroup;
+			children = (
+				223A18DA1ABCC9CA00D983D4 /* keys.h */,
+				223A18B81ABCC99F00D983D4 /* AppDelegate.h */,
+				223A18B91ABCC99F00D983D4 /* AppDelegate.m */,
+				22BCD8071ACDFAE600864FA2 /* projectColor.h */,
+				22BCD8081ACDFAE700864FA2 /* projectColor.m */,
+			);
+			path = projectFiles;
+			sourceTree = "<group>";
+		};
 		23EC67782163E1F6826AC6F6 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -303,6 +337,7 @@
 					};
 					223A18C91ABCC99F00D983D4 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 9M238DU2FS;
 						TestTargetID = 223A18B01ABCC99F00D983D4;
 					};
 				};
@@ -392,7 +427,9 @@
 				2290B0501ABE470C008317C3 /* profileViewController.m in Sources */,
 				2290B0A41AC45649008317C3 /* searchViewController.m in Sources */,
 				2290B0871ABF675A008317C3 /* UIGridViewRow.m in Sources */,
+				22BCD8091ACDFAE700864FA2 /* projectColor.m in Sources */,
 				22BD24541ABDC7C500049159 /* AVCamPreviewView.m in Sources */,
+				22BCD80C1ACE2DC600864FA2 /* registrationView.m in Sources */,
 				2290B0851ABF675A008317C3 /* UIGridView.m in Sources */,
 				229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */,
 				22BCD8061ACC69A200864FA2 /* annotationsLinkedList.m in Sources */,
@@ -462,8 +499,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Raylen Margono";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Raylen Margono";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -483,6 +520,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "de64b7b1-2bdb-4694-8d48-85da4ddefef3";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -504,8 +542,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Raylen Margono";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Raylen Margono";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -518,6 +556,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "de64b7b1-2bdb-4694-8d48-85da4ddefef3";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -528,8 +567,8 @@
 			baseConfigurationReference = 2985C95F7673E7D011223044 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Raylen Margono (YPKZ4833K6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Raylen Margono (YPKZ4833K6)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Hermes/parse-library-1.6.3",
@@ -548,8 +587,8 @@
 			baseConfigurationReference = 63A567DCAE9F9D7F2F7352D0 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Raylen Margono (YPKZ4833K6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Raylen Margono (YPKZ4833K6)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Hermes/parse-library-1.6.3",
@@ -567,6 +606,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -578,6 +619,7 @@
 				INFOPLIST_FILE = HermesTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hermes.app/Hermes";
 			};
 			name = Debug;
@@ -586,6 +628,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -593,6 +637,7 @@
 				INFOPLIST_FILE = HermesTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hermes.app/Hermes";
 			};
 			name = Release;

@@ -22,4 +22,5 @@
 @property(strong,nonatomic)UIImageView *blurMask;
 -(void)reloadData;
 -(void)moveToView:(id)sender;
+-(void)getFriends;
 @end

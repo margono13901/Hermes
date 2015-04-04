@@ -11,6 +11,8 @@
 @interface userInteractionView ()
 @end
 
+typedef void(^zoomCompletion)(BOOL);
+
 @implementation userInteractionView
 
 - (void)viewDidLoad {
@@ -22,6 +24,8 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     self.mapView.zoom = 15;
+    self.mapView.showsUserLocation = YES;
+    self.mapView.userTrackingMode = RMUserTrackingModeFollow;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -33,15 +37,18 @@
 
 
 -(void)setUpNotificationCenter{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incomingPost:) name:@"incomingPost" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incomingPost:) name:@"incomingOtherPost" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(segueToFriendSearch:) name:@"segueToFriendSearch" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeCurrentUser:) name:@"newUser" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView:) name:@"refresh" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUpProfilePhoto:) name:@"changeProfilePhoto" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selfPost:) name:@"incomingSelfPost" object:nil];
+
 }
 
 -(void)changeCurrentUser:(id)sender{
     self.currentUserOnDisplay = self.friendPane.user;
+    [self getCurrentUserProfilePhoto];
     [self getCurrentuserPosts];
     [self setUpAnnotations];
 }
@@ -50,38 +57,89 @@
 -(void)refreshView:(id)sender{
     [self setUpNotificationCounter];
     [self setUpAnnotations];
+    [self.friendPane getFriends];
     [self.friendPane.collectionView reloadData];
 }
 
+-(void)increamentBadge{
+    NSInteger numberOfBadges = [UIApplication sharedApplication].applicationIconBadgeNumber;
+    numberOfBadges +=1;
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:numberOfBadges];
+}
+
+-(void)getCurrentUserProfilePhoto{
+    [self.currentUserOnDisplay[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+        UIImage *image = [UIImage imageWithData:data];
+        CGSize sacleSize = CGSizeMake(50, 50);
+        UIGraphicsBeginImageContextWithOptions(sacleSize, NO, 0.0);
+        [image drawInRect:CGRectMake(0, 0, sacleSize.width, sacleSize.height)];
+        UIImage * resizedImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        self.currentUserProfilePhoto = resizedImage;
+    }];
+}
+
+
+
 -(void)incomingPost:(id)sender{
+    [self increamentBadge];
     NSString *incomingPostId = self.delegate.incomingPostId;
     PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
         [self addToUnseenPostCenter:object];
-        [self.currentUserPosts addObject:object];
+        [self.currentUserPosts insertObject:object atIndex:0];
         [self refreshView:self];
     }];
 }
 
+-(void)selfPost:(id)sender{
+    NSString *incomingPostId = self.delegate.incomingPostId;
+    PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
+    [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
+        [self.currentUserPosts insertObject:object atIndex:0];
+        [self refreshView:self];
+    }];
+}
+
+
 #pragma firstTimeSetups
 
 -(void)initialization{
+    //set up delegate
     self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
+    //set up nagivation contorller
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.navigationController.navigationBar.barTintColor = [UIColor purpleColor];
-    self.optionContainers.backgroundColor = [[UIColor whiteColor]colorWithAlphaComponent:0.8f];
+    self.navigationController.navigationBar.barTintColor = [projectColor returnColor];
+    //set up friend pane
     self.friendPane = [[friendCollectionView alloc]initWithFrame:self.view.bounds];
     [self.view addSubview:self.friendPane];
+    //set up profile pic interaction
+    self.profileView.userInteractionEnabled = YES;
+    UITapGestureRecognizer *segue = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(segueToProfile:)];
+    [self.profileView addGestureRecognizer:segue];
+    self.profileView.layer.cornerRadius = 40;
+    self.profileView.clipsToBounds = YES;
+    self.profileView.layer.borderColor = [[UIColor whiteColor]CGColor];
+    self.profileView.layer.borderWidth = 2.0f;
+    //set up container View
+    self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
+    self.optionContainers.layer.borderColor = [UIColor whiteColor].CGColor;
+    //set up zoom
+    [self.zoomButton.layer setCornerRadius:10.0f];
+    self.zoomButton.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
+    //set up map box
     [[RMConfiguration sharedInstance] setAccessToken:mapAccessToken];
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:mapID];
     self.mapView.delegate = self;
     [self.mapView setTileSource:tileSource];
     self.mapView.showsUserLocation = YES;
     self.mapView.userTrackingMode = RMUserTrackingModeFollow;
-    [
-     self setUpProfilePhoto:self];
+    //display user
+    [self setUpProfilePhoto:self];
     self.currentUserOnDisplay = [PFUser currentUser];
+    [self getCurrentUserProfilePhoto];
+    //download posts
     [self downloadUnseenPosts:YES];
 }
 
@@ -135,7 +193,7 @@
 -(void)getCurrentuserPosts{
     PFRelation *relation = [self.currentUserOnDisplay relationForKey:@"mediaPosts"];
     PFQuery *query = [relation query];
-    [query orderByAscending:@"createdAt"];
+    [query orderByDescending:@"createdAt"];
     NSDate *oneDayAgo = [[NSDate date]dateByAddingTimeInterval:-60*60*24];
     [query whereKey:@"createdAt" greaterThan:oneDayAgo];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -153,16 +211,16 @@
         NSMutableArray *temp = [[NSMutableArray alloc]initWithArray:self.currentUserPosts];
         for (int i = 0 ; i < temp.count; i++) {
             int newPosts = 0;
-            NSStack *postStack = [[NSStack alloc]init];
+            NSQueue *postQueue = [[NSQueue alloc]init];
             PFObject *post = [temp objectAtIndex:i];
-            [postStack push:post];
+            [postQueue enqueue:post];
             if ([self postIsUnseen:post]) newPosts++;
             
             int iterations = i+1;
             while (iterations < temp.count) {
                 PFObject *comparedPost = [temp objectAtIndex:iterations];
                 if ([self distanceIsClose:post to:comparedPost]) {
-                    [postStack push:comparedPost];
+                    [postQueue enqueue:comparedPost];
                     [temp removeObject:comparedPost];
                     if ([self postIsUnseen:comparedPost]) newPosts++;
                 }else{
@@ -173,7 +231,7 @@
             
             RMAnnotation *annotation = [RMAnnotation annotationWithMapView:self.mapView coordinate:[location coordinate] andTitle:[NSString stringWithFormat:@"%i new posts",newPosts]];
             
-            annotation.userInfo = postStack;
+            annotation.userInfo = postQueue;
             [self addAnnotationToLink:annotation];
 
             dispatch_async(dispatch_get_main_queue(), ^(void)
@@ -217,26 +275,33 @@
     if ([annotation isUserLocationAnnotation]) return nil;
     
     RMMapLayer *mapLayer = [[RMMarker alloc]initWithUIImage:[UIImage imageNamed:@"singlePic"]];
-    mapLayer.bounds = CGRectMake(0, 0, 50, 50);
+    mapLayer.bounds = CGRectMake(0, 0, 60, 60);
     mapLayer.canShowCallout = YES;
-    mediaButton *button = [[mediaButton alloc]initWithStack:annotation.userInfo];
+    mediaButton *button = [[mediaButton alloc]initWithQueue:annotation.userInfo];
     UITapGestureRecognizer *singleFingerTap =
     [[UITapGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(displayMediaStack:)];
     [button addGestureRecognizer:singleFingerTap];
     mapLayer.rightCalloutAccessoryView = button;
+    mapLayer.leftCalloutAccessoryView = [[UIImageView alloc]
+                                       initWithImage:
+                                       self.currentUserProfilePhoto];
     
     return mapLayer;
 }
 
 -(void)displayMediaStack:(UITapGestureRecognizer *)sender{
     mediaButton *button = (mediaButton *)sender.view;
-    userPostView *media = [[userPostView alloc]initWithFrame:self.view.frame withStack:button.stack];
+    userPostView *media = [[userPostView alloc]initWithFrame:self.view.frame withQueue:button.queue];
     [self.view addSubview:media];
 }
 
 -(void)segueToFriendSearch:(id)sender{
     [self performSegueWithIdentifier:@"searchFriendsSegue" sender:self];
+}
+
+-(void)segueToProfile:(id)sender{
+    [self performSegueWithIdentifier:@"profile" sender:self];
 }
 
 - (IBAction)camera:(id)sender {
@@ -249,22 +314,32 @@
 }
 
 - (IBAction)zoomToAnnotation:(id)sender{
-    
-    RMAnnotation *annotation = [self.annotationLink returnAnnotatotation];
-    
-    CLLocationCoordinate2D coordinate = [annotation coordinate];
+    if (self.annotationLink.storage.count>0) {
+        RMAnnotation *annotation = [self.annotationLink returnAnnotatotation];
+       [self didZoomWithAnnotation:annotation withComp:^(BOOL finished) {
+           if (finished) {
+               [self.mapView selectAnnotation:annotation animated:YES];
+           }
+       }];
+    }
+}
 
+-(void)didZoomWithAnnotation:(RMAnnotation *)annotation withComp:(zoomCompletion)compblock{
+    //do stuff
+    CLLocationCoordinate2D coordinate = [annotation coordinate];
+    
     //Find the southwest and northeast point
     double northEastLatitude = coordinate.latitude;
     double northEastLongitude = coordinate.longitude;
     double southWestLatitude = coordinate.latitude;
     double southWestLongitude = coordinate.longitude;
     
+    
+    
     [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(southWestLatitude, southWestLongitude)
-                                         northEast:CLLocationCoordinate2DMake(northEastLatitude, northEastLongitude)
-                                          animated:YES];
-    [self.mapView selectAnnotation:annotation animated:YES];
-
+                                                 northEast:CLLocationCoordinate2DMake(northEastLatitude, northEastLongitude)
+                                                  animated:NO];
+    compblock(YES);
 }
 - (UIImage *)getImageView{
     UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0.0);

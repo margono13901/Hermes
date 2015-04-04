@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NSStack.h"
+#import "NSQueue.h"
 
 @interface mediaButton : UIView
-@property(strong,nonatomic) NSStack *stack;
--(id)initWithStack:(NSStack *)stack;
+@property(strong,nonatomic) NSQueue *queue;
+-(id)initWithQueue:(NSQueue *)queue;
 @end

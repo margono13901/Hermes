@@ -21,16 +21,17 @@
 
 -(void)addToLink:(id)object{
     [self.storage addObject:object];
-    placement = (int)self.storage.count-1;
+    placement = 0;
 }
 
 -(id)returnAnnotatotation{
     id annotation = nil;
-    if (placement < 0) {
-        placement = (int)self.storage.count-1;
+    if (placement >= self.storage.count) {
+        placement = 0;
     }
-    annotation = [self.storage objectAtIndex:placement--];
+    annotation = [self.storage objectAtIndex:placement++];
     return annotation;
 }
+
 
 @end

@@ -1,98 +1,91 @@
 //
-//  profileViewController.m
+//  registrationView.m
 //  Hermes
 //
-//  Created by Raylen Margono on 3/21/15.
+//  Created by Raylen Margono on 4/2/15.
 //  Copyright (c) 2015 Raylen Margono. All rights reserved.
 //
 
-#import "profileViewController.h"
+#import "registrationView.h"
 
-@interface profileViewController ()
+@interface registrationView ()
 
 @end
 
-@implementation profileViewController
+@implementation registrationView
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationController.navigationItem.title = @"Profile";
-
-    // Do any additional setup after loading the view
-    [self.imageView.layer setCornerRadius:30.0f];
+    // Do any additional setup after loading the view.
+    [self setUpPicture];
+    [self setUpButton];
     
-    // border
+}
+-(void)setUpPicture{
+    self.profilePickView.userInteractionEnabled = YES;
+    UITapGestureRecognizer *segue = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(openPictureCollection:)];
+    [self.profilePickView addGestureRecognizer:segue];
+    self.profilePickView.layer.cornerRadius = 40;
+    self.profilePickView.clipsToBounds = YES;
     UIColor *color = [projectColor returnColor];
-    [self.imageView.layer setBorderColor:color.CGColor];
-    [self.imageView.layer setBorderWidth:5.0f];
-    
-    // drop shadow
-    [self.imageView.layer setShadowColor:[UIColor blueColor].CGColor];
-    [self.imageView.layer setShadowOpacity:0.8];
-    [self.imageView.layer setShadowRadius:3.0];
-    [self.imageView.layer setShadowOffset:CGSizeMake(2.0, 2.0)];
-    
-    //clip
-    self.imageView.clipsToBounds = YES;
-    
-    self.usernameField.text = [PFUser currentUser][@"username"];
-    PFRelation *relation = [[PFUser currentUser] relationForKey:@"mediaPosts"];
-    PFQuery *query = [relation query];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSLog(@"%@",objects);
-        NSNumber *likes = [NSNumber numberWithInteger:0];
-        NSNumber *uber = [NSNumber numberWithInteger:0];
-
-        for(int i = 0 ; i < objects.count ; i++){
-            likes = @([likes integerValue] + [objects[i][@"likes"] integerValue]);
-            uber = @([uber integerValue] + [objects[i][@"uber"] integerValue]);
-
-        }
-        
-        self.likes.text = [NSString stringWithFormat:@"%@ likes",likes];
-        self.uber.text = [NSString stringWithFormat:@"%@ ubers",uber];
-    }];
-    
-    [[PFUser currentUser][@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        if (!error) {
-            UIImage *image = [UIImage imageWithData:data];
-            // image can now be set on a UIImageView
-            self.imageView.image = image;
-        }
-    }];
+    self.profilePickView.layer.borderColor = color.CGColor;
+    self.profilePickView.layer.borderWidth = 2.0f;
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    self.navigationController.navigationBarHidden = NO;
+-(void)setUpButton{
+    UIBarButtonItem *anotherButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(registerForUser:)];
+    self.navigationItem.rightBarButtonItem = anotherButton;
 }
-
--(void)viewWillDisappear:(BOOL)animated{
-    self.navigationController.navigationBarHidden = YES;
-}
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+-(void)registerForUser:(id)sender{
+    if (hasProfilePicture) {
+        PFUser *user = [PFUser user];
+        user.username = self.username;
+        user.password = self.password;
+        NSData *data = UIImagePNGRepresentation([self fixrotation:self.profilePickView.image]);
+        PFFile *media = [PFFile fileWithName:@"picture" data:data];
+        user[@"profilePhoto"] = media;
+        [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if(!error){
+                AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
+                PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+                [currentInstallation setDeviceTokenFromData:delegate.deviceToken];
+                currentInstallation.channels = @[ @"global" ];
+                [currentInstallation setObject: [PFUser currentUser] forKey: @"owner"];
+                [currentInstallation saveInBackground];
+                PFRelation *relation = [[PFUser currentUser]relationForKey:@"friends"];
+                [relation addObject:[PFUser currentUser]];
+                [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error){
+                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
+                    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
+                    [self presentViewController:nav animated:YES completion:^{
+                        NSLog(@"success");
+                    }];
+                }];
+            }else{
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops" message:[NSString stringWithFormat:@"%@",error] delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles: nil];
+                [alert show];
+            }
+        }];
+    }else{
+        UIAlertView *alert =[[UIAlertView alloc]initWithTitle:@"Choose photo" message:@"Choose a photo!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alert show];
+    }
 }
-*/
 
-- (IBAction)changeProfile:(id)sender {
+- (IBAction)openPictureCollection:(id)sender {
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
     imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePickerController.delegate = self;
     [self presentViewController:imagePickerController animated:YES completion:nil];
-
+    
 }
 
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
@@ -100,15 +93,8 @@
     UIImage *image = [[UIImage alloc]init];
     image = [info valueForKey:UIImagePickerControllerOriginalImage];
     [self dismissViewControllerAnimated:YES completion:^{
-        self.imageView.image = image;
-        NSData *data = UIImagePNGRepresentation([self fixrotation:image]);
-        PFFile *media = [PFFile fileWithName:@"picture" data:data];
-        PFUser *user = [PFUser currentUser];
-        user[@"profilePhoto"] = media;
-        [user saveInBackground];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"changeProfilePhoto" object:nil];
-        self.navigationController.navigationBar.hidden = NO;
-
+        hasProfilePicture = YES;
+        self.profilePickView.image = image;
     }];
 }
 
@@ -237,5 +223,6 @@
     
     return newImage;
 }
+
 
 @end

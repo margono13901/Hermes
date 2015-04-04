@@ -38,9 +38,10 @@
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     // Store the deviceToken in the current installation and save it to Parse.
-    if([PFUser currentUser]){
+    self.deviceToken = deviceToken;
+    if ([PFUser currentUser]) {
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-        [currentInstallation setDeviceTokenFromData:deviceToken];
+        [currentInstallation setDeviceTokenFromData:self.deviceToken];
         currentInstallation.channels = @[ @"global" ];
         [currentInstallation setObject: [PFUser currentUser] forKey: @"owner"];
         [currentInstallation saveInBackground];
@@ -50,32 +51,33 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     if ([PFUser currentUser]) {
         NSDictionary *payload = [userInfo objectForKey:@"custom"];
-        NSString *senderId = [payload objectForKey:@"senderId"];
-        if (![senderId isEqual:[PFUser currentUser].objectId]) {
-            NSString *type = [payload objectForKey:@"type"];
-            if ([type isEqualToString:@"post"]) {
-                [self recievePost:payload];
-            }
+        NSDictionary *senderPayload = [payload objectForKey:@"senderId"];
+        NSString *senderId = [senderPayload objectForKey:@"objectId"];
+        
+        BOOL isUser = [senderId isEqual:[PFUser currentUser].objectId];
+        NSString *type = [payload objectForKey:@"type"];
+        NSLog(@"%@",[PFUser currentUser]);
+        if ([type isEqualToString:@"post"]) {
+            [self recievePost:payload isUser:isUser];
         }
-
 
     }
 }
 
--(void)increamentBadge{
-    NSInteger numberOfBadges = [UIApplication sharedApplication].applicationIconBadgeNumber;
-    numberOfBadges +=1;
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:numberOfBadges];
-}
-
--(void)recievePost:(NSDictionary *)payload{
-    [self increamentBadge];
-    NSString *sender = [payload objectForKey:@"sender"];
-    [self displayBanner:[NSString stringWithFormat:@"New Post By %@",sender]];
+-(void)recievePost:(NSDictionary *)payload isUser:(BOOL)user{
+    
     PFObject *temp = [payload objectForKey:@"post"];
     NSString *objectID = [temp objectForKey:@"objectId"];
     self.incomingPostId = objectID;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingPost" object:nil];
+
+    if (!user) {
+        NSString *sender = [payload objectForKey:@"sender"];
+        [self displayBanner:[NSString stringWithFormat:@"New Post By %@",sender]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingOtherPost" object:nil];
+    }else{
+        [self displayBanner:[NSString stringWithFormat:@"Post Uploaded"]];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingSelfPost" object:nil];
+    }
 }
 
 -(void)displayBanner:(NSString *)text{

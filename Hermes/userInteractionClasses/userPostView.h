@@ -7,15 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NSStack.h"
+#import "NSQueue.h"
 #import <Parse/Parse.h>
 #import "AppDelegate.h"
 
 @interface userPostView : UIImageView
 
 @property(strong,nonatomic)UILabel *previewText;
-@property(strong,nonatomic)NSStack *previewStack;
--(id)initWithFrame:(CGRect)frame withStack:(NSStack *)stack;
+@property(strong,nonatomic)NSQueue *previewQueue;
+-(id)initWithFrame:(CGRect)frame withQueue:(NSQueue *)queue;
 @property(strong,nonatomic)AppDelegate *delegate;
 
 @end

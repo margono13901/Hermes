@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
-
+#import "projectColor.h"
 @interface profileViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 - (IBAction)changeProfile:(id)sender;

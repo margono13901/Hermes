@@ -22,7 +22,6 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.searchResultsUpdater = self;
     self.searchController.dimsBackgroundDuringPresentation = NO;
@@ -39,18 +38,35 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
+    [self getFriends];
+    [self getPendingRealtion];
+}
+
+-(void)getFriends{
+    //find Friends
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
     [query whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.friendArray = objects;
+    }];
+}
+
+-(void)getPendingRealtion{
+    //find pending Friends
+    PFRelation *pendingRelation = [[PFUser currentUser] relationForKey:@"friendsPending"];
+    PFQuery *pendingQuery = [pendingRelation query];
+    [pendingQuery whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];
+    [pendingQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        self.friendsPending = objects;
         [self.tableView reloadData];
     }];
-    
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
-    self.navigationController.navigationBar.hidden = YES;
+    self.navigationController.navigationBarHidden = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -70,7 +86,7 @@
     if (self.searchController.isActive) {
         return [self.searchResults count];
     }
-    return [self.friendArray count];
+    return [self.friendsPending count];
 }
 
 
@@ -86,7 +102,7 @@
     if (self.searchController.isActive) {
         user = [self.searchResults objectAtIndex:indexPath.row];
     }else{
-        user = [self.friendArray objectAtIndex:indexPath.row];
+        user = [self.friendsPending objectAtIndex:indexPath.row];
     }
     cell.user=user;
     [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
@@ -103,14 +119,8 @@
     }];
     
     cell.friendUsername.text = user.username;
-    BOOL found = NO;
-    for (int i = 0 ; i < self.friendArray.count; i++) {
-        PFUser *friend = self.friendArray[i];
-        if ([user.username isEqual:friend.username]) {
-            found = YES;
-        }
-    }
-    if (found) {
+    
+    if ([self isFriend:user]) {
         [cell.friendAddButton setTitle:@"Unfriend" forState:UIControlStateNormal];
     }else{
         [cell.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
@@ -119,6 +129,15 @@
     return cell;
 }
 
+-(BOOL)isFriend:(PFUser *)user{
+    for (int i = 0 ; i < self.friendArray.count; i++) {
+        PFUser *friend = self.friendArray[i];
+        if ([user.username isEqual:friend.username]) {
+            return YES;
+        }
+    }
+    return NO;
+}
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {

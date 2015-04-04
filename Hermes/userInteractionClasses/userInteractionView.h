@@ -16,10 +16,13 @@
 #import "AppDelegate.h"
 #import "friendCollectionView.h"
 #import "annotationsLinkedList.h"
+#import "projectColor.h"
+
 @class friendCollectionView;
 @interface userInteractionView : UIViewController<RMMapViewDelegate>
 
 #pragma view interface
+@property (strong, nonatomic) IBOutlet UIButton *zoomButton;
 @property (strong, nonatomic) IBOutlet UITextField *notifications;
 @property (strong, nonatomic) IBOutlet UIImageView *profileView;
 @property (strong, nonatomic) IBOutlet UIView *optionContainers;
@@ -34,5 +37,6 @@
 @property(strong,nonatomic) NSMutableArray *currentUserPosts;
 @property(strong,nonatomic) friendCollectionView *friendPane;
 @property(strong,nonatomic) annotationsLinkedList *annotationLink;
+@property(strong,nonatomic) UIImage *currentUserProfilePhoto;
 
 @end

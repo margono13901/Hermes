@@ -18,17 +18,17 @@
 }
 */
 
--(id)initWithStack:(NSStack *)stack{
-    self = [super initWithFrame:CGRectMake(0, 0, 20, 20)];
+-(id)initWithQueue:(NSQueue *)queue{
+    self = [super initWithFrame:CGRectMake(0, 0, 40, 20)];
     
     if (self){
-        self.stack = stack;
+        self.queue = queue;
         UILabel *label = [[UILabel alloc]initWithFrame:self.frame];
-        label.text = @"!";
+        label.text = @"View";
         label.textAlignment = NSTextAlignmentCenter;
         label.backgroundColor = [UIColor redColor];
         label.textColor = [UIColor whiteColor];
-        label.layer.cornerRadius = 10;
+        label.layer.cornerRadius = 30;
         [self addSubview:label];
 
     }

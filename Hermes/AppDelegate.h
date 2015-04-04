@@ -20,6 +20,7 @@
 @property(strong,nonatomic) userInteractionView *userInteractionView;
 @property(strong,nonatomic) NSString *incomingPostId;
 @property(strong,nonatomic) NSMutableDictionary *unseenPostCenter;
+@property(strong,nonatomic) NSData *deviceToken;
 
 @end
 
