@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C087743F07CA4233B4EEE3D1"
+               BlueprintIdentifier = "50998F1DAFEC8E72D6F602E2"
                BuildableName = "libPods-Hermes-GRMustache.a"
                BlueprintName = "Pods-Hermes-GRMustache"
                ReferencedContainer = "container:Pods.xcodeproj">

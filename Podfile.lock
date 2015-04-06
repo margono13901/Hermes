@@ -1,32 +1,89 @@
 PODS:
+  - AFNetworking (2.5.2):
+    - AFNetworking/NSURLConnection (= 2.5.2)
+    - AFNetworking/NSURLSession (= 2.5.2)
+    - AFNetworking/Reachability (= 2.5.2)
+    - AFNetworking/Security (= 2.5.2)
+    - AFNetworking/Serialization (= 2.5.2)
+    - AFNetworking/UIKit (= 2.5.2)
+  - AFNetworking/NSURLConnection (2.5.2):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.5.2):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.5.2)
+  - AFNetworking/Security (2.5.2)
+  - AFNetworking/Serialization (2.5.2)
+  - AFNetworking/UIKit (2.5.2):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+  - BlocksKit (2.2.5):
+    - BlocksKit/All (= 2.2.5)
+  - BlocksKit/All (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+    - BlocksKit/MessageUI
+    - BlocksKit/UIKit
+  - BlocksKit/Core (2.2.5)
+  - BlocksKit/DynamicDelegate (2.2.5)
+  - BlocksKit/MessageUI (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+  - BlocksKit/UIKit (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
   - Bolts (1.1.4)
   - FMDB (2.3):
     - FMDB/standard (= 2.3)
   - FMDB/common (2.3)
   - FMDB/standard (2.3):
     - FMDB/common
+  - GPUberView (1.0.2):
+    - AFNetworking (~> 2.5)
+    - BlocksKit (~> 2.2)
+    - Bolts (~> 1.1)
+    - INTULocationManager (~> 2.0)
+    - JSONModel (~> 1.0)
+    - Masonry (~> 0.6)
+    - PulsingHalo
   - GRMustache (7.3.0):
     - JRSwizzle (~> 1.0)
+  - INTULocationManager (2.0.2)
   - JRSwizzle (1.0)
+  - JSONModel (1.0.2)
   - Mapbox-iOS-SDK (1.6.0):
     - FMDB (= 2.3)
     - GRMustache (= 7.3.0)
     - SMCalloutView (= 2.0)
+  - Masonry (0.6.1)
   - Parse (1.6.5):
     - Bolts (~> 1.1)
+  - PulsingHalo (0.0.1)
   - SMCalloutView (2.0)
 
 DEPENDENCIES:
+  - AFNetworking (~> 2.0)
+  - GPUberView
   - Mapbox-iOS-SDK
   - Parse
 
 SPEC CHECKSUMS:
-  Bolts: dd9fb8433d67f5acc3b6b4d1379bbc5513d716c1
-  FMDB: 31ec26773c7f7b7890a6038235a1f2bbd933a7cb
-  GRMustache: efecd3b603f0a7a99cf6bdf3998782ee0c465726
-  JRSwizzle: 30da7a2c539a4ebf954b16d15f6dd8221c9f6fa5
-  Mapbox-iOS-SDK: 189a35013e100f1464cd2f9f6c489d6326fbb927
+  AFNetworking: fefbce9660acb17f48ae0011292d4da0f457bf36
+  BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
+  Bolts: f8e2f94edbf9fec7bb8de5ecaaa3aa6b7de6f64e
+  FMDB: 773d79bb74226959b7e2286b1d6e0bd857c88915
+  GPUberView: 13678fed4d6938557389c93befce405cf8dc0d7c
+  GRMustache: 6baee020c5644416c034f5afb1607f6219e7f753
+  INTULocationManager: 4eb51ce242d95950676a535208056d9cb246d879
+  JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
+  JSONModel: 6ffcb4ffa3659c9e9a2e5d45d6c7705bab187c03
+  Mapbox-iOS-SDK: ee136ca5b7f853456b50dfd7a7f0e243288cf86f
+  Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
   Parse: a21db4037d70a68a4ec64ecc0f327ed475cc14f8
-  SMCalloutView: c1906604d47c058400ade5c9d52ab98aa77b7e76
+  PulsingHalo: 1583823bd6c989fff3469bb417bc42f0d268f98e
+  SMCalloutView: f758edd824b18bf4f42de00df1e299861a2d1950
 
 COCOAPODS: 0.35.0

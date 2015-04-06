@@ -19,8 +19,38 @@
     // Do any additional setup after loading the view.
     [self setUpPicture];
     [self setUpButton];
-    
+    [self reassignResponders];
+    self.usernameField.delegate = self;
+    self.passwordField.delegate = self;
+
 }
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [self reassignResponders];
+}
+-(void)reassignResponders{
+    [self.usernameField resignFirstResponder];
+    [self.passwordField resignFirstResponder];
+}
+
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    CGFloat y = textField.frame.origin.y;
+    if (y >= 350) //not 380
+    {
+        CGRect frame = self.view.frame;
+        frame.origin.y = 310 - textField.frame.origin.y;
+        [UIView animateWithDuration:0.3 animations:^{self.view.frame = frame;}];
+    }
+}
+
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    CGRect returnframe =self.view.frame;
+    returnframe.origin.y = 0;
+    [UIView animateWithDuration:0.3 animations:^{self.view.frame = returnframe;}];
+}
+
 -(void)setUpPicture{
     self.profilePickView.userInteractionEnabled = YES;
     UITapGestureRecognizer *segue = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(openPictureCollection:)];
@@ -43,10 +73,11 @@
 }
 
 -(void)registerForUser:(id)sender{
-    if (hasProfilePicture) {
+    if (hasProfilePicture&&self.usernameField.text.length>5&&self.passwordField.text.length>5) {
         PFUser *user = [PFUser user];
-        user.username = self.username;
-        user.password = self.password;
+        user.username = self.usernameField.text;
+        user.password = self.passwordField.text;
+    
         NSData *data = UIImagePNGRepresentation([self fixrotation:self.profilePickView.image]);
         PFFile *media = [PFFile fileWithName:@"picture" data:data];
         user[@"profilePhoto"] = media;
@@ -74,7 +105,12 @@
             }
         }];
     }else{
-        UIAlertView *alert =[[UIAlertView alloc]initWithTitle:@"Choose photo" message:@"Choose a photo!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        UIAlertView *alert;
+        if (hasProfilePicture) {
+            alert =[[UIAlertView alloc]initWithTitle:@"Ooops" message:@"Username and Password has to be longer than 5 characters!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        }else{
+             alert =[[UIAlertView alloc]initWithTitle:@"Choose photo" message:@"Choose a photo!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        }
         [alert show];
     }
 }

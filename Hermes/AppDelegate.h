@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "keys.h"
 #import <Parse/Parse.h>
+#import <AFNetworking/AFNetworking.h>
 @class userInteractionView;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate,CLLocationManagerDelegate>

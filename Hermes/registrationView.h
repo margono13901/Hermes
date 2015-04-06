@@ -13,10 +13,9 @@
 
 static bool hasProfilePicture = NO;
 
-@interface registrationView : UIViewController<UINavigationControllerDelegate, UIImagePickerControllerDelegate,UIAlertViewDelegate>
+@interface registrationView : UIViewController<UINavigationControllerDelegate, UIImagePickerControllerDelegate,UIAlertViewDelegate,UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *profilePickView;
-
-@property(strong,nonatomic) NSString *username;
-@property(strong,nonatomic) NSString *password;
+@property (strong, nonatomic) IBOutlet UITextField *usernameField;
+@property (strong, nonatomic) IBOutlet UITextField *passwordField;
 
 @end

@@ -60,6 +60,9 @@
         if ([type isEqualToString:@"post"]) {
             [self recievePost:payload isUser:isUser];
         }
+        else if([type isEqualToString:@"friendRequest"]){
+            [self recieveFriendRequest:payload];
+        }
 
     }
 }
@@ -78,6 +81,11 @@
         [self displayBanner:[NSString stringWithFormat:@"Post Uploaded"]];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingSelfPost" object:nil];
     }
+}
+
+-(void)recieveFriendRequest:(NSDictionary *)payload{
+    NSString *sender = [payload objectForKey:@"sender"];
+    [self displayBanner:[NSString stringWithFormat:@"%@ requests to be your friend!",sender]];
 }
 
 -(void)displayBanner:(NSString *)text{

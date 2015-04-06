@@ -29,6 +29,12 @@
     self.searchController.searchBar.frame = CGRectMake(self.searchController.searchBar.frame.origin.x, self.searchController.searchBar.frame.origin.y, self.searchController.searchBar.frame.size.width, 44.0);
     self.tableView.tableHeaderView = self.searchController.searchBar;
     self.definesPresentationContext = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshTable:) name:@"refreshTable" object:nil];
+}
+
+-(void)refreshTable:(id)sender{
+    [self getPendingRealtion];
+    [self getPotentialFriends];
 }
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope
@@ -39,7 +45,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
     [self getFriends];
-    [self getPendingRealtion];
+    [self refreshTable:self];
 }
 
 -(void)getFriends{
@@ -52,13 +58,29 @@
     }];
 }
 
+//USE INCLUDE KEY
+
 -(void)getPendingRealtion{
     //find pending Friends
-    PFRelation *pendingRelation = [[PFUser currentUser] relationForKey:@"friendsPending"];
-    PFQuery *pendingQuery = [pendingRelation query];
-    [pendingQuery whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];
-    [pendingQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        self.friendsPending = objects;
+    PFQuery *query = [PFQuery queryWithClassName:@"friendRequest"];
+    [query whereKey:@"recipient" equalTo:[PFUser currentUser]];
+    [query whereKey:@"status" equalTo:@"pending"];
+    [query includeKey:@"recipient"];
+    [query orderByDescending:@"createdAt"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        self.friendsPendingForAccept = objects;
+        [self.tableView reloadData];
+    }];
+}
+
+-(void)getPotentialFriends{
+    PFQuery *query = [PFQuery queryWithClassName:@"friendRequest"];
+    [query whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [query whereKey:@"status" equalTo:@"pending"];
+    [query includeKey:@"sender"];
+    [query orderByDescending:@"createdAt"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        self.potentialFriends = objects;
         [self.tableView reloadData];
     }];
 }
@@ -86,14 +108,12 @@
     if (self.searchController.isActive) {
         return [self.searchResults count];
     }
-    return [self.friendsPending count];
+    return [self.friendsPendingForAccept count];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     friendCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-    
     if (cell == nil) {
         cell = [[friendCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
@@ -102,7 +122,7 @@
     if (self.searchController.isActive) {
         user = [self.searchResults objectAtIndex:indexPath.row];
     }else{
-        user = [self.friendsPending objectAtIndex:indexPath.row];
+        user = [self.friendsPendingForAccept objectAtIndex:indexPath.row][@"recipient"];
     }
     cell.user=user;
     [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
@@ -114,16 +134,20 @@
             cell.friendPicturePreview.layer.masksToBounds = YES;
             cell.friendPicturePreview.image =image;
             [cell.loadingIndicator stopAnimating];
-             cell.loadingIndicator.hidden = YES;
+            cell.loadingIndicator.hidden = YES;
         }
     }];
     
     cell.friendUsername.text = user.username;
     
-    if ([self isFriend:user]) {
-        [cell.friendAddButton setTitle:@"Unfriend" forState:UIControlStateNormal];
+    if (self.searchController.isActive) {
+        if ([self isFriend:user]||[self isPendingUser:user]) {
+            [cell.friendAddButton setTitle:@"Unfriend" forState:UIControlStateNormal];
+        }else{
+            [cell.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
+        }
     }else{
-        [cell.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
+        [cell.friendAddButton setTitle:@"Accept" forState:UIControlStateNormal];
     }
     
     return cell;
@@ -138,6 +162,17 @@
     }
     return NO;
 }
+
+-(BOOL)isPendingUser:(PFUser *)user{
+    for (int i = 0 ; i < self.potentialFriends.count; i++) {
+        PFUser *friend = self.potentialFriends[i][@"sender"];
+        if ([user.username isEqual:friend.username]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {

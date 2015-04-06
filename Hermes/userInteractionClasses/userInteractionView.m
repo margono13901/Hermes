@@ -20,6 +20,7 @@ typedef void(^zoomCompletion)(BOOL);
     // Do any additional setup after loading the view.
     [self setUpNotificationCenter];
     [self initialization];
+
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -61,11 +62,6 @@ typedef void(^zoomCompletion)(BOOL);
     [self.friendPane.collectionView reloadData];
 }
 
--(void)increamentBadge{
-    NSInteger numberOfBadges = [UIApplication sharedApplication].applicationIconBadgeNumber;
-    numberOfBadges +=1;
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:numberOfBadges];
-}
 
 -(void)getCurrentUserProfilePhoto{
     [self.currentUserOnDisplay[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
@@ -79,10 +75,7 @@ typedef void(^zoomCompletion)(BOOL);
     }];
 }
 
-
-
 -(void)incomingPost:(id)sender{
-    [self increamentBadge];
     NSString *incomingPostId = self.delegate.incomingPostId;
     PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
@@ -124,7 +117,9 @@ typedef void(^zoomCompletion)(BOOL);
     self.profileView.layer.borderWidth = 2.0f;
     //set up container View
     self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
-    self.optionContainers.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.bottomOptionContainer.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
+    //set up location view
+    self.locationView.layer.cornerRadius = 10.0f;
     //set up zoom
     [self.zoomButton.layer setCornerRadius:10.0f];
     self.zoomButton.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
@@ -259,7 +254,6 @@ typedef void(^zoomCompletion)(BOOL);
     return NO;
 }
 
-
 -(BOOL)distanceIsClose:(PFObject *)post1 to:(PFObject *)post2{
     PFGeoPoint *g1 = post1[@"location"];
     PFGeoPoint *g2 = post2[@"location"];
@@ -327,7 +321,7 @@ typedef void(^zoomCompletion)(BOOL);
 -(void)didZoomWithAnnotation:(RMAnnotation *)annotation withComp:(zoomCompletion)compblock{
     //do stuff
     CLLocationCoordinate2D coordinate = [annotation coordinate];
-    
+    [self getGeoCodingInformationWithLat:coordinate.latitude withLon:coordinate.longitude];
     //Find the southwest and northeast point
     double northEastLatitude = coordinate.latitude;
     double northEastLongitude = coordinate.longitude;
@@ -341,6 +335,30 @@ typedef void(^zoomCompletion)(BOOL);
                                                   animated:NO];
     compblock(YES);
 }
+
+-(void)getGeoCodingInformationWithLat:(double)lat withLon:(double)lon{
+    NSString *index= @"mapbox.places";
+    NSString *url = [NSString stringWithFormat:@"http://api.tiles.mapbox.com/v4/geocode/%@/%f,%f.json?access_token=%@",index,lon,lat,mapAccessToken];
+    AFSecurityPolicy *policy = [[AFSecurityPolicy alloc] init];
+    [policy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
+    [operationManager setSecurityPolicy:policy];
+    operationManager.requestSerializer = [AFJSONRequestSerializer serializer];
+    operationManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    operationManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/vnd.geo+json"];
+    
+    [operationManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *json  = responseObject;
+        NSArray *jsonData = [json objectForKey:@"features"];
+        NSDictionary *allData = jsonData[0];
+        NSString *location = [allData objectForKey:@"place_name"];
+        self.locationView.text = location;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
 - (UIImage *)getImageView{
     UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0.0);
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];

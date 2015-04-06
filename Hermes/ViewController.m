@@ -56,29 +56,7 @@
      }];
 }
 - (IBAction)signup:(id)sender {
-    PFQuery *query = [PFUser query];
-    [query whereKey:@"username" equalTo:self.usernameField.text];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
-        if (objects.count==0) {
-            if (self.usernameField.text.length>5 && self.passwordField.text.length>5 ) {
-                [self performSegueWithIdentifier:@"userLoginSegue" sender:self];
-            }else{
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Ooops!" message:@"Choose another name: username and passwords needs to be longer than 5 characters"  delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
-                [alert show];
-            }
-        }else{
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Ooops!" message:@"Choose another name: username taken"  delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
-            [alert show];
-        }
-    }];
-    
-    
+    [self performSegueWithIdentifier:@"userLoginSegue" sender:self];
 }
 
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    registrationView *vc = [segue destinationViewController];
-    vc.username = self.usernameField.text;
-    vc.password = self.passwordField.text;
-
-}
 @end

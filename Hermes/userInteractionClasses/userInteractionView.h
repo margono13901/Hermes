@@ -27,6 +27,8 @@
 @property (strong, nonatomic) IBOutlet UIImageView *profileView;
 @property (strong, nonatomic) IBOutlet UIView *optionContainers;
 @property (strong, nonatomic) IBOutlet RMMapView *mapView;
+@property (strong, nonatomic) IBOutlet UIView *bottomOptionContainer;
+@property (strong, nonatomic) IBOutlet UITextView *locationView;
 - (IBAction)camera:(id)sender;
 - (IBAction)findFriends:(id)sender;
 - (IBAction)zoomToAnnotation:(id)sender;

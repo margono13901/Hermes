@@ -13,7 +13,9 @@
 
 @property(strong,nonatomic) NSArray *friendArray;
 @property(strong,nonatomic) NSArray *searchResults;
-@property(strong,nonatomic) NSArray *friendsPending;
+@property(strong,nonatomic) NSArray *friendsPendingForAccept;
+@property(strong,nonatomic) NSArray *potentialFriends;
+
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) IBOutlet UISearchBar *searchbar;
 @property (strong,nonatomic) NSArray *userArray;
