@@ -19,19 +19,17 @@
 */
 
 -(id)initWithQueue:(NSQueue *)queue{
-    self = [super initWithFrame:CGRectMake(0, 0, 40, 20)];
+    self = [super initWithFrame:CGRectMake(0, 0, 26, 26)];
+    
     
     if (self){
         self.queue = queue;
-        UILabel *label = [[UILabel alloc]initWithFrame:self.frame];
-        label.text = @"View";
-        label.textAlignment = NSTextAlignmentCenter;
-        label.backgroundColor = [UIColor redColor];
-        label.textColor = [UIColor whiteColor];
-        label.layer.cornerRadius = 30;
-        [self addSubview:label];
+        UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"arrow"]];
+        imageView.frame = self.frame;
+        [self addSubview:imageView];
 
     }
     return self;
 }
+
 @end

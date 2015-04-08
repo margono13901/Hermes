@@ -45,13 +45,13 @@
     [friendText setFont:[UIFont boldSystemFontOfSize:25]];
     [friendText setEnabled:NO];
     friendText.backgroundColor = [UIColor clearColor];
-    [friendText setTextColor:[UIColor blackColor]];
+    [friendText setTextColor:[UIColor whiteColor]];
     //set up friend button
     self.friendButton = [[UIButton alloc]initWithFrame:CGRectMake(self.frame.size.width-80, 45, 50, 50)];
     [self.friendButton setTitle:@"+" forState:UIControlStateNormal];
     [self.friendButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
     [self.friendButton.titleLabel setFont:[UIFont boldSystemFontOfSize:25]];
-    [self.friendButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.friendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.friendButton addTarget:self action:@selector(segueToFriendSearch:) forControlEvents:UIControlEventTouchUpInside];
 
     //setup collectionview
@@ -66,23 +66,37 @@
     [self addSubview:friendText];
     [self addSubview:self.friendButton];
     [self getFriends];
-
 }
 
 -(void)getFriends{
     //query all of users friends
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
-    [query orderByDescending:@"createdAt"];
+    [query orderByAscending:@"createdAt"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        self.users = [[NSMutableArray alloc]initWithArray:objects];
+        self.users = [[NSMutableArray alloc]init];
+        NSMutableArray *userArray=[[NSMutableArray alloc]init];
+        for (PFUser *user in objects) {
+            if (userArray.count==3) {
+                [self.users addObject:userArray];
+                userArray=[[NSMutableArray alloc]init];
+            }
+            [userArray addObject:user];
+            
+        }
+        [self.users addObject:userArray];
         [self.collectionView reloadData];
     }];
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return self.users.count;
+    return [[self.users objectAtIndex:section] count];
+}
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return [self.users count];
 }
 
 // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
@@ -92,8 +106,7 @@
     [self.collectionView registerClass:[CollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     
     CollectionViewCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    
-    PFUser *user = [self.users objectAtIndex:indexPath.row];
+    PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
     [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         if (!error) {
             UIImage *image = [UIImage imageWithData:data];
@@ -120,12 +133,22 @@
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         self.frame = CGRectMake(0, -800, self.bounds.size.width, self.bounds.size.height);
     }completion:^(BOOL finished) {
-        PFUser *user = self.users[indexPath.row];
+        PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
         self.user = user;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"newUser" object:nil];
     }];
    
 
+}
+
+#pragma mark collection view cell paddings
+- (UIEdgeInsets)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(5.0f, 0.0f, 5.0f, 0.0f); // top, left, bottom, right
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    
+    return 7.0;
 }
 
 -(PFUser *)returnSelectedUser:(PFUser *)user{
@@ -143,7 +166,7 @@
 -(void)moveToView:(id)sender{
     
     self.blurMask.image = (UIImage *)sender;
-    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
+    [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         self.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
     }completion:^(BOOL finished) {
         NSLog(@"Animation is complete");

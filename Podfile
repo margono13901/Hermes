@@ -14,6 +14,8 @@ pod 'Mapbox-iOS-SDK'
 platform :ios, '7.1'
 pod "GPUberView"
 
+pod 'UberKit'
+
 target 'Hermes' do
 
 end

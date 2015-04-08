@@ -100,7 +100,16 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-    	// Create the AVCaptureSession
+    //create rounded corners
+    self.stillButton.layer.cornerRadius= self.stillButton.frame.size.height/2;
+    self.stillButton.clipsToBounds= YES;
+    self.cameraButton.layer.cornerRadius= self.cameraButton.frame.size.height/2;
+    self.cameraButton.clipsToBounds= YES;
+    self.recordButton.hidden= YES;
+    self.sendbutton.layer.cornerRadius= self.sendbutton.frame.size.height/2;
+    self.sendbutton.clipsToBounds= YES;
+
+    // Create the AVCaptureSession
 	AVCaptureSession *session = [[AVCaptureSession alloc] init];
 	[self setSession:session];
     [self registerForKeyboardNotifications];
@@ -410,6 +419,10 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     if ([touch view]==self.mediaPreviewLayer && ![self.mediaPreviewLayer.subviews containsObject:self.textLabel]) {
         self.position = [touch locationInView:self.mediaPreviewLayer];
         self.textLabel = [ [UITextView alloc ] initWithFrame:CGRectMake(0, self.position.y, self.mediaPreviewLayer.bounds.size.width,35 ) ];
+        UIPanGestureRecognizer *singleFingerTap =
+        [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                action:@selector(handlePan:)];
+        [self.textLabel addGestureRecognizer:singleFingerTap];
         self.textLabel.textColor = [UIColor whiteColor];
         self.textLabel.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6];
         self.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -418,17 +431,15 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     else if([self.textLabel resignFirstResponder]&&self.textLabel.text.length==0){
         [self.textLabel removeFromSuperview];
     }
-   
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
-    UITouch *touch = [[event allTouches] anyObject];
-    CGPoint location = [touch locationInView:self.view];
+- (IBAction)handlePan:(UIPanGestureRecognizer *)recognizer {
     
-    CGRect frame;
-    frame=self.textLabel.frame;
-    frame.origin.y=location.y;
-    self.textLabel.frame=frame;
+    CGPoint translation = [recognizer translationInView:self.view];
+    recognizer.view.center = CGPointMake(recognizer.view.center.x,
+                                         recognizer.view.center.y + translation.y);
+    [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
+    
 }
 
 - (void)registerForKeyboardNotifications

@@ -89,8 +89,8 @@ NSTimeInterval kSMCalloutViewRepositionDelayForUIScrollView = 1.0/3.0;
             self.titleLabel.$height = TITLE_HEIGHT;
             self.titleLabel.opaque = NO;
             self.titleLabel.backgroundColor = [UIColor clearColor];
-            self.titleLabel.font = [UIFont systemFontOfSize:17];
             self.titleLabel.textColor = [UIColor blackColor];
+            self.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-UltraLight" size:20];
         }
         return self.titleLabel;
     }

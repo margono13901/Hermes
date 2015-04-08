@@ -20,7 +20,6 @@ typedef void(^zoomCompletion)(BOOL);
     // Do any additional setup after loading the view.
     [self setUpNotificationCenter];
     [self initialization];
-
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -49,11 +48,16 @@ typedef void(^zoomCompletion)(BOOL);
 
 -(void)changeCurrentUser:(id)sender{
     self.currentUserOnDisplay = self.friendPane.user;
+    self.currentUserNameField.text = self.friendPane.user.username;
     [self getCurrentUserProfilePhoto];
     [self getCurrentuserPosts];
     [self setUpAnnotations];
+    self.locationView.text=@"";
+    self.scrollThroughPicturesLabel.text = @"Scroll Through Pictures";
+    [self.scrollThroughPicturesLabel stopGlowing];
+    self.scrollThroughPicturesLabel.userInteractionEnabled= NO;
+    self.currentAnnotation = nil;
 }
-
 
 -(void)refreshView:(id)sender{
     [self setUpNotificationCounter];
@@ -72,6 +76,18 @@ typedef void(^zoomCompletion)(BOOL);
         UIImage * resizedImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         self.currentUserProfilePhoto = resizedImage;
+        
+        CGSize scaleSize = CGSizeMake(100, 100);
+        UIGraphicsBeginImageContextWithOptions(scaleSize, NO, 0.0);
+        [image drawInRect:CGRectMake(0, 0, scaleSize.width, scaleSize.height)];
+        UIImage * resized = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        self.currentUserPhoto.image = resized;
+        self.currentUserPhoto.layer.cornerRadius = 50;
+        self.currentUserPhoto.clipsToBounds = YES;
+        self.currentUserPhoto.layer.borderColor = [UIColor whiteColor].CGColor;
+        self.currentUserPhoto.layer.borderWidth = 5;
+
     }];
 }
 
@@ -99,7 +115,7 @@ typedef void(^zoomCompletion)(BOOL);
 
 -(void)initialization{
     //set up delegate
-    self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
+    self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     //set up nagivation contorller
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
@@ -116,13 +132,10 @@ typedef void(^zoomCompletion)(BOOL);
     self.profileView.layer.borderColor = [[UIColor whiteColor]CGColor];
     self.profileView.layer.borderWidth = 2.0f;
     //set up container View
-    self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
-    self.bottomOptionContainer.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
-    //set up location view
-    self.locationView.layer.cornerRadius = 10.0f;
-    //set up zoom
-    [self.zoomButton.layer setCornerRadius:10.0f];
-    self.zoomButton.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:0.7f];
+    self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0f];
+    self.bottomOptionContainer.backgroundColor = [UIColor whiteColor];
+    self.bottomOptionContainer.layer.borderWidth = 2;
+    self.bottomOptionContainer.layer.borderColor = [[UIColor blackColor]colorWithAlphaComponent:0.7f].CGColor;
     //set up map box
     [[RMConfiguration sharedInstance] setAccessToken:mapAccessToken];
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:mapID];
@@ -130,13 +143,27 @@ typedef void(^zoomCompletion)(BOOL);
     [self.mapView setTileSource:tileSource];
     self.mapView.showsUserLocation = YES;
     self.mapView.userTrackingMode = RMUserTrackingModeFollow;
+    [self.mapView setHideAttribution:YES];
+    //scrolll through label setup
+    self.scrollThroughPicturesLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
     //display user
     [self setUpProfilePhoto:self];
     self.currentUserOnDisplay = [PFUser currentUser];
     [self getCurrentUserProfilePhoto];
+    //nameView
+    self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
+    self.currentUserNameField.text = self.currentUserOnDisplay.username;
+    //set up location view
+    self.locationView.font =[UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
+    self.scrollThroughPicturesLabel.userInteractionEnabled= NO;
+    //set up uber button
+    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(displayUber:)];
+    [self.scrollThroughPicturesLabel addGestureRecognizer:gestureRecognizer];
     //download posts
     [self downloadUnseenPosts:YES];
 }
+
+
 
 -(void)setUpProfilePhoto:(id)sender{
     [[PFUser currentUser][@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
@@ -224,8 +251,9 @@ typedef void(^zoomCompletion)(BOOL);
             }
             CLLocation *location = [[CLLocation alloc]initWithLatitude:[post[@"location"] latitude] longitude:[post[@"location"] longitude]];
             
-            RMAnnotation *annotation = [RMAnnotation annotationWithMapView:self.mapView coordinate:[location coordinate] andTitle:[NSString stringWithFormat:@"%i new posts",newPosts]];
+            NSString *displayText = [NSString stringWithFormat:@"%i New Posts",newPosts];
             
+            RMAnnotation *annotation = [RMAnnotation annotationWithMapView:self.mapView coordinate:[location coordinate] andTitle:displayText];
             annotation.userInfo = postQueue;
             [self addAnnotationToLink:annotation];
 
@@ -280,7 +308,6 @@ typedef void(^zoomCompletion)(BOOL);
     mapLayer.leftCalloutAccessoryView = [[UIImageView alloc]
                                        initWithImage:
                                        self.currentUserProfilePhoto];
-    
     return mapLayer;
 }
 
@@ -303,18 +330,44 @@ typedef void(^zoomCompletion)(BOOL);
 }
 
 - (IBAction)findFriends:(id)sender{
-    UIImage *blurImage = [self blurWithCoreImage:[self getImageView]];
+    UIImage *blurImage = [[self getImageView] stackBlur:50];
     [self.friendPane moveToView:blurImage];
 }
 
 - (IBAction)zoomToAnnotation:(id)sender{
     if (self.annotationLink.storage.count>0) {
-        RMAnnotation *annotation = [self.annotationLink returnAnnotatotation];
-       [self didZoomWithAnnotation:annotation withComp:^(BOOL finished) {
-           if (finished) {
-               [self.mapView selectAnnotation:annotation animated:YES];
-           }
-       }];
+        RMAnnotation *annotation = [self.annotationLink scrollThroughAnnotatotation];
+        [self selectAnnotation:annotation];
+    }
+}
+
+- (IBAction)zoomToAnnotationBack:(id)sender {
+    if (self.annotationLink.storage.count>0) {
+        NSLog(@"%lu",(unsigned long)self.annotationLink.storage.count);
+        RMAnnotation *annotation = [self.annotationLink scrollBackThroughAnnotatotation];
+        [self selectAnnotation:annotation];
+    }
+}
+
+-(void)selectAnnotation:(RMAnnotation *)annotation{
+    [self didZoomWithAnnotation:annotation withComp:^(BOOL finished) {
+        if (finished) {
+            self.currentAnnotation = annotation;
+            [self.mapView selectAnnotation:annotation animated:YES];
+            self.scrollThroughPicturesLabel.userInteractionEnabled = YES;
+            self.scrollThroughPicturesLabel.text = @"Tap To Uber There!";
+            [self.scrollThroughPicturesLabel startGlowing];
+        }
+    }];
+}
+
+- (IBAction)displayUber:(id)sender {
+    GPUberViewController *uber = [[GPUberViewController alloc] initWithServerToken:uberClientId];
+    // optional
+    if (self.currentAnnotation&&self.annotationLink.storage.count>0&&self.locationView.text.length>0) {
+        uber.startLocation = self.mapView.userLocation.location.coordinate;
+        uber.endLocation = [self.currentAnnotation coordinate];
+        [uber showInViewController:self];
     }
 }
 
@@ -353,7 +406,14 @@ typedef void(^zoomCompletion)(BOOL);
         NSArray *jsonData = [json objectForKey:@"features"];
         NSDictionary *allData = jsonData[0];
         NSString *location = [allData objectForKey:@"place_name"];
-        self.locationView.text = location;
+        NSArray* stringArray = [location  componentsSeparatedByString:@","];
+        NSMutableString *text = [[NSMutableString alloc]init];
+        for (int i = 0 ; i < 4; i++) {
+            [text appendString:stringArray[i]];
+            [text appendString:@" "];
+        }
+        self.locationView.text = [NSString stringWithFormat:@"%@",text];
+
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
@@ -368,48 +428,4 @@ typedef void(^zoomCompletion)(BOOL);
     UIGraphicsEndImageContext();
     return myImage;
 }
-
-- (UIImage *)blurWithCoreImage:(UIImage *)sourceImage
-{
-    CIImage *inputImage = [CIImage imageWithCGImage:sourceImage.CGImage];
-    
-    // Apply Affine-Clamp filter to stretch the image so that it does not
-    // look shrunken when gaussian blur is applied
-    CGAffineTransform transform = CGAffineTransformIdentity;
-    CIFilter *clampFilter = [CIFilter filterWithName:@"CIAffineClamp"];
-    [clampFilter setValue:inputImage forKey:@"inputImage"];
-    [clampFilter setValue:[NSValue valueWithBytes:&transform objCType:@encode(CGAffineTransform)] forKey:@"inputTransform"];
-    
-    // Apply gaussian blur filter with radius of 30
-    CIFilter *gaussianBlurFilter = [CIFilter filterWithName: @"CIGaussianBlur"];
-    [gaussianBlurFilter setValue:clampFilter.outputImage forKey: @"inputImage"];
-    [gaussianBlurFilter setValue:@30 forKey:@"inputRadius"];
-    
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CGImageRef cgImage = [context createCGImage:gaussianBlurFilter.outputImage fromRect:[inputImage extent]];
-    
-    // Set up output context.
-    UIGraphicsBeginImageContext(self.view.frame.size);
-    CGContextRef outputContext = UIGraphicsGetCurrentContext();
-    
-    // Invert image coordinates
-    CGContextScaleCTM(outputContext, 1.0, -1.0);
-    CGContextTranslateCTM(outputContext, 0, -self.view.frame.size.height);
-    
-    // Draw base image.
-    CGContextDrawImage(outputContext, self.view.frame, cgImage);
-    
-    // Apply white tint
-    CGContextSaveGState(outputContext);
-    CGContextSetFillColorWithColor(outputContext, [UIColor colorWithWhite:1 alpha:0.2].CGColor);
-    CGContextFillRect(outputContext, self.view.frame);
-    CGContextRestoreGState(outputContext);
-    
-    // Output image is ready.
-    UIImage *outputImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return outputImage;
-}
-
 @end

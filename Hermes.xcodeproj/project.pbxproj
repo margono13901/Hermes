@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2228A1CF1AD38B2D002CED57 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2228A1CB1AD38B2D002CED57 /* .gitignore */; };
+		2228A1D01AD38B2D002CED57 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 2228A1CC1AD38B2D002CED57 /* README.md */; };
+		2228A1D11AD38B2D002CED57 /* UIView+Glow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2228A1CE1AD38B2D002CED57 /* UIView+Glow.m */; };
+		2228A1FF1AD433B9002CED57 /* UIImage+StackBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 2228A1FE1AD433B9002CED57 /* UIImage+StackBlur.m */; };
+		2228A2011AD4AFE1002CED57 /* SackersGothicLightAT.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2228A2001AD4AE83002CED57 /* SackersGothicLightAT.otf */; };
 		223A18B71ABCC99F00D983D4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18B61ABCC99F00D983D4 /* main.m */; };
 		223A18BA1ABCC99F00D983D4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18B91ABCC99F00D983D4 /* AppDelegate.m */; };
 		223A18BD1ABCC99F00D983D4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18BC1ABCC99F00D983D4 /* ViewController.m */; };
@@ -47,6 +52,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2228A1CB1AD38B2D002CED57 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		2228A1CC1AD38B2D002CED57 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2228A1CD1AD38B2D002CED57 /* UIView+Glow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Glow.h"; sourceTree = "<group>"; };
+		2228A1CE1AD38B2D002CED57 /* UIView+Glow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Glow.m"; sourceTree = "<group>"; };
+		2228A1FD1AD433B9002CED57 /* UIImage+StackBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+StackBlur.h"; path = "../../../../../Downloads/StackBluriOS-master/Classes/UIImage+StackBlur.h"; sourceTree = "<group>"; };
+		2228A1FE1AD433B9002CED57 /* UIImage+StackBlur.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+StackBlur.m"; path = "../../../../../Downloads/StackBluriOS-master/Classes/UIImage+StackBlur.m"; sourceTree = "<group>"; };
+		2228A2001AD4AE83002CED57 /* SackersGothicLightAT.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = SackersGothicLightAT.otf; path = ../../../../Downloads/SackersGothicLightAT.otf; sourceTree = "<group>"; };
 		223A18B11ABCC99F00D983D4 /* Hermes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hermes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		223A18B51ABCC99F00D983D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223A18B61ABCC99F00D983D4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -133,6 +145,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2228A1CA1AD38B2D002CED57 /* UIView-Glow-master */ = {
+			isa = PBXGroup;
+			children = (
+				2228A1CB1AD38B2D002CED57 /* .gitignore */,
+				2228A1CC1AD38B2D002CED57 /* README.md */,
+				2228A1CD1AD38B2D002CED57 /* UIView+Glow.h */,
+				2228A1CE1AD38B2D002CED57 /* UIView+Glow.m */,
+			);
+			name = "UIView-Glow-master";
+			path = "../../../../Downloads/UIView-Glow-master";
+			sourceTree = "<group>";
+		};
 		223A18A81ABCC99F00D983D4 = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +180,7 @@
 		223A18B31ABCC99F00D983D4 /* Hermes */ = {
 			isa = PBXGroup;
 			children = (
+				2228A1CA1AD38B2D002CED57 /* UIView-Glow-master */,
 				22BCD80E1ACE2F3600864FA2 /* camera */,
 				2290B07D1ABF675A008317C3 /* UIGridView */,
 				22BCD80D1ACE2E7700864FA2 /* registration */,
@@ -180,6 +205,7 @@
 			children = (
 				223A18B51ABCC99F00D983D4 /* Info.plist */,
 				223A18B61ABCC99F00D983D4 /* main.m */,
+				2228A2001AD4AE83002CED57 /* SackersGothicLightAT.otf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -264,6 +290,8 @@
 		22BCD80F1ACF6CC400864FA2 /* projectFiles */ = {
 			isa = PBXGroup;
 			children = (
+				2228A1FD1AD433B9002CED57 /* UIImage+StackBlur.h */,
+				2228A1FE1AD433B9002CED57 /* UIImage+StackBlur.m */,
 				223A18DA1ABCC9CA00D983D4 /* keys.h */,
 				223A18B81ABCC99F00D983D4 /* AppDelegate.h */,
 				223A18B91ABCC99F00D983D4 /* AppDelegate.m */,
@@ -367,6 +395,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2228A2011AD4AFE1002CED57 /* SackersGothicLightAT.otf in Resources */,
+				2228A1CF1AD38B2D002CED57 /* .gitignore in Resources */,
 				223A18C01ABCC99F00D983D4 /* Main.storyboard in Resources */,
 				223A18C51ABCC99F00D983D4 /* LaunchScreen.xib in Resources */,
 				223A18C21ABCC99F00D983D4 /* Images.xcassets in Resources */,
@@ -439,7 +469,10 @@
 				229F5A231ACB66C200D557D2 /* userPostView.m in Sources */,
 				223A18B71ABCC99F00D983D4 /* main.m in Sources */,
 				2290B0A71AC45F16008317C3 /* friendCell.m in Sources */,
+				2228A1FF1AD433B9002CED57 /* UIImage+StackBlur.m in Sources */,
 				22BCD8031ACB982600864FA2 /* mediaButton.m in Sources */,
+				2228A1D01AD38B2D002CED57 /* README.md in Sources */,
+				2228A1D11AD38B2D002CED57 /* UIView+Glow.m in Sources */,
 				229F5A261ACB70F400D557D2 /* userInteractionView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -62,6 +62,8 @@
         }
         else if([type isEqualToString:@"friendRequest"]){
             [self recieveFriendRequest:payload];
+        }else if([type isEqualToString:@"friendAccept"]){
+            [self acceptFriendRequest:payload];
         }
 
     }
@@ -86,6 +88,11 @@
 -(void)recieveFriendRequest:(NSDictionary *)payload{
     NSString *sender = [payload objectForKey:@"sender"];
     [self displayBanner:[NSString stringWithFormat:@"%@ requests to be your friend!",sender]];
+}
+
+-(void)acceptFriendRequest:(NSDictionary *)payload{
+    NSString *sender = [payload objectForKey:@"sender"];
+    [self displayBanner:[NSString stringWithFormat:@"%@ is now your friend!",sender]];
 }
 
 -(void)displayBanner:(NSString *)text{

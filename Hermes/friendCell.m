@@ -36,59 +36,28 @@
     PFObject *friendRequest = [PFObject objectWithClassName:@"friendRequests"];
     friendRequest[@"sender"] = [PFUser currentUser];
     friendRequest[@"recipient"] = self.user;
-    friendRequest[@"status"] = @"pending";
+    //friendRequest[@"status"] = @"pending";
     [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         [self.friendAddButton setTitle:@"Unfriend" forState:UIControlStateNormal];
     }];
 }
 
 -(void)unFriend{
-    PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
-    PFQuery *query = [relation query];
-    [query whereKey:@"objectId" notEqualTo:[PFUser currentUser].objectId];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        for (PFUser *user in objects) {
-            if ([user.objectId isEqual:self.user.objectId]) {
-                [self removeFriend];
-                return;
-            }
-        }
-        [self removeFriendRequest];
+    PFObject *deleteFriend = [PFObject objectWithClassName:@"deleteFriend"];
+    deleteFriend[@"sender"] = [PFUser currentUser];
+    deleteFriend[@"recipient"] = self.user;
+    [deleteFriend saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        [self.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
+
     }];
-}
-
--(void)removeFriend{
-    [PFCloud callFunction:@"removeFriend" withParameters:@{
-                                                           @"user": self.user
-                                                           }];
-    [self.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
-
-}
-
--(void)removeFriendRequest{
-    [self.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
-    PFQuery *query = [PFQuery queryWithClassName:@"friendPending"];
-    [query whereKey:@"sender" equalTo:[PFUser currentUser]];
-    [query whereKey:@"recipient" equalTo:self.user];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        PFObject *object = objects[0];
-        object[@"status"] = @"deny";
-        [object saveInBackground];
-    }];
+   // [self removeFriendRequest];
 }
 
 -(void)acceptFriendRequest{
-    PFQuery *query = [PFQuery queryWithClassName:@"friendPending"];
-    [query whereKey:@"sender" equalTo:self.user];
-    [query whereKey:@"recipient" equalTo:[PFUser currentUser]];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        PFObject *object = objects[0];
-        object[@"status"] = @"accept";
-        [object saveInBackground];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshTable" object:nil];
-    }];
-    [PFCloud callFunction:@"friendAccept" withParameters:@{
-                                                       @"user": self.user
-                                                       }];
+
+    PFObject *acceptFriend = [PFObject objectWithClassName:@"acceptFriend"];
+    acceptFriend[@"sender"] = [PFUser currentUser];
+    acceptFriend[@"recipient"] = self.user;
+    [acceptFriend saveInBackground];
 }
 @end

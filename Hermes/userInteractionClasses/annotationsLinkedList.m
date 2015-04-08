@@ -24,14 +24,33 @@
     placement = 0;
 }
 
--(id)returnAnnotatotation{
+-(id)scrollThroughAnnotatotation{
     id annotation = nil;
-    if (placement >= self.storage.count) {
+    if ([self placementOutOfIndex]) {
         placement = 0;
     }
     annotation = [self.storage objectAtIndex:placement++];
     return annotation;
 }
+
+-(id)scrollBackThroughAnnotatotation{
+    id annotation = nil;
+    if ([self placementOutOfIndex]) {
+        placement = (int)self.storage.count-1;
+    }
+    annotation = [self.storage objectAtIndex:placement--];
+    return annotation;
+}
+
+
+-(BOOL)placementOutOfIndex{
+    return placement < 0||placement >= self.storage.count;
+}
+
+
+
+
+
 
 
 @end

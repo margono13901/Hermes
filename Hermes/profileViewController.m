@@ -36,6 +36,8 @@
     self.imageView.clipsToBounds = YES;
     
     self.usernameField.text = [PFUser currentUser][@"username"];
+    self.usernameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+    
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"mediaPosts"];
     PFQuery *query = [relation query];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -50,7 +52,11 @@
         }
         
         self.likes.text = [NSString stringWithFormat:@"%@ likes",likes];
+        self.likes.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+
         self.uber.text = [NSString stringWithFormat:@"%@ ubers",uber];
+        self.uber.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+
     }];
     
     [[PFUser currentUser][@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {

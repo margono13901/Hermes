@@ -7,14 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "keys.h"
+#import "AppDelegate.h"
 
 static int placement;
 
 @interface annotationsLinkedList : NSObject
 @property(strong,nonatomic)NSMutableArray *storage;
 -(id)init;
--(id)returnAnnotatotation;
+-(id)scrollThroughAnnotatotation;
 -(void)addToLink:(id)object;
+-(id)scrollBackThroughAnnotatotation;
 @end
 
 

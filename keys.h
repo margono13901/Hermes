@@ -13,6 +13,6 @@
 #define parseClientId @"xWoL02j4mX4hnV5xblgfNf48zMe5gPjGvxY3dkqb"
 #define mapAccessToken @"pk.eyJ1IjoicmF5bGVubWFyZ29ubyIsImEiOiJVU1ZiRjJrIn0.XaGjPvdc3uUMZyVHWehElw"
 #define mapID @"raylenmargono.lh7809l4"
-
+#define uberClientId @"K3bEsfZHfd4J_N1c-R-E_sExSEL7nBwnFylz67th"
 
 #endif
