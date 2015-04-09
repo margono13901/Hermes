@@ -100,11 +100,9 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 
 - (void)showInViewController:(UIViewController *)viewController {
     UINavigationController *nVc = [[UINavigationController alloc] initWithRootViewController:self];
-    float red = 244.0f/255.0f;
-    float green = 109.0f/255.0f;
-    float blue = 37.0f/255.0f;
-
-    
+    float red = 29.0f/255.0f;
+    float green = 202.0f/255.0f;
+    float blue = 255.0f/255.0f;
     nVc.navigationBar.barTintColor =[UIColor colorWithRed:red green:green blue:blue alpha:1.0f ];
     [viewController presentViewController:nVc animated:YES completion:nil];
 }

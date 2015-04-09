@@ -101,14 +101,19 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 {
 	[super viewDidLoad];
     //create rounded corners
-    self.stillButton.layer.cornerRadius= self.stillButton.frame.size.height/2;
+    self.stillButton.layer.cornerRadius= 50;
     self.stillButton.clipsToBounds= YES;
+    
     self.cameraButton.layer.cornerRadius= self.cameraButton.frame.size.height/2;
     self.cameraButton.clipsToBounds= YES;
     self.recordButton.hidden= YES;
     self.sendbutton.layer.cornerRadius= self.sendbutton.frame.size.height/2;
     self.sendbutton.clipsToBounds= YES;
-
+    self.backButton.layer.cornerRadius= self.backButton.frame.size.height/2;
+    self.backButton.clipsToBounds= YES;
+    self.sendbutton.tintColor = [UIColor blueColor];
+    self.stillButton.tintColor = [UIColor blueColor];
+    self.backButton.tintColor = [UIColor blueColor];
     // Create the AVCaptureSession
 	AVCaptureSession *session = [[AVCaptureSession alloc] init];
 	[self setSession:session];

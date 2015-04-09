@@ -135,7 +135,8 @@ typedef void(^zoomCompletion)(BOOL);
     self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0f];
     self.bottomOptionContainer.backgroundColor = [UIColor whiteColor];
     self.bottomOptionContainer.layer.borderWidth = 2;
-    self.bottomOptionContainer.layer.borderColor = [[UIColor blackColor]colorWithAlphaComponent:0.7f].CGColor;
+    UIColor *color = [projectColor returnColor];
+    self.bottomOptionContainer.layer.borderColor = color.CGColor;
     //set up map box
     [[RMConfiguration sharedInstance] setAccessToken:mapAccessToken];
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:mapID];
@@ -151,7 +152,7 @@ typedef void(^zoomCompletion)(BOOL);
     self.currentUserOnDisplay = [PFUser currentUser];
     [self getCurrentUserProfilePhoto];
     //nameView
-    self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
+    self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
     self.currentUserNameField.text = self.currentUserOnDisplay.username;
     //set up location view
     self.locationView.font =[UIFont fontWithName:@"SackersGothicLightAT" size:10 ];

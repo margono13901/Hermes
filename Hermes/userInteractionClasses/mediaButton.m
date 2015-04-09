@@ -24,7 +24,7 @@
     
     if (self){
         self.queue = queue;
-        UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"arrow"]];
+        UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"glasses"]];
         imageView.frame = self.frame;
         [self addSubview:imageView];
 

@@ -10,6 +10,8 @@
 #import <Parse/Parse.h>
 #import "projectColor.h"
 #import "AppDelegate.h"
+#import "MBProgressHUD.h"
+#import <CoreGraphics/CoreGraphics.h>
 
 static bool hasProfilePicture = NO;
 

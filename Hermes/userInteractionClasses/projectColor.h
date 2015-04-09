@@ -12,4 +12,5 @@
 
 @interface projectColor : NSObject
 +(id)returnColor;
++(id)returnDarkerColor;
 @end

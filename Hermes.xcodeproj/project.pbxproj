@@ -12,6 +12,7 @@
 		2228A1D11AD38B2D002CED57 /* UIView+Glow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2228A1CE1AD38B2D002CED57 /* UIView+Glow.m */; };
 		2228A1FF1AD433B9002CED57 /* UIImage+StackBlur.m in Sources */ = {isa = PBXBuildFile; fileRef = 2228A1FE1AD433B9002CED57 /* UIImage+StackBlur.m */; };
 		2228A2011AD4AFE1002CED57 /* SackersGothicLightAT.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2228A2001AD4AE83002CED57 /* SackersGothicLightAT.otf */; };
+		2228A2061AD5752F002CED57 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 2228A2051AD5752F002CED57 /* MBProgressHUD.m */; };
 		223A18B71ABCC99F00D983D4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18B61ABCC99F00D983D4 /* main.m */; };
 		223A18BA1ABCC99F00D983D4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18B91ABCC99F00D983D4 /* AppDelegate.m */; };
 		223A18BD1ABCC99F00D983D4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18BC1ABCC99F00D983D4 /* ViewController.m */; };
@@ -59,6 +60,8 @@
 		2228A1FD1AD433B9002CED57 /* UIImage+StackBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+StackBlur.h"; path = "../../../../../Downloads/StackBluriOS-master/Classes/UIImage+StackBlur.h"; sourceTree = "<group>"; };
 		2228A1FE1AD433B9002CED57 /* UIImage+StackBlur.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+StackBlur.m"; path = "../../../../../Downloads/StackBluriOS-master/Classes/UIImage+StackBlur.m"; sourceTree = "<group>"; };
 		2228A2001AD4AE83002CED57 /* SackersGothicLightAT.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = SackersGothicLightAT.otf; path = ../../../../Downloads/SackersGothicLightAT.otf; sourceTree = "<group>"; };
+		2228A2041AD5752F002CED57 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = ../../../MBProgressHUD/MBProgressHUD.h; sourceTree = "<group>"; };
+		2228A2051AD5752F002CED57 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = ../../../MBProgressHUD/MBProgressHUD.m; sourceTree = "<group>"; };
 		223A18B11ABCC99F00D983D4 /* Hermes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hermes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		223A18B51ABCC99F00D983D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223A18B61ABCC99F00D983D4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -290,6 +293,8 @@
 		22BCD80F1ACF6CC400864FA2 /* projectFiles */ = {
 			isa = PBXGroup;
 			children = (
+				2228A2041AD5752F002CED57 /* MBProgressHUD.h */,
+				2228A2051AD5752F002CED57 /* MBProgressHUD.m */,
 				2228A1FD1AD433B9002CED57 /* UIImage+StackBlur.h */,
 				2228A1FE1AD433B9002CED57 /* UIImage+StackBlur.m */,
 				223A18DA1ABCC9CA00D983D4 /* keys.h */,
@@ -467,6 +472,7 @@
 				223A18BA1ABCC99F00D983D4 /* AppDelegate.m in Sources */,
 				2290B0861ABF675A008317C3 /* UIGridViewCell.m in Sources */,
 				229F5A231ACB66C200D557D2 /* userPostView.m in Sources */,
+				2228A2061AD5752F002CED57 /* MBProgressHUD.m in Sources */,
 				223A18B71ABCC99F00D983D4 /* main.m in Sources */,
 				2290B0A71AC45F16008317C3 /* friendCell.m in Sources */,
 				2228A1FF1AD433B9002CED57 /* UIImage+StackBlur.m in Sources */,

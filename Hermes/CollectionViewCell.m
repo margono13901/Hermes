@@ -19,7 +19,7 @@
         _imageView.layer.cornerRadius = 50;
         _imageView.layer.masksToBounds = YES;
         _imageView.layer.borderWidth = 3;
-        _imageView.layer.borderColor = [UIColor whiteColor].CGColor;
+        _imageView.layer.borderColor = [[UIColor blackColor]colorWithAlphaComponent:0.6].CGColor;
         [self.contentView addSubview:_imageView];
     }
     return _imageView;

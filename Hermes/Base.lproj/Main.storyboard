@@ -131,7 +131,7 @@
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                                    <rect key="frame" x="110" y="23" width="100" height="100"/>
+                                                    <rect key="frame" x="112" y="23" width="100" height="100"/>
                                                 </variation>
                                                 <connections>
                                                     <action selector="camera:" destination="Bkj-1g-r0R" eventType="touchUpInside" id="dYk-4j-mjr"/>
@@ -148,7 +148,7 @@
                                             </mask>
                                         </variation>
                                         <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                            <rect key="frame" x="0.0" y="0.0" width="400" height="150"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="400" height="133"/>
                                             <mask key="subviews">
                                                 <include reference="3VL-bR-Ru7"/>
                                                 <include reference="Fcq-hH-Ns3"/>
@@ -166,7 +166,7 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                                    <rect key="frame" x="87" y="42" width="145" height="30"/>
+                                                    <rect key="frame" x="92" y="42" width="145" height="30"/>
                                                 </variation>
                                             </textField>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OWU-9G-G6m">
@@ -205,10 +205,10 @@
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scroll Through Pictures" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XJZ-U4-8LC">
                                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" red="0.95686274510000002" green="0.42745098040000001" blue="0.1450980392" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <color key="textColor" red="0.0" green="0.51764705882352946" blue="0.70588235294117652" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                                 <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                                    <rect key="frame" x="67" y="104" width="184" height="21"/>
+                                                    <rect key="frame" x="70" y="104" width="184" height="21"/>
                                                 </variation>
                                             </label>
                                         </subviews>
@@ -236,7 +236,7 @@
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wW6-ZP-EHy">
                                         <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                         <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                            <rect key="frame" x="110" y="368" width="100" height="100"/>
+                                            <rect key="frame" x="115" y="368" width="100" height="100"/>
                                         </variation>
                                     </imageView>
                                 </subviews>
@@ -477,14 +477,16 @@
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="72" id="cO7-H4-pNe"/>
-                                            <constraint firstAttribute="height" constant="30" id="pLy-tg-RgS"/>
+                                            <constraint firstAttribute="height" constant="30" id="pLy-tg-RgS">
+                                                <variation key="heightClass=regular-widthClass=compact" constant="32"/>
+                                            </constraint>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Record">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                            <rect key="frame" x="72" y="684" width="72" height="30"/>
+                                            <rect key="frame" x="72" y="684" width="72" height="32"/>
                                         </variation>
                                         <connections>
                                             <action selector="toggleMovieRecording:" destination="128-48-wfj" eventType="touchUpInside" id="d83-Rh-FUl"/>
@@ -494,31 +496,35 @@
                                         <rect key="frame" x="264" y="484" width="72" height="30"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="72" id="vw5-ax-EkV"/>
+                                            <constraint firstAttribute="width" constant="72" id="vw5-ax-EkV">
+                                                <variation key="heightClass=regular-widthClass=compact" constant="100"/>
+                                            </constraint>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <state key="normal" title="Still">
+                                        <state key="normal" title="Snap!">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                            <rect key="frame" x="164" y="684" width="72" height="30"/>
+                                            <rect key="frame" x="150" y="620" width="100" height="100"/>
                                         </variation>
                                         <connections>
                                             <action selector="snapStillImage:" destination="128-48-wfj" eventType="touchUpInside" id="QyH-h6-70j"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xmf-uR-J9q">
+                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xmf-uR-J9q">
                                         <rect key="frame" x="356" y="484" width="72" height="30"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="72" id="qWs-CC-dno"/>
+                                            <constraint firstAttribute="width" constant="72" id="qWs-CC-dno">
+                                                <variation key="heightClass=regular-widthClass=compact" constant="72"/>
+                                            </constraint>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <state key="normal" title="Switch">
+                                        <state key="normal" image="Switch Camera-50">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
-                                            <rect key="frame" x="256" y="684" width="72" height="30"/>
+                                            <rect key="frame" x="280" y="670" width="72" height="50"/>
                                         </variation>
                                         <connections>
                                             <action selector="changeCamera:" destination="128-48-wfj" eventType="touchUpInside" id="IhQ-SU-O63"/>
@@ -526,9 +532,14 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tvs-0t-pA0">
                                         <rect key="frame" x="8" y="16" width="46" height="30"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="46" id="Kgq-dn-tEe"/>
-                                            <constraint firstAttribute="height" constant="30" id="O2T-3N-Dlr"/>
+                                            <constraint firstAttribute="width" constant="46" id="Kgq-dn-tEe">
+                                                <variation key="heightClass=regular-widthClass=compact" constant="60"/>
+                                            </constraint>
+                                            <constraint firstAttribute="height" constant="30" id="O2T-3N-Dlr">
+                                                <variation key="heightClass=regular-widthClass=compact" constant="40"/>
+                                            </constraint>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Back">
@@ -542,16 +553,30 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="xmf-uR-J9q" firstAttribute="leading" secondItem="tHU-Un-pj0" secondAttribute="trailing" constant="20" id="0VD-D5-S6q"/>
-                                    <constraint firstItem="xmf-uR-J9q" firstAttribute="bottom" secondItem="tHU-Un-pj0" secondAttribute="bottom" id="QTd-Yq-Xz3"/>
-                                    <constraint firstItem="tHU-Un-pj0" firstAttribute="leading" secondItem="0Q8-bD-9pw" secondAttribute="trailing" constant="20" id="Tcv-wJ-VSZ"/>
-                                    <constraint firstItem="tHU-Un-pj0" firstAttribute="top" secondItem="0Q8-bD-9pw" secondAttribute="top" id="Ykn-f7-4Hd"/>
-                                    <constraint firstItem="0Q8-bD-9pw" firstAttribute="bottom" secondItem="tHU-Un-pj0" secondAttribute="bottom" id="a9D-IS-vrw"/>
-                                    <constraint firstAttribute="bottom" secondItem="0Q8-bD-9pw" secondAttribute="bottom" constant="22" id="cpr-xI-ABb"/>
+                                    <constraint firstItem="xmf-uR-J9q" firstAttribute="leading" secondItem="tHU-Un-pj0" secondAttribute="trailing" constant="20" id="0VD-D5-S6q">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="30"/>
+                                    </constraint>
+                                    <constraint firstItem="xmf-uR-J9q" firstAttribute="bottom" secondItem="tHU-Un-pj0" secondAttribute="bottom" id="QTd-Yq-Xz3">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="0.0"/>
+                                    </constraint>
+                                    <constraint firstItem="tHU-Un-pj0" firstAttribute="leading" secondItem="0Q8-bD-9pw" secondAttribute="trailing" constant="20" id="Tcv-wJ-VSZ">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="6"/>
+                                    </constraint>
+                                    <constraint firstItem="tHU-Un-pj0" firstAttribute="top" secondItem="0Q8-bD-9pw" secondAttribute="top" id="Ykn-f7-4Hd">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="-64"/>
+                                    </constraint>
+                                    <constraint firstItem="0Q8-bD-9pw" firstAttribute="bottom" secondItem="tHU-Un-pj0" secondAttribute="bottom" id="a9D-IS-vrw">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="-4"/>
+                                    </constraint>
+                                    <constraint firstAttribute="bottom" secondItem="0Q8-bD-9pw" secondAttribute="bottom" constant="22" id="cpr-xI-ABb">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="20"/>
+                                    </constraint>
                                     <constraint firstItem="Tvs-0t-pA0" firstAttribute="top" secondItem="YZv-g4-D2d" secondAttribute="top" constant="16" id="gGN-T4-JXw"/>
                                     <constraint firstItem="Tvs-0t-pA0" firstAttribute="leading" secondItem="YZv-g4-D2d" secondAttribute="leadingMargin" id="pUl-ue-PCY"/>
                                     <constraint firstItem="tHU-Un-pj0" firstAttribute="centerX" secondItem="YZv-g4-D2d" secondAttribute="centerX" id="qj1-lw-tuz"/>
-                                    <constraint firstItem="xmf-uR-J9q" firstAttribute="top" secondItem="tHU-Un-pj0" secondAttribute="top" id="zac-6x-QhG"/>
+                                    <constraint firstItem="xmf-uR-J9q" firstAttribute="top" secondItem="tHU-Un-pj0" secondAttribute="top" id="zac-6x-QhG">
+                                        <variation key="heightClass=regular-widthClass=compact" constant="50"/>
+                                    </constraint>
                                 </constraints>
                                 <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
                                     <rect key="frame" x="0.0" y="0.0" width="400" height="736"/>
@@ -574,7 +599,7 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                            <rect key="frame" x="8" y="8" width="46" height="30"/>
+                                            <rect key="frame" x="15" y="8" width="46" height="30"/>
                                         </variation>
                                         <connections>
                                             <action selector="mediaPreviewback:" destination="128-48-wfj" eventType="touchUpInside" id="lIy-s6-Fpj"/>
@@ -691,6 +716,7 @@
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <connections>
+                        <outlet property="backButton" destination="Tvs-0t-pA0" id="TMg-wa-PTe"/>
                         <outlet property="cameraButton" destination="xmf-uR-J9q" id="GO4-Yq-3dp"/>
                         <outlet property="mediaBackButton" destination="JsG-Tg-YdB" id="PYy-3i-GJn"/>
                         <outlet property="mediaPreview" destination="SIE-wg-GPd" id="4UE-sg-1vp"/>
@@ -1044,6 +1070,7 @@
     <resources>
         <image name="Group-100" width="100" height="100"/>
         <image name="Integrated Webcam Filled-100" width="100" height="100"/>
+        <image name="Switch Camera-50" width="50" height="50"/>
         <image name="forward" width="50" height="50"/>
         <image name="previous" width="50" height="50"/>
     </resources>

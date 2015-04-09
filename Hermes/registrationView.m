@@ -73,6 +73,9 @@
 }
 
 -(void)registerForUser:(id)sender{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Registering";
+    hud.detailsLabelText = @"Uploading Your Information";
     if (hasProfilePicture&&self.usernameField.text.length>5&&self.passwordField.text.length>5) {
         PFUser *user = [PFUser user];
         user.username = self.usernameField.text;
@@ -97,14 +100,18 @@
                     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
                     [self presentViewController:nav animated:YES completion:^{
                         NSLog(@"success");
+                        [hud hide:YES];
                     }];
                 }];
             }else{
                 UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops" message:[NSString stringWithFormat:@"%@",error] delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles: nil];
                 [alert show];
+                [hud hide:YES];
+
             }
         }];
     }else{
+        [hud hide:YES];
         UIAlertView *alert;
         if (hasProfilePicture) {
             alert =[[UIAlertView alloc]initWithTitle:@"Ooops" message:@"Username and Password has to be longer than 5 characters!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];

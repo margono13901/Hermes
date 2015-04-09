@@ -60,6 +60,7 @@
 - (IBAction)uploadMedia:(id)sender;
 @property (strong, nonatomic) IBOutlet UIButton *mediaBackButton;
 @property (strong, nonatomic) IBOutlet UIButton *sendbutton;
+@property (strong, nonatomic) IBOutlet UIButton *backButton;
 
 
 @end

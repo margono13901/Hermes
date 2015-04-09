@@ -10,9 +10,16 @@
 
 @implementation projectColor
 +(id)returnColor{
-    float red = 244.0f/255.0f;
-    float green = 109.0f/255.0f;
-    float blue = 37.0f/255.0f;
+    float red = 29.0f/255.0f;
+    float green = 202.0f/255.0f;
+    float blue = 255.0f/255.0f;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f ];
+}
++(id)returnDarkerColor{
+    float red = 92.0f/255.0f;
+    float green = 222.0f/255.0f;
+    float blue = 237.0f/255.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f ];
+
 }
 @end

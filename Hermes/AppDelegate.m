@@ -29,6 +29,11 @@
                                                                              categories:nil];
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
+    [NSTimer scheduledTimerWithTimeInterval: 60.0*5
+                                                  target: self
+                                                selector:@selector(removeOldPosts:)
+                                                userInfo: nil repeats:YES];
+    
     
     [self setUp];
     [self setUpLocation];
@@ -166,6 +171,22 @@
     }
     UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
     self.window.rootViewController = nav;
+}
+
+-(void)removeOldPosts:(id)sender{
+    NSDate *yesterday = [[NSDate date] dateByAddingTimeInterval:60*60*24*-1];
+    NSArray *keys =[self.unseenPostCenter allKeys];
+    for (NSString *key in keys) {
+        NSMutableArray *posts = [self.unseenPostCenter objectForKey:key];
+        for (PFObject *post in posts) {
+            NSDate *postDate = post[@"createdAt"];
+            if ([postDate compare:yesterday]==NSOrderedAscending) {
+                [posts removeObject:postDate];
+            }
+        }
+        [self.unseenPostCenter setObject:posts forKey:key];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

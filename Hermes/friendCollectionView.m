@@ -42,17 +42,21 @@
     UITextField *friendText = [[UITextField alloc]initWithFrame:CGRectMake(self.frame.size.width/2-42, 20, 100, 100)];
     friendText.text = @"Friends";
     friendText.textAlignment = NSTextAlignmentCenter;
-    [friendText setFont:[UIFont boldSystemFontOfSize:25]];
     [friendText setEnabled:NO];
     friendText.backgroundColor = [UIColor clearColor];
-    [friendText setTextColor:[UIColor whiteColor]];
+    [friendText setTextColor:[UIColor blackColor]];
+    friendText.font = [UIFont fontWithName:@"SackersGothicLightAT" size:20 ];
+
     //set up friend button
     self.friendButton = [[UIButton alloc]initWithFrame:CGRectMake(self.frame.size.width-80, 45, 50, 50)];
     [self.friendButton setTitle:@"+" forState:UIControlStateNormal];
     [self.friendButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
     [self.friendButton.titleLabel setFont:[UIFont boldSystemFontOfSize:25]];
-    [self.friendButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.friendButton addTarget:self action:@selector(segueToFriendSearch:) forControlEvents:UIControlEventTouchUpInside];
+    [self.friendButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.friendButton addTarget:self action:@selector(segueToFriendSearch:) forControlEvents:
+     UIControlEventTouchUpInside];
+    self.friendButton.titleLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:20 ];
+
 
     //setup collectionview
     _collectionView=[[UICollectionView alloc] initWithFrame:aRect collectionViewLayout:layout];
