@@ -38,10 +38,21 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)loginSuccess:(id)sender{
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Uber Login Successful!" message:nil delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
+    [alert show];
+}
+
+
+-(void)loginFailed:(id)sender{
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Uber Login Failed!" message:nil delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
+    [alert show];
+}
+
 - (IBAction)login:(id)sender {
     [PFUser logInWithUsernameInBackground:self.usernameField.text password:self.passwordField.text block:
      ^(PFUser *user, NSError *error) {
-         if (!error) {
+         if (user) {
              UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
              UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
              UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
@@ -50,7 +61,7 @@
              }];
 
          }else{
-             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Ooops!" message:[NSString stringWithFormat:@"Oops: %@",error.localizedDescription]  delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
+             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Ooops!" message:[NSString stringWithFormat:@"%@",error.userInfo[@"error"]]  delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
              [alert show];
          }
      }];
@@ -58,5 +69,7 @@
 - (IBAction)signup:(id)sender {
     [self performSegueWithIdentifier:@"userLoginSegue" sender:self];
 }
+
+
 
 @end

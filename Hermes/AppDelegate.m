@@ -27,13 +27,15 @@
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:                    userNotificationTypes
                                             
                                                                              categories:nil];
+    
+    self.uberkit = [[UberKit alloc]initWithClientID:uberClientId ClientSecret:uberSecret RedirectURL:redirectURI ApplicationName:@"Hermes"];
+    
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
     [NSTimer scheduledTimerWithTimeInterval: 60.0*5
                                                   target: self
                                                 selector:@selector(removeOldPosts:)
                                                 userInfo: nil repeats:YES];
-    
     
     [self setUp];
     [self setUpLocation];
@@ -92,7 +94,7 @@
 
 -(void)recieveFriendRequest:(NSDictionary *)payload{
     NSString *sender = [payload objectForKey:@"sender"];
-    [self displayBanner:[NSString stringWithFormat:@"%@ requests to be your friend!",sender]];
+    [self displayBanner:[NSString stringWithFormat:@"Friend request by %@",sender]];
 }
 
 -(void)acceptFriendRequest:(NSDictionary *)payload{
@@ -159,6 +161,7 @@
 }
 
 
+
 -(void)setUp{
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 
@@ -189,6 +192,32 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    NSLog(@"Calling Application Bundle ID: %@", sourceApplication);
+    NSLog(@"URL scheme:%@", [url scheme]);
+    NSLog(@"URL query: %@", [url query]);
+    [self uberKitSetUp:url];
+    return YES;
+}
+
+-(void)uberKitSetUp:(NSURL *)url{
+    NSString* verifier = nil;
+    NSArray* urlParams = [[url query] componentsSeparatedByString:@"&"];
+    for (NSString* param in urlParams) {
+        NSArray* keyValue = [param componentsSeparatedByString:@"="];
+        NSString* key = [keyValue objectAtIndex:0];
+        if ([key isEqualToString:@"code"]) {
+            verifier = [keyValue objectAtIndex:1];
+            [self.uberkit setUpAccessTokenWithCode:verifier];
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            [defaults setObject:self.uberkit.authDictionary forKey:@"uberInformation"];
+            [defaults synchronize];
+        }
+    }
+}
+
+
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -205,6 +234,11 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (currentInstallation.badge != 0) {
+        currentInstallation.badge = 0;
+        [currentInstallation saveEventually];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

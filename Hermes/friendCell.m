@@ -48,7 +48,6 @@
     deleteFriend[@"recipient"] = self.user;
     [deleteFriend saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         [self.friendAddButton setTitle:@"Friend" forState:UIControlStateNormal];
-
     }];
    // [self removeFriendRequest];
 }
@@ -59,5 +58,6 @@
     acceptFriend[@"sender"] = [PFUser currentUser];
     acceptFriend[@"recipient"] = self.user;
     [acceptFriend saveInBackground];
+    [self.friendAddButton setTitle:@"Unfriend" forState:UIControlStateNormal];
 }
 @end

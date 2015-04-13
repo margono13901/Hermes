@@ -23,6 +23,10 @@
 
 
 #define DEFAULT_CLIENT_ID @"70zxopERw9Nx2OeQU8yrUYSpW69N-RVh"
+#define uberClientServerToken @"K3bEsfZHfd4J_N1c-R-E_sExSEL7nBwnFylz67th"
+#define uberSecret @"kPe3aGnyWs5uZTdlalJTgQYZdESeExLcJkLTLmtH"
+#define redirectURI @"Hermes://com.Hyphen.Hermes"
+#define uberClientId @"LZCKMtpl8YmctOR93qdjL8n_0fvJGH8z"
 
 @interface GPUberViewController () <UITableViewDataSource, UITableViewDelegate, MKMapViewDelegate>
 
@@ -680,9 +684,34 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GPUberViewElement *element = [self.elements objectAtIndex:indexPath.row];
     
-    [self launchUberWithProductId:element.productId clientId:self.clientId];
+    //[self launchUberWithProductId:element.productId clientId:self.clientId];
     
+    NSDictionary * myDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"uberInformation"];
+    NSString *accessToken = [myDictionary objectForKey:@"access_token"];
+    UberKit* uberkit = [[UberKit alloc]initWithClientID:uberClientId ClientSecret:uberSecret RedirectURL:redirectURI ApplicationName:@"Hermes"];
+    
+    [uberkit setAccessToken:accessToken];
+    
+    NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/requests?access_token=%@", uberkit.getStoredAuthToken];
+    NSLog(@"%@",url);
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSDictionary *params = @{@"product_id": element.productId,
+                             @"start_latitude": [self returnStringValue:self.startLocation.latitude],
+                             @"start_longitude": [self returnStringValue:self.startLocation.longitude],
+                             @"end_latitude" : [self returnStringValue:self.endLocation.latitude],
+                             @"end_longitude": [self returnStringValue:self.endLocation.longitude]
+                             };
+    [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"JSON: %@", responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+-(NSString *)returnStringValue:(float)location{
+    return [NSString stringWithFormat:@"%f",location];
 }
 
 @end

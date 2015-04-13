@@ -43,10 +43,14 @@
     friendText.text = @"Friends";
     friendText.textAlignment = NSTextAlignmentCenter;
     [friendText setEnabled:NO];
-    friendText.backgroundColor = [UIColor clearColor];
     [friendText setTextColor:[UIColor blackColor]];
     friendText.font = [UIFont fontWithName:@"SackersGothicLightAT" size:20 ];
-
+    //add button
+    UIButton *backButton = [[UIButton alloc]initWithFrame:CGRectMake(20, 28, 70, 80)];
+    [backButton setTitle:@"back" forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backAction:) forControlEvents:UIControlEventTouchUpInside];
+    backButton.titleLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:16 ];
+    [backButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     //set up friend button
     self.friendButton = [[UIButton alloc]initWithFrame:CGRectMake(self.frame.size.width-80, 45, 50, 50)];
     [self.friendButton setTitle:@"+" forState:UIControlStateNormal];
@@ -69,7 +73,16 @@
     [self addSubview:self.collectionView];
     [self addSubview:friendText];
     [self addSubview:self.friendButton];
+    [self addSubview:backButton];
     [self getFriends];
+}
+
+-(void)backAction:(id)sender{
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
+        self.frame = CGRectMake(0, -800, self.bounds.size.width, self.bounds.size.height);
+    }completion:^(BOOL finished) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
+    }];
 }
 
 -(void)getFriends{
@@ -95,7 +108,8 @@
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [[self.users objectAtIndex:section] count];
+    NSArray *userInSection = [self.users objectAtIndex:section];
+    return userInSection.count;
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -168,13 +182,18 @@
 }
 
 -(void)moveToView:(id)sender{
-    
     self.blurMask.image = (UIImage *)sender;
-    [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
-        self.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
-    }completion:^(BOOL finished) {
-        NSLog(@"Animation is complete");
-    }];
+    
+    [UIView animateWithDuration:0.3
+                          delay:0.0
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^
+     {
+         self.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
+     }
+                     completion:^(BOOL finished)
+     {
+     }];
 }
 
 

@@ -83,7 +83,7 @@ typedef void(^zoomCompletion)(BOOL);
         UIImage * resized = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         self.currentUserPhoto.image = resized;
-        self.currentUserPhoto.layer.cornerRadius = 50;
+        self.currentUserPhoto.layer.cornerRadius = 45;
         self.currentUserPhoto.clipsToBounds = YES;
         self.currentUserPhoto.layer.borderColor = [UIColor whiteColor].CGColor;
         self.currentUserPhoto.layer.borderWidth = 5;
@@ -96,8 +96,11 @@ typedef void(^zoomCompletion)(BOOL);
     PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
         [self addToUnseenPostCenter:object];
-        [self.currentUserPosts insertObject:object atIndex:0];
-        [self refreshView:self];
+        PFUser *author = object[@"author"];
+        if ([author.objectId isEqual:self.currentUserOnDisplay.objectId]) {
+            [self.currentUserPosts insertObject:object atIndex:0];
+            [self refreshView:self];
+        }
     }];
 }
 
@@ -114,29 +117,6 @@ typedef void(^zoomCompletion)(BOOL);
 #pragma firstTimeSetups
 
 -(void)initialization{
-    //set up delegate
-    self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    //set up nagivation contorller
-    self.navigationController.navigationBarHidden = YES;
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.navigationController.navigationBar.barTintColor = [projectColor returnColor];
-    //set up friend pane
-    self.friendPane = [[friendCollectionView alloc]initWithFrame:self.view.bounds];
-    [self.view addSubview:self.friendPane];
-    //set up profile pic interaction
-    self.profileView.userInteractionEnabled = YES;
-    UITapGestureRecognizer *segue = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(segueToProfile:)];
-    [self.profileView addGestureRecognizer:segue];
-    self.profileView.layer.cornerRadius = 40;
-    self.profileView.clipsToBounds = YES;
-    self.profileView.layer.borderColor = [[UIColor whiteColor]CGColor];
-    self.profileView.layer.borderWidth = 2.0f;
-    //set up container View
-    self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0f];
-    self.bottomOptionContainer.backgroundColor = [UIColor whiteColor];
-    self.bottomOptionContainer.layer.borderWidth = 2;
-    UIColor *color = [projectColor returnColor];
-    self.bottomOptionContainer.layer.borderColor = color.CGColor;
     //set up map box
     [[RMConfiguration sharedInstance] setAccessToken:mapAccessToken];
     RMMapboxSource *tileSource = [[RMMapboxSource alloc] initWithMapID:mapID];
@@ -145,30 +125,60 @@ typedef void(^zoomCompletion)(BOOL);
     self.mapView.showsUserLocation = YES;
     self.mapView.userTrackingMode = RMUserTrackingModeFollow;
     [self.mapView setHideAttribution:YES];
-    //scrolll through label setup
-    self.scrollThroughPicturesLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
-    //display user
-    [self setUpProfilePhoto:self];
+    self.mapView.frame = self.view.frame;
     self.currentUserOnDisplay = [PFUser currentUser];
-    [self getCurrentUserProfilePhoto];
-    //nameView
-    self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
-    self.currentUserNameField.text = self.currentUserOnDisplay.username;
-    //set up location view
-    self.locationView.font =[UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
-    self.scrollThroughPicturesLabel.userInteractionEnabled= NO;
-    //set up uber button
-    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(displayUber:)];
-    [self.scrollThroughPicturesLabel addGestureRecognizer:gestureRecognizer];
-    //download posts
-    [self downloadUnseenPosts:YES];
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        //Background Thread
+        //display user
+        [self setUpProfilePhoto:self];
+        [self getCurrentUserProfilePhoto];
+        //download posts
+        [self downloadUnseenPosts:YES];
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            //Run UI Updates
+            self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            //set up nagivation contorller
+            self.navigationController.navigationBarHidden = YES;
+            self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+            self.navigationController.navigationBar.barTintColor = [projectColor returnColor];
+            //set up friend pane
+            self.friendPane = [[friendCollectionView alloc]initWithFrame:self.view.bounds];
+            [self.view addSubview:self.friendPane];
+            //set up profile pic interaction
+            self.profileView.userInteractionEnabled = YES;
+            UITapGestureRecognizer *segue = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(segueToProfile:)];
+            [self.profileView addGestureRecognizer:segue];
+            self.profileView.layer.cornerRadius = self.profileView.layer.bounds.size.width/2;
+            self.profileView.clipsToBounds = YES;
+            self.profileView.layer.borderColor = [[UIColor whiteColor]CGColor];
+            self.profileView.layer.borderWidth = 2.0f;
+            //set up container View
+            self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0f];
+            self.bottomOptionContainer.backgroundColor = [UIColor whiteColor];
+            self.bottomOptionContainer.layer.borderWidth = 2;
+            UIColor *color = [projectColor returnColor];
+            self.bottomOptionContainer.layer.borderColor = color.CGColor;
+            //scrolll through label setup
+            self.scrollThroughPicturesLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
+            //nameView
+            self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+            self.currentUserNameField.text = self.currentUserOnDisplay.username;
+            //set up location view
+            self.locationView.font =[UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
+            self.scrollThroughPicturesLabel.userInteractionEnabled= NO;
+            //set up uber button
+            UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(displayUber:)];
+            [self.scrollThroughPicturesLabel addGestureRecognizer:gestureRecognizer];
+        });
+    });
 }
 
 
 
 -(void)setUpProfilePhoto:(id)sender{
     [[PFUser currentUser][@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        self.profileView.image = [UIImage imageWithData:data];
+        if(data) self.profileView.image = [UIImage imageWithData:data];
+        else [self setUpProfilePhoto:self];
     }];
 }
 
@@ -196,8 +206,10 @@ typedef void(^zoomCompletion)(BOOL);
     if (counter>0) {
         self.notifications.hidden = NO;
         self.notifications.text = [NSString stringWithFormat:@"%i",counter];
+        [self.notifications startGlowing];
     }else{
         self.notifications.hidden = YES;
+        [self.notifications stopGlowing];
     }
 }
 
@@ -331,8 +343,16 @@ typedef void(^zoomCompletion)(BOOL);
 }
 
 - (IBAction)findFriends:(id)sender{
-    UIImage *blurImage = [[self getImageView] stackBlur:50];
-    [self.friendPane moveToView:blurImage];
+    
+    dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
+    dispatch_async(myQueue, ^{
+        // Perform long running process
+        UIImage *blurImage = [[self getImageView] stackBlur:50];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // Update the UI
+            [self.friendPane moveToView:blurImage];
+        });
+    });
 }
 
 - (IBAction)zoomToAnnotation:(id)sender{
@@ -363,7 +383,7 @@ typedef void(^zoomCompletion)(BOOL);
 }
 
 - (IBAction)displayUber:(id)sender {
-    GPUberViewController *uber = [[GPUberViewController alloc] initWithServerToken:uberClientId];
+    GPUberViewController *uber = [[GPUberViewController alloc] initWithServerToken:uberClientServerToken];
     // optional
     if (self.currentAnnotation&&self.annotationLink.storage.count>0&&self.locationView.text.length>0) {
         uber.startLocation = self.mapView.userLocation.location.coordinate;
@@ -409,7 +429,7 @@ typedef void(^zoomCompletion)(BOOL);
         NSString *location = [allData objectForKey:@"place_name"];
         NSArray* stringArray = [location  componentsSeparatedByString:@","];
         NSMutableString *text = [[NSMutableString alloc]init];
-        for (int i = 0 ; i < 4; i++) {
+        for (int i = 0 ; i < stringArray.count-1; i++) {
             [text appendString:stringArray[i]];
             [text appendString:@" "];
         }

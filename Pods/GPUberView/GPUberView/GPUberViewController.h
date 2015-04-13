@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <UberKit.h>
 
 @interface GPUberViewController : UIViewController {
     NSString *_clientId;

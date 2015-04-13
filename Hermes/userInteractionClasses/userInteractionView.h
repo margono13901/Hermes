@@ -41,7 +41,6 @@
 - (IBAction)findFriends:(id)sender;
 - (IBAction)zoomToAnnotation:(id)sender;
 - (IBAction)zoomToAnnotationBack:(id)sender;
-- (IBAction)displayUber:(id)sender;
 
 #pragma interface interaction data
 @property(strong,nonatomic) PFUser *currentUserOnDisplay;

@@ -66,6 +66,7 @@ static const NSString *baseURL = @"https://api.uber.com";
     return self;
 }
 
+
 - (instancetype) initWithClientID:(NSString *)clientId ClientSecret:(NSString *)clientSecret RedirectURL:(NSString *)redirectURL ApplicationName:(NSString *)applicationName
 {
     self = [super init];
@@ -82,20 +83,27 @@ static const NSString *baseURL = @"https://api.uber.com";
 
 #pragma mark - Login
 
-- (void) startLogin
-{
-    [self setUpLoginView];
+- (void) startLogin:(UINavigationController *)view{
+    [self setUpLoginView:view];
     [self setupOAuth2AccountStore];
     [self requestOAuth2Access];
 }
 
-- (void) setUpLoginView
-{
-    _loginView =[[UIWebView alloc] init];
-    _loginView.frame = [UIScreen mainScreen].bounds;
-    _loginView.delegate = self;
-    _loginView.scalesPageToFit = YES;
-    [[UIApplication sharedApplication].keyWindow addSubview:_loginView];
+- (void) setUpLoginView:(UINavigationController *)view{
+//    self.controller = [[UIViewController alloc]init];
+//    [self.controller.view addSubview:_loginView];
+//    [view pushViewController:self.controller animated:YES];
+    self.loginView =[[UIWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    [self.loginView setDelegate:self];
+    self.loginView.scalesPageToFit = YES;
+    NSLog(@"%@",self.loginView.delegate);
+    UIView *test = [[UIView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+    [test addSubview:self.loginView];
+    UIWindow *keyWindow = [[[UIApplication sharedApplication] delegate] window];
+    [keyWindow addSubview:test];
+    
+    NSString *url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@",_clientID];
+    [self.loginView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
 }
 
 - (NSString *) getStoredAuthToken
@@ -103,8 +111,20 @@ static const NSString *baseURL = @"https://api.uber.com";
     return _accessToken;
 }
 
-- (BOOL) webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
-{
+-(void) setAccessToken:(NSString *)accessToken{
+    _accessToken = accessToken;
+    if([self.delegate respondsToSelector:@selector(uberKit:didReceiveAccessToken:)])
+    {
+        [self.delegate uberKit:self didReceiveAccessToken:_accessToken];
+    }
+}
+
+
+-(void)webViewDidStartLoad:(UIWebView *)webView{
+    NSLog(@"hello");
+}
+- (BOOL) webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType{
+    
     NSString *url = request.URL.absoluteString;
     if ([url hasPrefix:self.redirectURL])
     {
@@ -122,7 +142,8 @@ static const NSString *baseURL = @"https://api.uber.com";
             {
                 //Got the code, now retrieving the auth token
                 [self getAuthTokenForCode:code];
-                [_loginView removeFromSuperview];
+                //[_loginView removeFromSuperview];
+                [self.controller.navigationController popToRootViewControllerAnimated:YES];
             }
             else
             {
@@ -137,8 +158,11 @@ static const NSString *baseURL = @"https://api.uber.com";
 
 }
 
-- (void) webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
-{
+-(void)setUpAccessTokenWithCode:(NSString *)code{
+    [self getAuthTokenForCode:code];
+}
+- (void) webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+    NSLog(@"failed load");
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     if([self.delegate respondsToSelector:@selector(uberKit:loginFailedWithError:)])
     {
@@ -146,8 +170,8 @@ static const NSString *baseURL = @"https://api.uber.com";
     }
 }
 
-- (void) webViewDidFinishLoad:(UIWebView *)webView
-{
+- (void) webViewDidFinishLoad:(UIWebView *)webView{
+    NSLog(@"finishLoad");
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 }
 
@@ -165,10 +189,10 @@ static const NSString *baseURL = @"https://api.uber.com";
     if(!error)
     {
         NSError *jsonError = nil;
-        NSDictionary *authDictionary = [NSJSONSerialization JSONObjectWithData:authData options:0 error:&jsonError];
+        self.authDictionary = [NSJSONSerialization JSONObjectWithData:authData options:0 error:&jsonError];
         if(!jsonError)
         {
-            _accessToken = [authDictionary objectForKey:@"access_token"];
+            _accessToken = [self.authDictionary objectForKey:@"access_token"];
             if(_accessToken)
             {
                 if([self.delegate respondsToSelector:@selector(uberKit:didReceiveAccessToken:)])
@@ -315,9 +339,8 @@ static const NSString *baseURL = @"https://api.uber.com";
 {
     //GET /v1/me
     
-    NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1.1/history?access_token=%@", _accessToken];
-    [self performNetworkOperationWithURL:url completionHandler:^(NSDictionary *profileDictionary, NSURLResponse *response, NSError *error)
-     {
+    NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/me?access_token=%@", _accessToken];
+    [self performNetworkOperationWithURL:url completionHandler:^(NSDictionary *profileDictionary, NSURLResponse *response, NSError *error){
          if(profileDictionary)
          {
              UberProfile *profile = [[UberProfile alloc] initWithDictionary:profileDictionary];
@@ -329,6 +352,7 @@ static const NSString *baseURL = @"https://api.uber.com";
          }
      }];
 }
+
 
 #pragma mark - OAuth
 
@@ -367,11 +391,9 @@ static const NSString *baseURL = @"https://api.uber.com";
                                                   }];
 }
 
--(void)requestOAuth2Access
-{
+-(void)requestOAuth2Access{
     [[NXOAuth2AccountStore sharedStore] requestAccessToAccountWithType:_applicationName
                                    withPreparedAuthorizationURLHandler:^(NSURL *preparedURL){
-
                                        [_loginView loadRequest:[NSURLRequest requestWithURL:preparedURL]];
                                        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
                                    }];

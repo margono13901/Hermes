@@ -95,16 +95,14 @@
                 PFRelation *relation = [[PFUser currentUser]relationForKey:@"friends"];
                 [relation addObject:[PFUser currentUser]];
                 [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error){
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
-                    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
-                    [self presentViewController:nav animated:YES completion:^{
-                        NSLog(@"success");
-                        [hud hide:YES];
-                    }];
+                    UIAlertView *uberConnect = [[UIAlertView alloc]initWithTitle:@"Connect account with Uber?" message:@"Connect Your Account To Drive To Events On The Map!" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
+                    uberConnect.tag = 1;
+                    [hud hide:YES];
+                    [uberConnect show];
+
                 }];
             }else{
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops" message:[NSString stringWithFormat:@"%@",error] delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles: nil];
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops" message:[NSString stringWithFormat:@"%@",error.userInfo[@"error"]] delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles: nil];
                 [alert show];
                 [hud hide:YES];
 
@@ -119,6 +117,24 @@
              alert =[[UIAlertView alloc]initWithTitle:@"Choose photo" message:@"Choose a photo!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
         }
         [alert show];
+    }
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (alertView.tag==1) {
+        if (buttonIndex ==0) {
+            NSString *url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@",uberClientId];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+            
+            NSLog(@"user registers for uber");
+        }
+        
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
+        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
+        [self presentViewController:nav animated:YES completion:^{
+            NSLog(@"success");
+        }];
     }
 }
 

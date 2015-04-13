@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import <AFNetworking/AFNetworking.h>
 #import "NXOAuth2.h"
 #import "UberProduct.h"
 #import "UberPrice.h"
@@ -51,6 +52,7 @@ typedef void (^ProfileHandler) (UberProfile *profile, NSURLResponse *response, N
 @property (strong, nonatomic) NSString *clientSecret;
 @property (strong, nonatomic) NSString *redirectURL;
 @property (strong, nonatomic) NSString *applicationName;
+@property (strong,nonatomic) NSDictionary *authDictionary;
 
 @property (weak, nonatomic) id <UberKitDelegate> delegate;
 
@@ -60,11 +62,13 @@ typedef void (^ProfileHandler) (UberProfile *profile, NSURLResponse *response, N
 
 - (instancetype) initWithServerToken: (NSString *) serverToken;
 - (instancetype) initWithClientID: (NSString *) clientId ClientSecret: (NSString *) clientSecret RedirectURL: (NSString *) redirectURL ApplicationName: (NSString *) applicationName;
-
+-(void)setUpAccessTokenWithCode:(NSString *)code;
 #pragma mark - Login
 
-- (void) startLogin;
+- (void) startLogin:(UIViewController *)view;
 - (NSString *) getStoredAuthToken;
+-(void) setAccessToken:(NSString *)accessToken;
+
 
 #pragma mark - Product Types
 
@@ -89,5 +93,10 @@ typedef void (^ProfileHandler) (UberProfile *profile, NSURLResponse *response, N
 #pragma mark - Deep Linking
 
 - (void) openUberApp;
+
+#pragma mark - Controller
+
+@property UIViewController *controller;
+
 
 @end

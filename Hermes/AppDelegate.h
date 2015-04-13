@@ -10,9 +10,9 @@
 #import "keys.h"
 #import <Parse/Parse.h>
 #import <AFNetworking/AFNetworking.h>
+#import <UberKit.h>
 @class userInteractionView;
-
-@interface AppDelegate : UIResponder <UIApplicationDelegate,CLLocationManagerDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,CLLocationManagerDelegate,NSURLConnectionDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong,nonatomic) CLLocationManager *locationManager;
@@ -22,6 +22,6 @@
 @property(strong,nonatomic) NSString *incomingPostId;
 @property(strong,nonatomic) NSMutableDictionary *unseenPostCenter;
 @property(strong,nonatomic) NSData *deviceToken;
-
+@property(strong,nonatomic) UberKit *uberkit;
 @end
 

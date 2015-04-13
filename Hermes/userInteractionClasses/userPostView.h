@@ -10,6 +10,7 @@
 #import "NSQueue.h"
 #import <Parse/Parse.h>
 #import "AppDelegate.h"
+#import "MBProgressHUD.h"
 
 @interface userPostView : UIImageView
 

@@ -29,7 +29,7 @@
 }
 
 -(void)initialization{
-    self.previewText = [[UILabel alloc]initWithFrame:CGRectMake(260, 30, 40, 50)];
+    self.previewText = [[UILabel alloc]initWithFrame:CGRectMake(280, 30, 40, 50)];
     self.previewText.textAlignment = NSTextAlignmentCenter;
     self.previewText.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5f];
     [self.previewText.layer setBorderColor:[UIColor whiteColor].CGColor];
@@ -79,9 +79,12 @@
 }
 
 -(void)setUpImage:(PFObject *)post{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
+    hud.labelText = @"Loading";
     [post[@"media"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         UIImage *image = [UIImage imageWithData:data];
         self.image = image;
+        [hud hide:NO];
     }];
 }
 
