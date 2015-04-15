@@ -84,6 +84,7 @@
         NSData *data = UIImagePNGRepresentation([self fixrotation:self.profilePickView.image]);
         PFFile *media = [PFFile fileWithName:@"picture" data:data];
         user[@"profilePhoto"] = media;
+        user[@"points"] = @0;
         [user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if(!error){
                 AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;

@@ -38,27 +38,6 @@
     self.usernameField.text = [PFUser currentUser][@"username"];
     self.usernameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
     
-    PFRelation *relation = [[PFUser currentUser] relationForKey:@"mediaPosts"];
-    PFQuery *query = [relation query];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSLog(@"%@",objects);
-        NSNumber *likes = [NSNumber numberWithInteger:0];
-        NSNumber *uber = [NSNumber numberWithInteger:0];
-
-        for(int i = 0 ; i < objects.count ; i++){
-            likes = @([likes integerValue] + [objects[i][@"likes"] integerValue]);
-            uber = @([uber integerValue] + [objects[i][@"uber"] integerValue]);
-
-        }
-        
-        self.likes.text = [NSString stringWithFormat:@"%@ likes",likes];
-        self.likes.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
-
-        self.uber.text = [NSString stringWithFormat:@"%@ ubers",uber];
-        self.uber.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
-
-    }];
-    
     [[PFUser currentUser][@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         if (!error) {
             UIImage *image = [UIImage imageWithData:data];
@@ -70,6 +49,13 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
+    NSLog(@"%@",[PFUser currentUser]);
+    self.points.text =[NSString stringWithFormat:@"%@/10 LP",[PFUser currentUser][@"points"]];
+    self.points.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+    
+    self.usertitle.text = @"Beginner";
+    self.usertitle.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+
 }
 
 -(void)viewWillDisappear:(BOOL)animated{

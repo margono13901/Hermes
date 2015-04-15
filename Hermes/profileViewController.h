@@ -12,8 +12,8 @@
 @interface profileViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 - (IBAction)changeProfile:(id)sender;
-@property (strong, nonatomic) IBOutlet UITextField *likes;
-@property (strong, nonatomic) IBOutlet UITextField *uber;
+@property (strong, nonatomic) IBOutlet UITextField *points;
+@property (strong, nonatomic) IBOutlet UITextField *usertitle;
 @property (strong, nonatomic) IBOutlet UITextField *usernameField;
 
 @end

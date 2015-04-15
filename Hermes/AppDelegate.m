@@ -27,6 +27,7 @@
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:                    userNotificationTypes
                                             
                                                                              categories:nil];
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     self.uberkit = [[UberKit alloc]initWithClientID:uberClientId ClientSecret:uberSecret RedirectURL:redirectURI ApplicationName:@"Hermes"];
     
@@ -58,12 +59,11 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     if ([PFUser currentUser]) {
         NSDictionary *payload = [userInfo objectForKey:@"custom"];
-        NSDictionary *senderPayload = [payload objectForKey:@"senderId"];
-        NSString *senderId = [senderPayload objectForKey:@"objectId"];
-        
+        NSString *senderId = [payload objectForKey:@"objectId"];
         BOOL isUser = [senderId isEqual:[PFUser currentUser].objectId];
         NSString *type = [payload objectForKey:@"type"];
-        NSLog(@"%@",[PFUser currentUser]);
+        NSLog(@"this is type: %@",type);
+
         if ([type isEqualToString:@"post"]) {
             [self recievePost:payload isUser:isUser];
         }
@@ -72,8 +72,36 @@
         }else if([type isEqualToString:@"friendAccept"]){
             [self acceptFriendRequest:payload];
         }
+        else if([type isEqualToString:@"goThere"]){
+            [self recieveGoThere:payload];
+        }
 
     }
+}
+
+-(void)recieveGoThere:(NSDictionary *)payload{
+    PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
+    [query getObjectInBackgroundWithId:[payload objectForKey:@"post"] block:^(PFObject *object, NSError *error){
+        if (object) {
+            PFGeoPoint *g1 = object[@"location"];
+            CLLocation *l1 = [[CLLocation alloc]initWithLatitude:[g1 latitude] longitude:[g1 longitude]];
+            CLLocation *currentLocation = self.location;
+            if ([l1 distanceFromLocation:currentLocation]<50) {
+                [self displayBanner:[NSString stringWithFormat:@"%@ is joining you!",[payload objectForKey:@"senderUsername"]]];
+                NSLog(@"going near user");
+            }else{
+                [self displayBanner:[NSString stringWithFormat:@"%@ is going to your post!",[payload objectForKey:@"senderUsername"]]];
+                NSLog(@"going away from user");
+
+            }
+            
+        }else{
+            [self displayBanner:[NSString stringWithFormat:@"%@ is going to your post!",[payload objectForKey:@"senderUsername"]]];
+            NSLog(@"%@",error);
+
+        }
+        
+    }];
 }
 
 -(void)recievePost:(NSDictionary *)payload isUser:(BOOL)user{
@@ -85,11 +113,11 @@
     if (!user) {
         NSString *sender = [payload objectForKey:@"sender"];
         [self displayBanner:[NSString stringWithFormat:@"New Post By %@",sender]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingOtherPost" object:nil];
     }else{
         [self displayBanner:[NSString stringWithFormat:@"Post Uploaded"]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingSelfPost" object:nil];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingPost" object:nil];
+
 }
 
 -(void)recieveFriendRequest:(NSDictionary *)payload{

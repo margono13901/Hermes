@@ -22,14 +22,14 @@
     self = [super initWithFrame:frame];
     self.previewQueue = queue;
     if (self) {
-        self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
+        self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [self initialization];
     }
     return self;
 }
 
 -(void)initialization{
-    self.previewText = [[UILabel alloc]initWithFrame:CGRectMake(280, 30, 40, 50)];
+    self.previewText = [[UILabel alloc]initWithFrame:CGRectMake(self.layer.bounds.size.width-50, 30, 40, 50)];
     self.previewText.textAlignment = NSTextAlignmentCenter;
     self.previewText.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5f];
     [self.previewText.layer setBorderColor:[UIColor whiteColor].CGColor];
@@ -47,6 +47,16 @@
     [backButton setTintColor:[UIColor whiteColor]];
     [backButton addTarget:self action:@selector(exitView:) forControlEvents:UIControlEventTouchUpInside];
     backButton.titleLabel.font = [UIFont systemFontOfSize:23.0f];
+    
+    self.likeButton = [[UIButton alloc]initWithFrame:CGRectMake(self.frame.size.width/2-14, self.frame.size.height-80, 60, 60)];
+    self.likeButton.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6f];
+    self.likeButton.layer.cornerRadius = 30;
+    self.likeButton.clipsToBounds = YES;
+    [self.likeButton addTarget:self action:@selector(likeAction:) forControlEvents:UIControlEventTouchUpInside];
+    if (![(PFUser *)((PFObject *)self.previewQueue.peek[@"author"]).objectId isEqual:[PFUser currentUser].objectId]) {
+        [self addSubview:self.likeButton];
+        [self setUpLike:[self.previewQueue peek]];
+    }
     [self addSubview:self.previewText];
     [self addSubview:backButton];
     [self cycleThroughPost:self];
@@ -60,13 +70,13 @@
     }else{
         self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewQueue.storage.count];
 
-        PFObject *post = [self.previewQueue dequeue];
-        [self setUpImage:post];
-        PFUser *author = post[@"author"];
+        self.currentPost = [self.previewQueue dequeue];
+        [self setUpImage:self.currentPost];
+        PFUser *author = self.currentPost[@"author"];
         NSMutableArray *authorUnseenPosts = [self.delegate.unseenPostCenter objectForKey:author.objectId];
         for (int i = 0 ; i<authorUnseenPosts.count; i++) {
             PFObject *unseenPost = [authorUnseenPosts objectAtIndex:i];
-            [self removeUnSeenPost:unseenPost withCompareTo:post :authorUnseenPosts];
+            [self removeUnSeenPost:unseenPost withCompareTo:self.currentPost :authorUnseenPosts];
         }
         
         [self.delegate.unseenPostCenter setValue:authorUnseenPosts forKey:author.objectId];
@@ -75,7 +85,24 @@
 
 -(void)exitView:(id)sender{
     [self removeFromSuperview];
+}
 
+-(void)likeAction:(id)sender{
+    if (![self.likeButton.currentTitle isEqual:@"liked"]) {
+        PFRelation *relation = [[PFUser currentUser]relationForKey:@"likedPosts"];
+        [relation addObject:self.currentPost];
+        [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL success, NSError *error){
+            if (success) {
+                [self.likeButton setImage:[UIImage imageNamed:@"likeFilled"] forState:UIControlStateNormal];
+                [self.likeButton setTitle:@"liked" forState:UIControlStateNormal];
+                PFObject *goThere = [PFObject objectWithClassName:@"goThere"];
+                goThere[@"mediaPost"] = self.currentPost;
+                goThere[@"goToUser"] = self.currentPost[@"author"];
+                goThere[@"userGoing"] = [PFUser currentUser];
+                [goThere saveInBackground];
+            }
+        }];
+    }
 }
 
 -(void)setUpImage:(PFObject *)post{
@@ -85,6 +112,21 @@
         UIImage *image = [UIImage imageWithData:data];
         self.image = image;
         [hud hide:NO];
+    }];
+}
+
+-(void)setUpLike:(PFObject *)post{
+    PFRelation *relation = [[PFUser currentUser] relationForKey:@"likedPosts"];
+    PFQuery *query = [relation query];
+    [query whereKey:@"objectId" equalTo:post.objectId];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error){
+        if (object) {
+            [self.likeButton setImage:[UIImage imageNamed:@"likeFilled"] forState:UIControlStateNormal];
+            [self.likeButton setTitle:@"liked" forState:UIControlStateNormal];
+        }else{
+            [self.likeButton setImage:[UIImage imageNamed:@"likeEmpty"] forState:UIControlStateNormal];
+            [self.likeButton setTitle:@"empty" forState:UIControlStateNormal];
+        }
     }];
 }
 

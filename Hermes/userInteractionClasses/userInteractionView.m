@@ -19,7 +19,7 @@ typedef void(^zoomCompletion)(BOOL);
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setUpNotificationCenter];
-    [self initialization];
+    [self initialization];    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -37,13 +37,11 @@ typedef void(^zoomCompletion)(BOOL);
 
 
 -(void)setUpNotificationCenter{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incomingPost:) name:@"incomingOtherPost" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(incomingPost:) name:@"incomingPost" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(segueToFriendSearch:) name:@"segueToFriendSearch" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeCurrentUser:) name:@"newUser" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView:) name:@"refresh" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUpProfilePhoto:) name:@"changeProfilePhoto" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selfPost:) name:@"incomingSelfPost" object:nil];
-
 }
 
 -(void)changeCurrentUser:(id)sender{
@@ -54,8 +52,6 @@ typedef void(^zoomCompletion)(BOOL);
     [self setUpAnnotations];
     self.locationView.text=@"";
     self.scrollThroughPicturesLabel.text = @"Scroll Through Pictures";
-    [self.scrollThroughPicturesLabel stopGlowing];
-    self.scrollThroughPicturesLabel.userInteractionEnabled= NO;
     self.currentAnnotation = nil;
 }
 
@@ -95,24 +91,16 @@ typedef void(^zoomCompletion)(BOOL);
     NSString *incomingPostId = self.delegate.incomingPostId;
     PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
-        [self addToUnseenPostCenter:object];
         PFUser *author = object[@"author"];
+        if (![author.objectId isEqual:[PFUser currentUser].objectId]) {
+            [self addToUnseenPostCenter:object];
+        }
         if ([author.objectId isEqual:self.currentUserOnDisplay.objectId]) {
             [self.currentUserPosts insertObject:object atIndex:0];
             [self refreshView:self];
         }
     }];
 }
-
--(void)selfPost:(id)sender{
-    NSString *incomingPostId = self.delegate.incomingPostId;
-    PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
-    [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
-        [self.currentUserPosts insertObject:object atIndex:0];
-        [self refreshView:self];
-    }];
-}
-
 
 #pragma firstTimeSetups
 
@@ -364,7 +352,6 @@ typedef void(^zoomCompletion)(BOOL);
 
 - (IBAction)zoomToAnnotationBack:(id)sender {
     if (self.annotationLink.storage.count>0) {
-        NSLog(@"%lu",(unsigned long)self.annotationLink.storage.count);
         RMAnnotation *annotation = [self.annotationLink scrollBackThroughAnnotatotation];
         [self selectAnnotation:annotation];
     }
@@ -375,11 +362,26 @@ typedef void(^zoomCompletion)(BOOL);
         if (finished) {
             self.currentAnnotation = annotation;
             [self.mapView selectAnnotation:annotation animated:YES];
-            self.scrollThroughPicturesLabel.userInteractionEnabled = YES;
-            self.scrollThroughPicturesLabel.text = @"Tap To Uber There!";
-            [self.scrollThroughPicturesLabel startGlowing];
+            
+            CLLocationCoordinate2D coordinate = [annotation coordinate];
+            double lat = coordinate.latitude;
+            double lon = coordinate.longitude;
+            CLLocation *postLocation = [[CLLocation alloc]initWithLatitude:lat longitude:lon];
+            double distance = [postLocation distanceFromLocation:self.mapView.userLocation.location];
+            self.scrollThroughPicturesLabel.text = [self distanceString:distance];
         }
     }];
+}
+
+-(NSString *)distanceString:(double)distance{
+    if(distance<1){
+        return @"Here";
+    }
+    else if (distance<1000) {
+        return [NSString stringWithFormat: @"%i meters away",(int)distance];
+    }else{
+        return [NSString stringWithFormat: @"%i km away",(int)distance/1000];
+    }
 }
 
 - (IBAction)displayUber:(id)sender {

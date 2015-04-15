@@ -16,7 +16,9 @@
 
 @property(strong,nonatomic)UILabel *previewText;
 @property(strong,nonatomic)NSQueue *previewQueue;
--(id)initWithFrame:(CGRect)frame withQueue:(NSQueue *)queue;
 @property(strong,nonatomic)AppDelegate *delegate;
+@property(strong,nonatomic)UIButton *likeButton;
+@property(strong,nonatomic)PFObject *currentPost;
+-(id)initWithFrame:(CGRect)frame withQueue:(NSQueue *)queue;
 
 @end

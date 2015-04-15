@@ -627,7 +627,6 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 
 -(void)send{
     PFUser *currentUser = [PFUser currentUser];
-    
     NSData *data = UIImagePNGRepresentation([self fixrotation:[self getImageView]]);
     NSNumber *num = [NSNumber numberWithInt:0];
     PFFile *media = [PFFile fileWithName:@"picture" data:data];
@@ -646,8 +645,18 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
             PFRelation *relation = [currentUser relationForKey:@"mediaPosts"];
             [relation addObject:upload];
             //add post to unseen class in user's friends
-            [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            }];
+            [currentUser saveInBackground];
+            NSLog(@"upload complete");
+            [PFCloud callFunctionInBackground:@"pushMediaPostToUsers"
+                               withParameters:@{@"postid":upload.objectId}
+                                        block:^(NSString *result, NSError *error) {
+                                            if (!error) {
+                                                // result is @"Hello world!"
+                                                NSLog(@"%@",error);
+                                            }else{
+                                                NSLog(@"successful post upload");
+                                            }
+                                        }];
         }else{
             NSLog(@"%@",error);
         }
