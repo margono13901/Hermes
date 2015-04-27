@@ -49,7 +49,7 @@
 #import <Parse/Parse.h>
 #import "AppDelegate.h"
 
-@interface AVCamViewController : UIViewController<CLLocationManagerDelegate>
+@interface AVCamViewController : UIViewController<CLLocationManagerDelegate,UITextViewDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *mediaPreview;
 @property (strong, nonatomic) IBOutlet UIButton *uploadButton;
 - (IBAction)back:(id)sender;

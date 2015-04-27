@@ -65,7 +65,6 @@
 //work on this
 -(void)cycleThroughPost:(id)sender{
     if ([self.previewQueue isEmpty]){
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
         [self exitView:self];
     }else{
         self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewQueue.storage.count];
@@ -84,11 +83,20 @@
 }
 
 -(void)exitView:(id)sender{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
     [self removeFromSuperview];
 }
 
 -(void)likeAction:(id)sender{
-    if (![self.likeButton.currentTitle isEqual:@"liked"]) {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (![[defaults objectForKey:@"firstTimeLike"]isEqual:@NO]) {
+        [defaults setObject:@NO forKey:@"firstTimeLike"];
+        [defaults synchronize];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Join Your Friend!" message:@"Pressing this button will tell your friends that your coming to their location and increase their leadership points!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [alert show];
+    }
+    
+    else if (![self.likeButton.currentTitle isEqual:@"liked"]) {
         PFRelation *relation = [[PFUser currentUser]relationForKey:@"likedPosts"];
         [relation addObject:self.currentPost];
         [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL success, NSError *error){

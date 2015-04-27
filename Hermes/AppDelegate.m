@@ -57,26 +57,35 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    if ([PFUser currentUser]) {
-        NSDictionary *payload = [userInfo objectForKey:@"custom"];
-        NSString *senderId = [payload objectForKey:@"objectId"];
-        BOOL isUser = [senderId isEqual:[PFUser currentUser].objectId];
-        NSString *type = [payload objectForKey:@"type"];
-        NSLog(@"this is type: %@",type);
+    if ( application.applicationState == UIApplicationStateActive ){
+        // app was already in the foreground
+        if ([PFUser currentUser]) {
+            NSDictionary *payload = [userInfo objectForKey:@"custom"];
+            NSString *senderId = [payload objectForKey:@"senderId"];
+            BOOL isUser = [senderId isEqual:[PFUser currentUser].objectId];
+            NSString *type = [payload objectForKey:@"type"];
+            NSLog(@"payload contents: %@" , payload);
+            
+            if ([type isEqualToString:@"post"]) {
+                [self recievePost:payload isUser:isUser];
+            }
+            else if([type isEqualToString:@"friendRequest"]){
+                [self recieveFriendRequest:payload];
+            }else if([type isEqualToString:@"friendAccept"]){
+                [self acceptFriendRequest:payload];
+            }
+            else if([type isEqualToString:@"goThere"]){
+                [self recieveGoThere:payload];
+            }
+            
+        }
 
-        if ([type isEqualToString:@"post"]) {
-            [self recievePost:payload isUser:isUser];
-        }
-        else if([type isEqualToString:@"friendRequest"]){
-            [self recieveFriendRequest:payload];
-        }else if([type isEqualToString:@"friendAccept"]){
-            [self acceptFriendRequest:payload];
-        }
-        else if([type isEqualToString:@"goThere"]){
-            [self recieveGoThere:payload];
-        }
-
+    }else{
+        NSLog(@"hello");
+    
     }
+    
+    
 }
 
 -(void)recieveGoThere:(NSDictionary *)payload{
@@ -92,9 +101,7 @@
             }else{
                 [self displayBanner:[NSString stringWithFormat:@"%@ is going to your post!",[payload objectForKey:@"senderUsername"]]];
                 NSLog(@"going away from user");
-
             }
-            
         }else{
             [self displayBanner:[NSString stringWithFormat:@"%@ is going to your post!",[payload objectForKey:@"senderUsername"]]];
             NSLog(@"%@",error);
@@ -106,10 +113,9 @@
 
 -(void)recievePost:(NSDictionary *)payload isUser:(BOOL)user{
     
-    PFObject *temp = [payload objectForKey:@"post"];
-    NSString *objectID = [temp objectForKey:@"objectId"];
+    NSString *objectID = [payload objectForKey:@"postId"];
     self.incomingPostId = objectID;
-
+    NSLog(@"this is hte post id %@",objectID);
     if (!user) {
         NSString *sender = [payload objectForKey:@"sender"];
         [self displayBanner:[NSString stringWithFormat:@"New Post By %@",sender]];
@@ -192,7 +198,6 @@
 
 -(void)setUp{
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *viewController;
     if (![PFUser currentUser]) {
@@ -237,6 +242,7 @@
         NSString* key = [keyValue objectAtIndex:0];
         if ([key isEqualToString:@"code"]) {
             verifier = [keyValue objectAtIndex:1];
+            NSLog(@"%@",verifier);
             [self.uberkit setUpAccessTokenWithCode:verifier];
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             [defaults setObject:self.uberkit.authDictionary forKey:@"uberInformation"];
@@ -267,6 +273,7 @@
         currentInstallation.badge = 0;
         [currentInstallation saveEventually];
     }
+   [[NSNotificationCenter defaultCenter] postNotificationName:@"reopenApp" object:nil];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

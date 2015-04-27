@@ -22,6 +22,8 @@
     [self reassignResponders];
     self.usernameField.delegate = self;
     self.passwordField.delegate = self;
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(keyboardOnScreen:) name:UIKeyboardDidShowNotification object:nil];
 
 }
 
@@ -33,13 +35,24 @@
     [self.passwordField resignFirstResponder];
 }
 
+-(void)keyboardOnScreen:(NSNotification *)notification
+{
+    NSDictionary *info  = notification.userInfo;
+    NSValue      *value = info[UIKeyboardFrameEndUserInfoKey];
+    
+    CGRect rawFrame      = [value CGRectValue];
+    CGRect keyboardFrame = [self.view convertRect:rawFrame fromView:nil];
+    
+    NSLog(@"keyboardFrame: %@", NSStringFromCGRect(keyboardFrame));
+}
+
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
     CGFloat y = textField.frame.origin.y;
     if (y >= 350) //not 380
     {
         CGRect frame = self.view.frame;
-        frame.origin.y = 310 - textField.frame.origin.y;
+        frame.origin.y = 190 - textField.frame.origin.y;
         [UIView animateWithDuration:0.3 animations:^{self.view.frame = frame;}];
     }
 }
@@ -96,10 +109,13 @@
                 PFRelation *relation = [[PFUser currentUser]relationForKey:@"friends"];
                 [relation addObject:[PFUser currentUser]];
                 [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error){
-                    UIAlertView *uberConnect = [[UIAlertView alloc]initWithTitle:@"Connect account with Uber?" message:@"Connect Your Account To Drive To Events On The Map!" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
-                    uberConnect.tag = 1;
-                    [hud hide:YES];
-                    [uberConnect show];
+                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
+                    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
+                    [self presentViewController:nav animated:YES completion:^{
+                        NSLog(@"success");
+                        [hud hide:YES];
+                    }];
 
                 }];
             }else{
@@ -121,23 +137,6 @@
     }
 }
 
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (alertView.tag==1) {
-        if (buttonIndex ==0) {
-            NSString *url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@",uberClientId];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
-            
-            NSLog(@"user registers for uber");
-        }
-        
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"mapView"];
-        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:viewController];
-        [self presentViewController:nav animated:YES completion:^{
-            NSLog(@"success");
-        }];
-    }
-}
 
 - (IBAction)openPictureCollection:(id)sender {
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];

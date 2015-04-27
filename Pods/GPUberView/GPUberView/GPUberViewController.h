@@ -10,7 +10,10 @@
 #import <CoreLocation/CoreLocation.h>
 #import <UberKit.h>
 
-@interface GPUberViewController : UIViewController {
+
+static bool requestGet= NO;
+
+@interface GPUberViewController : UIViewController<UIGestureRecognizerDelegate,UIAlertViewDelegate> {
     NSString *_clientId;
 }
 
@@ -29,6 +32,9 @@
 @property (nonatomic) NSString *mobileCountryCode;
 @property (nonatomic) NSString *mobilePhone;
 @property (nonatomic) NSString *zipcode;
+@property (nonatomic) NSString *request_id;
+
+
 
 - (id)initWithServerToken:(NSString *)serverToken;
 

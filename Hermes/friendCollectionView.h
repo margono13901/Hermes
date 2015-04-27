@@ -18,8 +18,9 @@
 @property(strong,nonatomic)NSMutableArray *users;
 @property(strong,nonatomic)UIButton *friendButton;
 @property(strong,nonatomic)AppDelegate *delegate;
-@property(strong,nonatomic)PFUser *user;
+@property(strong,nonatomic)NSMutableArray *userArray;
 @property(strong,nonatomic)UIImageView *blurMask;
+@property(strong,nonatomic)NSArray *allUsers;
 -(void)reloadData;
 -(void)moveToView:(id)sender;
 -(void)getFriends;

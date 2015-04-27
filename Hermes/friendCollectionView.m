@@ -33,7 +33,7 @@
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
-    CGRect aRect = CGRectMake(0, 100, screenHeight-10, screenWidth);
+    CGRect aRect = CGRectMake(0, 100, screenWidth, screenHeight-100);
     //setup collectionview
     UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
     //add blurredView
@@ -90,16 +90,18 @@
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
     [query orderByAscending:@"createdAt"];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+        self.allUsers = objects;
+        PFUser *allUsers = [[PFUser alloc]init];
         self.users = [[NSMutableArray alloc]init];
         NSMutableArray *userArray=[[NSMutableArray alloc]init];
+        [userArray addObject:allUsers];
         for (PFUser *user in objects) {
             if (userArray.count==3) {
                 [self.users addObject:userArray];
                 userArray=[[NSMutableArray alloc]init];
             }
             [userArray addObject:user];
-            
         }
         [self.users addObject:userArray];
         [self.collectionView reloadData];
@@ -124,22 +126,28 @@
     [self.collectionView registerClass:[CollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
     
     CollectionViewCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
-    [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        if (!error) {
-            UIImage *image = [UIImage imageWithData:data];
-            // image can now be set on a UIImageView
-            cell.imageView.image = image;
-            NSMutableArray *array = [self.delegate.unseenPostCenter objectForKey:user.objectId];
-            if (array.count>0) {
-                cell.newPostField.hidden= NO;
-                NSMutableArray *temp = [self.delegate.unseenPostCenter objectForKey:user.objectId];
-                cell.newPostField.text = [NSString stringWithFormat:@"%lu",(unsigned long)temp.count];
+    if (indexPath.section==0&&indexPath.row==0) {
+        UIImage *image = [UIImage imageNamed:@"heart"];
+        cell.imageView.image=image;
+        
+    }else{
+        PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
+        [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+            if (!error) {
+                UIImage *image = [UIImage imageWithData:data];
+                // image can now be set on a UIImageView
+                cell.imageView.image = image;
+                NSMutableArray *array = [self.delegate.unseenPostCenter objectForKey:user.objectId];
+                if (array.count>0) {
+                    cell.newPostField.hidden= NO;
+                    NSMutableArray *temp = [self.delegate.unseenPostCenter objectForKey:user.objectId];
+                    cell.newPostField.text = [NSString stringWithFormat:@"%lu",(unsigned long)temp.count];
+                }
+                
             }
-            
-        }
-    }];
-    
+        }];
+      
+    }
     return cell;
 }
 
@@ -151,8 +159,13 @@
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         self.frame = CGRectMake(0, -800, self.bounds.size.width, self.bounds.size.height);
     }completion:^(BOOL finished) {
-        PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
-        self.user = user;
+        if (indexPath.section==0&&indexPath.row==0) {
+            self.userArray = [[NSMutableArray alloc]initWithArray: self.allUsers];
+        }else{
+            self.userArray = [[NSMutableArray alloc]init];
+            PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
+            [self.userArray addObject:user];
+        }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"newUser" object:nil];
     }];
    
@@ -169,8 +182,8 @@
     return 7.0;
 }
 
--(PFUser *)returnSelectedUser:(PFUser *)user{
-    return self.user;
+-(NSMutableArray *)returnSelectedUser:(PFUser *)user{
+    return self.userArray;
 }
 
 -(void)reloadData{

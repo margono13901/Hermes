@@ -20,9 +20,10 @@
 #import <GPUberViewController.h>
 #import "UIView+Glow.h"
 #import "UIImage+StackBlur.h"
+#import "userInteractionViewUtils.h"
 
 @class friendCollectionView;
-@interface userInteractionView : UIViewController<RMMapViewDelegate>
+@interface userInteractionView : UIViewController<RMMapViewDelegate,UIGestureRecognizerDelegate>
 
 #pragma view interface
 @property (strong, nonatomic) IBOutlet UIButton *zoomFoward;
@@ -39,15 +40,12 @@
 @property (strong, nonatomic) IBOutlet UILabel *scrollThroughPicturesLabel;
 - (IBAction)camera:(id)sender;
 - (IBAction)findFriends:(id)sender;
-- (IBAction)zoomToAnnotation:(id)sender;
-- (IBAction)zoomToAnnotationBack:(id)sender;
 
 #pragma interface interaction data
-@property(strong,nonatomic) PFUser *currentUserOnDisplay;
+@property(strong,nonatomic) NSMutableArray *currentUserOnDisplay;
 @property(strong,nonatomic) AppDelegate *delegate;
 @property(strong,nonatomic) NSMutableArray *currentUserPosts;
 @property(strong,nonatomic) friendCollectionView *friendPane;
 @property(strong,nonatomic) annotationsLinkedList *annotationLink;
-@property(strong,nonatomic) UIImage *currentUserProfilePhoto;
 @property(strong,nonatomic) RMAnnotation *currentAnnotation;
 @end

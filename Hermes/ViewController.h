@@ -17,7 +17,6 @@
 @property (strong, nonatomic) IBOutlet UITextField *passwordField;
 - (IBAction)login:(id)sender;
 - (IBAction)signup:(id)sender;
-- (IBAction)uberLogin:(id)sender;
 
 @end
 

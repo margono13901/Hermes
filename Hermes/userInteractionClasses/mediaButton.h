@@ -13,4 +13,6 @@
 @interface mediaButton : UIView
 @property(strong,nonatomic) NSQueue *queue;
 -(id)initWithQueue:(NSQueue *)queue;
+-(id)initUberButton:(NSQueue *)queue;
+
 @end

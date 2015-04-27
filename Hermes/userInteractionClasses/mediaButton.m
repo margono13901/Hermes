@@ -32,4 +32,19 @@
     return self;
 }
 
+-(id)initUberButton:(NSQueue *)queue{
+    self = [super initWithFrame:CGRectMake(0, 0, 60, 26)];
+    
+    
+    if (self){
+        self.queue = queue;
+        UILabel *view = [[UILabel alloc]init];
+        view.frame = self.frame;
+        view.text = @"uber";
+        [self addSubview:view];
+        
+    }
+    return self;
+}
+
 @end

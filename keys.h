@@ -17,5 +17,6 @@
 #define uberSecret @"kPe3aGnyWs5uZTdlalJTgQYZdESeExLcJkLTLmtH"
 #define redirectURI @"Hermes://com.Hyphen.Hermes"
 #define uberClientId @"LZCKMtpl8YmctOR93qdjL8n_0fvJGH8z"
+#define googlePlaceAPIKey @"AIzaSyB9xb1uiKLVc3kXPzuZqTiRp8a7anz8YZc"
 
 #endif

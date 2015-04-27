@@ -18,20 +18,21 @@ typedef void(^zoomCompletion)(BOOL);
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self initialization];
     [self setUpNotificationCenter];
-    [self initialization];    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    self.mapView.zoom = 15;
-    self.mapView.showsUserLocation = YES;
-    self.mapView.userTrackingMode = RMUserTrackingModeFollow;
+//    self.mapView.zoom = 15;
+//    self.mapView.showsUserLocation = YES;
+//    self.mapView.userTrackingMode = RMUserTrackingModeFollow;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 
 #pragma refresh
 
@@ -42,37 +43,35 @@ typedef void(^zoomCompletion)(BOOL);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeCurrentUser:) name:@"newUser" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView:) name:@"refresh" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUpProfilePhoto:) name:@"changeProfilePhoto" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reopenApp:) name:@"reopenApp" object:nil];
 }
 
 -(void)changeCurrentUser:(id)sender{
-    self.currentUserOnDisplay = self.friendPane.user;
-    self.currentUserNameField.text = self.friendPane.user.username;
-    [self getCurrentUserProfilePhoto];
+    self.currentUserOnDisplay = self.friendPane.userArray;
+    self.currentUserPhoto.hidden = YES;
+    self.currentUserNameField.text = nil;
     [self getCurrentuserPosts];
     [self setUpAnnotations];
     self.locationView.text=@"";
-    self.scrollThroughPicturesLabel.text = @"Scroll Through Pictures";
+    self.scrollThroughPicturesLabel.text = @"Swipe Through Pictures";
     self.currentAnnotation = nil;
+}
+
+-(void)reopenApp:(id)sender{
+    [self downloadUnseenPosts:NO];
+    [self.friendPane getFriends];
 }
 
 -(void)refreshView:(id)sender{
     [self setUpNotificationCounter];
     [self setUpAnnotations];
     [self.friendPane getFriends];
-    [self.friendPane.collectionView reloadData];
 }
 
 
--(void)getCurrentUserProfilePhoto{
-    [self.currentUserOnDisplay[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+-(void)getCurrentUserProfilePhoto:(PFUser *)user{
+    [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         UIImage *image = [UIImage imageWithData:data];
-        CGSize sacleSize = CGSizeMake(50, 50);
-        UIGraphicsBeginImageContextWithOptions(sacleSize, NO, 0.0);
-        [image drawInRect:CGRectMake(0, 0, sacleSize.width, sacleSize.height)];
-        UIImage * resizedImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        self.currentUserProfilePhoto = resizedImage;
-        
         CGSize scaleSize = CGSizeMake(100, 100);
         UIGraphicsBeginImageContextWithOptions(scaleSize, NO, 0.0);
         [image drawInRect:CGRectMake(0, 0, scaleSize.width, scaleSize.height)];
@@ -89,16 +88,29 @@ typedef void(^zoomCompletion)(BOOL);
 
 -(void)incomingPost:(id)sender{
     NSString *incomingPostId = self.delegate.incomingPostId;
+    NSLog(@"this is the incoming post id %@",incomingPostId);
     PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
-        PFUser *author = object[@"author"];
-        if (![author.objectId isEqual:[PFUser currentUser].objectId]) {
-            [self addToUnseenPostCenter:object];
-        }
-        if ([author.objectId isEqual:self.currentUserOnDisplay.objectId]) {
-            [self.currentUserPosts insertObject:object atIndex:0];
+        if (!error) {
+            PFUser *author = object[@"author"];
+            if (![author.objectId isEqual:[PFUser currentUser].objectId]) {
+                [self addToUnseenPostCenter:object];
+                
+            }
+            for (PFUser *user in self.currentUserOnDisplay) {
+                if ([author.objectId isEqual:user.objectId]) {
+                    [self.currentUserPosts insertObject:object atIndex:0];
+                    break;
+                }
+            }
+            
             [self refreshView:self];
+            NSLog(@"recieved post");
+        }else{
+            NSLog(@"%@",error);
         }
+        
+
     }];
 }
 
@@ -111,24 +123,28 @@ typedef void(^zoomCompletion)(BOOL);
     self.mapView.delegate = self;
     [self.mapView setTileSource:tileSource];
     self.mapView.showsUserLocation = YES;
-    self.mapView.userTrackingMode = RMUserTrackingModeFollow;
+    self.mapView.userTrackingMode = RMUserTrackingModeFollowWithHeading;
     [self.mapView setHideAttribution:YES];
     self.mapView.frame = self.view.frame;
-    self.currentUserOnDisplay = [PFUser currentUser];
+    self.mapView.zoom = 15;
+    self.mapView.showsUserLocation = YES;
+    self.mapView.userTrackingMode = RMUserTrackingModeFollow;
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
         //Background Thread
         //display user
-        [self setUpProfilePhoto:self];
-        [self getCurrentUserProfilePhoto];
+        self.currentUserOnDisplay = [[NSMutableArray alloc]init];
+        [self.currentUserOnDisplay addObject:[PFUser currentUser]];
+        [self setUpProfilePhoto:[PFUser currentUser]];
         //download posts
         [self downloadUnseenPosts:YES];
         dispatch_async(dispatch_get_main_queue(), ^(void){
             //Run UI Updates
             self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
             //set up nagivation contorller
-            self.navigationController.navigationBarHidden = YES;
+            //self.navigationController.navigationBarHidden = YES;
             self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
             self.navigationController.navigationBar.barTintColor = [projectColor returnColor];
+            self.navigationController.navigationBarHidden=YES;
             //set up friend pane
             self.friendPane = [[friendCollectionView alloc]initWithFrame:self.view.bounds];
             [self.view addSubview:self.friendPane];
@@ -141,26 +157,33 @@ typedef void(^zoomCompletion)(BOOL);
             self.profileView.layer.borderColor = [[UIColor whiteColor]CGColor];
             self.profileView.layer.borderWidth = 2.0f;
             //set up container View
-            self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0f];
+
+            self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0];
             self.bottomOptionContainer.backgroundColor = [UIColor whiteColor];
             self.bottomOptionContainer.layer.borderWidth = 2;
+            UISwipeGestureRecognizer * swipeleft=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(zoomToAnnotation:)];
+            swipeleft.direction=UISwipeGestureRecognizerDirectionLeft;
+            [self.bottomOptionContainer addGestureRecognizer:swipeleft];
+            UISwipeGestureRecognizer * swiperight=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(zoomToAnnotationBack:)];
+            swiperight.direction=UISwipeGestureRecognizerDirectionRight;
+            [self.bottomOptionContainer addGestureRecognizer:swiperight];
             UIColor *color = [projectColor returnColor];
             self.bottomOptionContainer.layer.borderColor = color.CGColor;
             //scrolll through label setup
             self.scrollThroughPicturesLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
             //nameView
             self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
-            self.currentUserNameField.text = self.currentUserOnDisplay.username;
+            //self.currentUserNameField.text = self.currentUserOnDisplay.username;
             //set up location view
             self.locationView.font =[UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
             self.scrollThroughPicturesLabel.userInteractionEnabled= NO;
             //set up uber button
             UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(displayUber:)];
             [self.scrollThroughPicturesLabel addGestureRecognizer:gestureRecognizer];
+            
         });
     });
 }
-
 
 
 -(void)setUpProfilePhoto:(id)sender{
@@ -171,8 +194,13 @@ typedef void(^zoomCompletion)(BOOL);
 }
 
 -(void)downloadUnseenPosts:(BOOL)firstSetUp{
+    NSDate *yesterday = [[NSDate date] dateByAddingTimeInterval:60*60*24*-1];
+
     PFRelation *relation= [[PFUser currentUser]relationForKey:@"unseenPosts"];
-    [[relation query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+    PFQuery *query = [relation query];
+    [query includeKey:@"author"];
+    [query whereKey:@"createdAt" greaterThan:yesterday];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.delegate.unseenPostCenter = [NSMutableDictionary dictionary];
         for (PFObject *posts in objects) {
             [self addToUnseenPostCenter:posts];
@@ -180,6 +208,8 @@ typedef void(^zoomCompletion)(BOOL);
         if (firstSetUp) {
             [self setUpNotificationCounter];
             [self getCurrentuserPosts];
+        }else{
+            [self refreshView:(self)];
         }
     }];
 }
@@ -199,6 +229,7 @@ typedef void(^zoomCompletion)(BOOL);
         self.notifications.hidden = YES;
         [self.notifications stopGlowing];
     }
+    NSLog(@"%i",counter);
 }
 
 -(void)addToUnseenPostCenter:(PFObject *)post{
@@ -214,9 +245,10 @@ typedef void(^zoomCompletion)(BOOL);
 }
 
 -(void)getCurrentuserPosts{
-    PFRelation *relation = [self.currentUserOnDisplay relationForKey:@"mediaPosts"];
-    PFQuery *query = [relation query];
+    PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
+    [query whereKey:@"author" containedIn:self.currentUserOnDisplay];
     [query orderByDescending:@"createdAt"];
+    [query includeKey:@"author"];
     NSDate *oneDayAgo = [[NSDate date]dateByAddingTimeInterval:-60*60*24];
     [query whereKey:@"createdAt" greaterThan:oneDayAgo];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -242,7 +274,7 @@ typedef void(^zoomCompletion)(BOOL);
             int iterations = i+1;
             while (iterations < temp.count) {
                 PFObject *comparedPost = [temp objectAtIndex:iterations];
-                if ([self distanceIsClose:post to:comparedPost]) {
+                if ([userInteractionViewUtils distanceIsClose:post to:comparedPost]) {
                     [postQueue enqueue:comparedPost];
                     [temp removeObject:comparedPost];
                     if ([self postIsUnseen:comparedPost]) newPosts++;
@@ -256,6 +288,8 @@ typedef void(^zoomCompletion)(BOOL);
             
             RMAnnotation *annotation = [RMAnnotation annotationWithMapView:self.mapView coordinate:[location coordinate] andTitle:displayText];
             annotation.userInfo = postQueue;
+            annotation.subtitle = [userInteractionViewUtils returnDateOfLatestAnnotation:annotation];
+
             [self addAnnotationToLink:annotation];
 
             dispatch_async(dispatch_get_main_queue(), ^(void)
@@ -274,41 +308,49 @@ typedef void(^zoomCompletion)(BOOL);
 }
 
 -(BOOL)postIsUnseen:(PFObject *)post{
-    NSMutableArray *unSeenPosts = [self.delegate.unseenPostCenter objectForKey:self.currentUserOnDisplay.objectId];
-    for (PFObject *objects in unSeenPosts) {
-        if ([objects.objectId isEqual:post.objectId]) {
-            return YES;
+    for (PFUser *user in self.currentUserOnDisplay) {
+        NSLog(@"%@",user);
+        NSMutableArray *unSeenPosts = [self.delegate.unseenPostCenter objectForKey:user.objectId];
+        for (PFObject *objects in unSeenPosts) {
+            if ([objects.objectId isEqual:post.objectId]) {
+                return YES;
+            }
         }
+
     }
     return NO;
 }
 
--(BOOL)distanceIsClose:(PFObject *)post1 to:(PFObject *)post2{
-    PFGeoPoint *g1 = post1[@"location"];
-    PFGeoPoint *g2 = post2[@"location"];
-    CLLocation *l1 = [[CLLocation alloc]initWithLatitude:[g1 latitude] longitude:[g1 longitude]];
-    CLLocation *l2 = [[CLLocation alloc]initWithLatitude:[g2 latitude] longitude:[g2 longitude]];
-    if ([l1 distanceFromLocation:l2]<50) {
-        return true;
-    }
-    return false;
-}
 
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
     if ([annotation isUserLocationAnnotation]) return nil;
-    
-    RMMapLayer *mapLayer = [[RMMarker alloc]initWithUIImage:[UIImage imageNamed:@"singlePic"]];
-    mapLayer.bounds = CGRectMake(0, 0, 60, 60);
+    RMMapLayer *mapLayer;
+    NSArray *stringArray = [annotation.title componentsSeparatedByString:@" "];
+    NSInteger unSeenPosts = [stringArray[0] integerValue];
+    if (unSeenPosts>0) {
+        mapLayer = [[RMMarker alloc]initWithUIImage:[UIImage imageNamed:@"location"]];
+    }else{
+        mapLayer = [[RMMarker alloc]initWithUIImage:[UIImage imageNamed:@"locationseen"]];
+
+    }
+    mapLayer.bounds = CGRectMake(0, 0, 50, 50);
     mapLayer.canShowCallout = YES;
+    
     mediaButton *button = [[mediaButton alloc]initWithQueue:annotation.userInfo];
     UITapGestureRecognizer *singleFingerTap =
     [[UITapGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(displayMediaStack:)];
     [button addGestureRecognizer:singleFingerTap];
     mapLayer.rightCalloutAccessoryView = button;
-    mapLayer.leftCalloutAccessoryView = [[UIImageView alloc]
-                                       initWithImage:
-                                       self.currentUserProfilePhoto];
+
+    
+    mediaButton *uberButton =[[mediaButton alloc]initUberButton:annotation.userInfo];
+    UITapGestureRecognizer *st =
+    [[UITapGestureRecognizer alloc] initWithTarget:self
+                                        action:@selector(displayUber:)];
+    [uberButton addGestureRecognizer:st];
+    mapLayer.leftCalloutAccessoryView = uberButton;
+
     return mapLayer;
 }
 
@@ -330,12 +372,13 @@ typedef void(^zoomCompletion)(BOOL);
     [self performSegueWithIdentifier:@"camera" sender:self];
 }
 
+
 - (IBAction)findFriends:(id)sender{
     
     dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
     dispatch_async(myQueue, ^{
         // Perform long running process
-        UIImage *blurImage = [[self getImageView] stackBlur:50];
+        UIImage *blurImage = [[userInteractionViewUtils getImageView:self.view] stackBlur:50];
         dispatch_async(dispatch_get_main_queue(), ^{
             // Update the UI
             [self.friendPane moveToView:blurImage];
@@ -343,25 +386,35 @@ typedef void(^zoomCompletion)(BOOL);
     });
 }
 
-- (IBAction)zoomToAnnotation:(id)sender{
+- (void)zoomToAnnotation:(id)sender{
     if (self.annotationLink.storage.count>0) {
         RMAnnotation *annotation = [self.annotationLink scrollThroughAnnotatotation];
         [self selectAnnotation:annotation];
     }
 }
 
-- (IBAction)zoomToAnnotationBack:(id)sender {
+- (void)zoomToAnnotationBack:(id)sender {
     if (self.annotationLink.storage.count>0) {
         RMAnnotation *annotation = [self.annotationLink scrollBackThroughAnnotatotation];
         [self selectAnnotation:annotation];
     }
 }
 
+-(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    [self selectAnnotation:annotation];
+}
+
 -(void)selectAnnotation:(RMAnnotation *)annotation{
+    self.currentUserPhoto.hidden = NO;
+    NSQueue *queue = annotation.userInfo;
+    PFObject *object = queue.peek;
+    [self getCurrentUserProfilePhoto:object[@"author"]];
+    self.currentUserNameField.text = ((PFUser *)object[@"author"]).username;
+
     [self didZoomWithAnnotation:annotation withComp:^(BOOL finished) {
         if (finished) {
             self.currentAnnotation = annotation;
-            [self.mapView selectAnnotation:annotation animated:YES];
+            [self.mapView selectAnnotation:annotation animated:NO];
             
             CLLocationCoordinate2D coordinate = [annotation coordinate];
             double lat = coordinate.latitude;
@@ -384,12 +437,16 @@ typedef void(^zoomCompletion)(BOOL);
     }
 }
 
-- (IBAction)displayUber:(id)sender {
+- (void)displayUber:(UITapGestureRecognizer*)sender{
     GPUberViewController *uber = [[GPUberViewController alloc] initWithServerToken:uberClientServerToken];
     // optional
-    if (self.currentAnnotation&&self.annotationLink.storage.count>0&&self.locationView.text.length>0) {
+    mediaButton *button = (mediaButton *)sender.view;
+    PFObject *post = [button.queue peek];
+    PFGeoPoint *g1 = post[@"location"];
+    CLLocation *l1 = [[CLLocation alloc]initWithLatitude:[g1 latitude] longitude:[g1 longitude]];
+    if (self.annotationLink.storage.count>0) {
         uber.startLocation = self.mapView.userLocation.location.coordinate;
-        uber.endLocation = [self.currentAnnotation coordinate];
+        uber.endLocation = [l1 coordinate];
         [uber showInViewController:self];
     }
 }
@@ -397,12 +454,13 @@ typedef void(^zoomCompletion)(BOOL);
 -(void)didZoomWithAnnotation:(RMAnnotation *)annotation withComp:(zoomCompletion)compblock{
     //do stuff
     CLLocationCoordinate2D coordinate = [annotation coordinate];
-    [self getGeoCodingInformationWithLat:coordinate.latitude withLon:coordinate.longitude];
+    [userInteractionViewUtils getGeoCodingInformationWithLat:coordinate.latitude withLon:coordinate.longitude withTextView:self.locationView];
     //Find the southwest and northeast point
     double northEastLatitude = coordinate.latitude;
     double northEastLongitude = coordinate.longitude;
     double southWestLatitude = coordinate.latitude;
     double southWestLongitude = coordinate.longitude;
+    
     
     
     
@@ -412,43 +470,4 @@ typedef void(^zoomCompletion)(BOOL);
     compblock(YES);
 }
 
--(void)getGeoCodingInformationWithLat:(double)lat withLon:(double)lon{
-    NSString *index= @"mapbox.places";
-    NSString *url = [NSString stringWithFormat:@"http://api.tiles.mapbox.com/v4/geocode/%@/%f,%f.json?access_token=%@",index,lon,lat,mapAccessToken];
-    AFSecurityPolicy *policy = [[AFSecurityPolicy alloc] init];
-    [policy setAllowInvalidCertificates:YES];
-    
-    AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
-    [operationManager setSecurityPolicy:policy];
-    operationManager.requestSerializer = [AFJSONRequestSerializer serializer];
-    operationManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    operationManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/vnd.geo+json"];
-    
-    [operationManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSDictionary *json  = responseObject;
-        NSArray *jsonData = [json objectForKey:@"features"];
-        NSDictionary *allData = jsonData[0];
-        NSString *location = [allData objectForKey:@"place_name"];
-        NSArray* stringArray = [location  componentsSeparatedByString:@","];
-        NSMutableString *text = [[NSMutableString alloc]init];
-        for (int i = 0 ; i < stringArray.count-1; i++) {
-            [text appendString:stringArray[i]];
-            [text appendString:@" "];
-        }
-        self.locationView.text = [NSString stringWithFormat:@"%@",text];
-
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-    }];
-}
-
-- (UIImage *)getImageView{
-    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, self.view.opaque, 0.0);
-    [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    UIImage * myImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    return myImage;
-}
 @end

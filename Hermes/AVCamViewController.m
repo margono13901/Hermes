@@ -227,6 +227,7 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 	});
 }
 
+
 - (BOOL)prefersStatusBarHidden
 {
 	return YES;
@@ -431,11 +432,25 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
         self.textLabel.textColor = [UIColor whiteColor];
         self.textLabel.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6];
         self.textLabel.textAlignment = NSTextAlignmentCenter;
+        self.textLabel.delegate= self;
+        self.textLabel.textContainer.maximumNumberOfLines = 1;
+        self.textLabel.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
         [self.mediaPreviewLayer addSubview:self.textLabel];
     }
     else if([self.textLabel resignFirstResponder]&&self.textLabel.text.length==0){
         [self.textLabel removeFromSuperview];
     }
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    
+    if([text isEqualToString:@"\n"])
+    {
+        [textView resignFirstResponder];
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (IBAction)handlePan:(UIPanGestureRecognizer *)recognizer {
@@ -650,18 +665,49 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
             [PFCloud callFunctionInBackground:@"pushMediaPostToUsers"
                                withParameters:@{@"postid":upload.objectId}
                                         block:^(NSString *result, NSError *error) {
-                                            if (!error) {
+                                            if (error) {
                                                 // result is @"Hello world!"
                                                 NSLog(@"%@",error);
                                             }else{
+                                                [self pushToUsers:upload];
                                                 NSLog(@"successful post upload");
                                             }
                                         }];
+            
         }else{
             NSLog(@"%@",error);
         }
     }];
     [self back:self];
+}
+
+-(void)pushToUsers:(PFObject *)post{
+    PFRelation *relation = [[PFUser currentUser]relationForKey:@"friends"];
+    [[relation query]findObjectsInBackgroundWithBlock:^(NSArray *friends,NSError *error){
+        for (PFUser *friend in friends) {
+            NSDictionary *data = @{
+                                   @"alert" : [NSString stringWithFormat:@"Got New Post by %@",[PFUser currentUser].username],
+                                   @"badge" : @"Increment",
+                                   @"custom" : @{@"type":@"post",
+                                                 @"sender":[PFUser currentUser].username,
+                                                 @"senderId":[PFUser currentUser].objectId,
+                                                 @"postId":post.objectId
+                                                 }
+                                   };
+            PFQuery *pushQuery = [PFInstallation query];
+            
+            // if you would like to send a notification to one user
+            [pushQuery whereKey: @"owner" equalTo: friend];
+            
+            PFPush *push = [PFPush new];
+            
+            [push setQuery: pushQuery];
+            [push setData:data];
+            [push setQuery:pushQuery];
+            [push sendPushInBackground];
+        }
+    }];
+
 }
 - (IBAction)back:(id)sender {
     [self.navigationController popToRootViewControllerAnimated:YES];

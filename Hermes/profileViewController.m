@@ -34,6 +34,7 @@
     
     //clip
     self.imageView.clipsToBounds = YES;
+
     
     self.usernameField.text = [PFUser currentUser][@"username"];
     self.usernameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
@@ -49,7 +50,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
-    NSLog(@"%@",[PFUser currentUser]);
+    [[PFUser currentUser]fetch];
     self.points.text =[NSString stringWithFormat:@"%@/10 LP",[PFUser currentUser][@"points"]];
     self.points.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
     

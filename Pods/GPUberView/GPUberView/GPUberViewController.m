@@ -43,6 +43,15 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *tableHeight;
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
 @property (nonatomic, weak) IBOutlet UIView *loadingView;
+@property (strong, nonatomic) IBOutlet UITextField *statusLabel;
+@property (strong, nonatomic) IBOutlet UITextField *nameLabel;
+@property (strong, nonatomic) IBOutlet UITextField *phoneNumber;
+@property (strong, nonatomic) IBOutlet UIImageView *driverImage;
+@property (strong, nonatomic) IBOutlet UIImageView *carImage;
+@property (strong, nonatomic) IBOutlet UIView *driverInformation;
+@property (strong, nonatomic) NSTimer *timer;
+
+
 
 @property (nonatomic) PulsingHaloLayer *pulsingHalo;
 @property (nonatomic) MKRoute *route;
@@ -117,6 +126,35 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
                                                                                   target:self
                                                                                   action:@selector(cancelView)];
+    NSString *url;
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    NSDictionary *uberinformation = [defaults objectForKey:@"uberInformation"];
+//    if (!uberinformation) {
+//        url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@&scope=request",uberClientId];
+//    }else{
+//        NSString *refreshToken = [uberinformation objectForKey:@"refresh_token"];
+//        url = [NSString stringWithFormat:@"https://login.uber.com/oauth/token"];
+//        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+////            NSDictionary *params = @{@"client_secret": uberSecret,
+////                                 @"client_id": uberClientId,
+////                                 @"grant_type": @"refresh_token",
+////                                 @"redirect_uri" : redirectURI,
+////                                 @"refresh_token": refreshToken
+////                                 };
+//        [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//            NSLog(@"JSON: %@", responseObject);
+//            
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            NSLog(@"Error: %@", error);
+//        }];
+//        NSLog(@"%@",url);
+//
+//    }
+    url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@&scope=request",uberClientId];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+
+
+
     cancelButton.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = cancelButton;
    
@@ -322,8 +360,36 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 
 - (IBAction)cancelView {
     [[INTULocationManager sharedInstance] cancelLocationRequest:self.locationRequestId];
+    if (requestGet) {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Cancel Uber?" message:@"Closing This Window Will Cancel Uber" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
+        [alert show];
+        [self.timer invalidate];
+    }else{
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
     
-    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex==0) {
+        NSDictionary * myDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"uberInformation"];
+        
+        NSString *accessToken = [myDictionary objectForKey:@"access_token"];
+        
+        NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/requests/%@",self.request_id];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        AFHTTPRequestSerializer *requestSerializer = [AFJSONRequestSerializer serializer];
+        [requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@",accessToken] forHTTPHeaderField:@"Authorization"];
+        manager.requestSerializer = requestSerializer;
+        [manager DELETE:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+            NSLog(@"success");
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
+
+    }
 }
 
 
@@ -683,35 +749,97 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 #pragma CHANGE THIS TO DO ENDPOINT REQUEST
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GPUberViewElement *element = [self.elements objectAtIndex:indexPath.row];
-    
+    [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+
     //[self launchUberWithProductId:element.productId clientId:self.clientId];
-    
     NSDictionary * myDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"uberInformation"];
     NSString *accessToken = [myDictionary objectForKey:@"access_token"];
-    UberKit* uberkit = [[UberKit alloc]initWithClientID:uberClientId ClientSecret:uberSecret RedirectURL:redirectURI ApplicationName:@"Hermes"];
-    
-    [uberkit setAccessToken:accessToken];
-    
-    NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/requests?access_token=%@", uberkit.getStoredAuthToken];
-    NSLog(@"%@",url);
+
+    NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/requests"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestSerializer *requestSerializer = [AFJSONRequestSerializer serializer];
+    [requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@",accessToken] forHTTPHeaderField:@"Authorization"];
+    manager.requestSerializer = requestSerializer;
     NSDictionary *params = @{@"product_id": element.productId,
                              @"start_latitude": [self returnStringValue:self.startLocation.latitude],
                              @"start_longitude": [self returnStringValue:self.startLocation.longitude],
                              @"end_latitude" : [self returnStringValue:self.endLocation.latitude],
                              @"end_longitude": [self returnStringValue:self.endLocation.longitude]
                              };
+    
     [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
+        NSDictionary *json = responseObject;
+        self.request_id = [json objectForKey:@"request_id"];
+        NSLog(@"this is the resposne object %@",responseObject);
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:3
+                                         target:self
+                                       selector:@selector(requestDriver:)
+                                       userInfo:@{@"requestId":self.request_id,
+                                                  @"token":accessToken,
+                                                  }
+                                        repeats:YES];
+        requestGet = YES;
+        self.tableView.hidden = YES;
+        self.driverInformation.hidden = NO;
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+        id json = error.userInfo;
+        NSLog(@"failure %@", operation.responseObject);
     }];
-
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 -(NSString *)returnStringValue:(float)location{
     return [NSString stringWithFormat:@"%f",location];
 }
+
+-(void)requestDriver:(NSTimer *)timer{
+    NSDictionary *timerDictionary = timer.userInfo;
+    NSString *request = [timerDictionary objectForKey:@"requestId"];
+    NSString *token = [timerDictionary objectForKey:@"token"];
+    NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/requests/%@",request];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestSerializer *requestSerializer = [AFJSONRequestSerializer serializer];
+    [requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@",token] forHTTPHeaderField:@"Authorization"];
+    manager.requestSerializer = requestSerializer;
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *json = responseObject;
+        NSLog(@"%@",json);
+        NSDictionary *driverLocation = [json objectForKey:@"location"];
+        
+        //MKPlacemark *placemark = [[MKPlacemark alloc]initWithCoordinate:nil addressDictionary:nil];
+        [self displayDriverInformation:json];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
+-(void)displayDriverInformation:(NSDictionary *)json{
+    NSString *status = [json objectForKey:@"status"];
+    self.statusLabel.text = status;
+    if (![status isEqual:@"processing"]) {
+        NSDictionary *driverInformation  = [json objectForKey:@"driver"];
+        if (driverInformation) {
+            self.nameLabel.hidden = NO;
+            self.phoneNumber.hidden = NO;
+            self.driverImage.hidden = NO;
+            self.carImage.hidden = NO;
+            
+            self.nameLabel.text = [driverInformation objectForKey:@"name"];
+            self.phoneNumber.text = [driverInformation objectForKey:@"phone_number"];
+            self.driverImage.image = [self getImageFromPath:[driverInformation objectForKey:@"picture_url"] ];
+            
+            NSDictionary *drivercar = [json objectForKey:@"vehicle"];
+            self.carImage.image = [self getImageFromPath:[drivercar objectForKey:@"picture_url"]];
+        }
+    }
+}
+
+-(UIImage *)getImageFromPath:(NSString *)path{
+    NSURL *url = [NSURL URLWithString:path];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    UIImage *img = [[UIImage alloc] initWithData:data];
+    return img;
+}
+
+
 
 @end

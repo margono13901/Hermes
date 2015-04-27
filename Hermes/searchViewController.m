@@ -76,6 +76,8 @@
     [self.searchController.searchBar performSelector: @selector(resignFirstResponder)
                     withObject: nil
                     afterDelay: 0.1];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
 }
 
 - (void)didReceiveMemoryWarning {
