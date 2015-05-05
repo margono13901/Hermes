@@ -13,7 +13,7 @@
 
 static bool requestGet= NO;
 
-@interface GPUberViewController : UIViewController<UIGestureRecognizerDelegate,UIAlertViewDelegate> {
+@interface GPUberViewController : UIViewController<UIGestureRecognizerDelegate,UIAlertViewDelegate,UIWebViewDelegate> {
     NSString *_clientId;
 }
 

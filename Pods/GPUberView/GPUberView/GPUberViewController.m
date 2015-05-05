@@ -50,8 +50,8 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 @property (strong, nonatomic) IBOutlet UIImageView *carImage;
 @property (strong, nonatomic) IBOutlet UIView *driverInformation;
 @property (strong, nonatomic) NSTimer *timer;
-
-
+@property (strong, nonatomic) UIWebView *webview;
+@property (strong,nonatomic) MKPlacemark *carAnnotation;
 
 @property (nonatomic) PulsingHaloLayer *pulsingHalo;
 @property (nonatomic) MKRoute *route;
@@ -127,33 +127,31 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
                                                                                   target:self
                                                                                   action:@selector(cancelView)];
     NSString *url;
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    NSDictionary *uberinformation = [defaults objectForKey:@"uberInformation"];
-//    if (!uberinformation) {
-//        url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@&scope=request",uberClientId];
-//    }else{
-//        NSString *refreshToken = [uberinformation objectForKey:@"refresh_token"];
-//        url = [NSString stringWithFormat:@"https://login.uber.com/oauth/token"];
-//        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-////            NSDictionary *params = @{@"client_secret": uberSecret,
-////                                 @"client_id": uberClientId,
-////                                 @"grant_type": @"refresh_token",
-////                                 @"redirect_uri" : redirectURI,
-////                                 @"refresh_token": refreshToken
-////                                 };
-//        [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//            NSLog(@"JSON: %@", responseObject);
-//            
-//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//            NSLog(@"Error: %@", error);
-//        }];
-//        NSLog(@"%@",url);
-//
-//    }
-    url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@&scope=request",uberClientId];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+    NSDictionary * uberinformation = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"uberInformation"];
+    if (!uberinformation) {
+        url = [NSString stringWithFormat:@"https://login.uber.com/oauth/authorize?response_type=code&client_id=%@&scope=request",uberClientId];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
 
+    }else{
+        NSString *refreshToken = [uberinformation objectForKey:@"refresh_token"];
+        url = [NSString stringWithFormat:@"https://login.uber.com/oauth/token"];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+         manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        NSDictionary *params = @{@"client_secret": uberSecret,
+                                 @"client_id": uberClientId,
+                                 @"grant_type": @"refresh_token",
+                                 @"redirect_uri" : redirectURI,
+                                 @"refresh_token": refreshToken
+                                 };
+        [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSLog(@"JSON: %@", responseObject);
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
 
+    }
+    
 
     cancelButton.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = cancelButton;
@@ -688,7 +686,8 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 - (MKAnnotationView *) mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>) annotation {
     static NSString *startPin = @"startPin";
     static NSString *endPin = @"endPin";
-    
+    static NSString *driverPin = @"driverPin";
+
     MKPinAnnotationView *annotationView = nil;
     if ([GPUberUtils isCoordinate:annotation.coordinate equalToCoordinate:self.startLocation]) {
         annotationView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:startPin];
@@ -696,11 +695,19 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
             annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:startPin];
             annotationView.pinColor = MKPinAnnotationColorGreen;
         }
-    } else {
+    } else if([GPUberUtils isCoordinate:annotation.coordinate equalToCoordinate:self.endLocation]) {
         annotationView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:endPin];
         if (!annotationView) {
             annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:endPin];
             annotationView.pinColor = MKPinAnnotationColorRed;
+        }
+    }
+    else{
+        annotationView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:driverPin];
+        if (!annotationView) {
+            annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:driverPin];
+            annotationView.pinColor = MKPinAnnotationColorPurple;
+
         }
     }
     
@@ -754,7 +761,6 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
     //[self launchUberWithProductId:element.productId clientId:self.clientId];
     NSDictionary * myDictionary = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"uberInformation"];
     NSString *accessToken = [myDictionary objectForKey:@"access_token"];
-
     NSString *url = [NSString stringWithFormat:@"https://api.uber.com/v1/requests"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     AFHTTPRequestSerializer *requestSerializer = [AFJSONRequestSerializer serializer];
@@ -780,7 +786,12 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
                                         repeats:YES];
         requestGet = YES;
         self.tableView.hidden = YES;
+        self.driverInformation.frame = self.tableView.frame;
         self.driverInformation.hidden = NO;
+        CLLocation *carLocation = [[CLLocation alloc]initWithLatitude:0 longitude:0];
+        self.carAnnotation = [[MKPlacemark alloc] initWithCoordinate:[carLocation coordinate] addressDictionary:nil];
+        
+        [self.mapView addAnnotation:self.carAnnotation];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         id json = error.userInfo;
         NSLog(@"failure %@", operation.responseObject);
@@ -792,6 +803,7 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 }
 
 -(void)requestDriver:(NSTimer *)timer{
+    
     NSDictionary *timerDictionary = timer.userInfo;
     NSString *request = [timerDictionary objectForKey:@"requestId"];
     NSString *token = [timerDictionary objectForKey:@"token"];
@@ -802,10 +814,7 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
     manager.requestSerializer = requestSerializer;
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSDictionary *json = responseObject;
-        NSLog(@"%@",json);
-        NSDictionary *driverLocation = [json objectForKey:@"location"];
         
-        //MKPlacemark *placemark = [[MKPlacemark alloc]initWithCoordinate:nil addressDictionary:nil];
         [self displayDriverInformation:json];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -815,7 +824,7 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 -(void)displayDriverInformation:(NSDictionary *)json{
     NSString *status = [json objectForKey:@"status"];
     self.statusLabel.text = status;
-    if (![status isEqual:@"processing"]) {
+    if ([status isEqual:@"accepted"]) {
         NSDictionary *driverInformation  = [json objectForKey:@"driver"];
         if (driverInformation) {
             self.nameLabel.hidden = NO;
@@ -825,19 +834,42 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
             
             self.nameLabel.text = [driverInformation objectForKey:@"name"];
             self.phoneNumber.text = [driverInformation objectForKey:@"phone_number"];
-            self.driverImage.image = [self getImageFromPath:[driverInformation objectForKey:@"picture_url"] ];
+            if ([driverInformation objectForKey:@"picture_url"]) {
+                 self.driverImage.image = [self getImageFromPath:[driverInformation objectForKey:@"picture_url"] ];
+            }
             
             NSDictionary *drivercar = [json objectForKey:@"vehicle"];
-            self.carImage.image = [self getImageFromPath:[drivercar objectForKey:@"picture_url"]];
+            if ([drivercar objectForKey:@"picture_url"]) {
+                self.carImage.image = [self getImageFromPath:[drivercar objectForKey:@"picture_url"]];
+
+            }
+            NSDictionary *location =[json objectForKey:@"location"];
+            float lat = [[location objectForKey:@"latitude"]floatValue];
+            float lon = [[location objectForKey:@"longitude"]floatValue];
+            CLLocation *carLocation = [[CLLocation alloc]initWithLatitude:lat longitude:lon];
+            NSLog(@"%@",carLocation);
+            [self.mapView removeAnnotation:self.carAnnotation];
+            self.carAnnotation=  [[MKPlacemark alloc] initWithCoordinate:[carLocation coordinate] addressDictionary:@{@"pin":@"one"}];
+            
+            [self.mapView addAnnotation:self.carAnnotation];
         }
     }
 }
 
 -(UIImage *)getImageFromPath:(NSString *)path{
-    NSURL *url = [NSURL URLWithString:path];
-    NSData *data = [NSData dataWithContentsOfURL:url];
-    UIImage *img = [[UIImage alloc] initWithData:data];
-    return img;
+    if (path) {
+        
+        @try {
+            NSURL *url = [NSURL URLWithString:path];
+            NSData *data = [NSData dataWithContentsOfURL:url];
+            UIImage *img = [[UIImage alloc] initWithData:data];
+            return img;        }
+        @catch (NSException *exception) {
+            NSLog(@"%@", exception.reason);
+            return nil;
+        }
+    }
+    return nil;
 }
 
 

@@ -25,13 +25,18 @@
 			<string>com.Hyphen.Hermes</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>fb471121769707493</string>
 				<string>Hermes</string>
 			</array>
 		</dict>
 		<dict/>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.06</string>
+	<string>1.09</string>
+	<key>FacebookAppID</key>
+	<string>471121769707493</string>
+	<key>FacebookDisplayName</key>
+	<string>Hermes</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>

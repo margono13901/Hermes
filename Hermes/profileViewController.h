@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 #import "projectColor.h"
-@interface profileViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+#import "newfeedCell.h"
+@interface profileViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITableViewDelegate,UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
-- (IBAction)changeProfile:(id)sender;
 @property (strong, nonatomic) IBOutlet UITextField *points;
 @property (strong, nonatomic) IBOutlet UITextField *usertitle;
 @property (strong, nonatomic) IBOutlet UITextField *usernameField;
-
+@property (strong, nonatomic) IBOutlet UITableView *newsFeed;
+@property (strong,nonatomic) NSArray *news;
 @end

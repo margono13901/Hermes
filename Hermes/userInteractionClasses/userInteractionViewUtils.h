@@ -12,10 +12,8 @@
 @interface userInteractionViewUtils : NSObject
 
 +(UIImage *)getImageView:(UIView *)view;
-+(void)getGeoCodingInformationWithLat:(double)lat withLon:(double)lon withTextView:(UITextView *)locationView;
++(void)getGeoCodingInformationWithLat:(double)lat withLon:(double)lon withLocationView:(UITextView *)locationView;
++(void)getPlaceName:(double)lat withLon:(double)lon withUserView:(UITextView *)textView;
 +(NSString *)returnDateOfLatestAnnotation:(RMAnnotation *)layer;
 +(BOOL)distanceIsClose:(PFObject *)post1 to:(PFObject *)post2;
-
-
-
 @end

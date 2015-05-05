@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0DEE87C8A32BB369F953A442"
+               BlueprintIdentifier = "D4DF75B6A960EFDB34A899DD"
                BuildableName = "libPods-Hermes-GPUberView.a"
                BlueprintName = "Pods-Hermes-GPUberView"
                ReferencedContainer = "container:Pods.xcodeproj">

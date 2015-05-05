@@ -25,6 +25,7 @@
         self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [self initialization];
     }
+    
     return self;
 }
 
@@ -47,31 +48,45 @@
     [backButton setTintColor:[UIColor whiteColor]];
     [backButton addTarget:self action:@selector(exitView:) forControlEvents:UIControlEventTouchUpInside];
     backButton.titleLabel.font = [UIFont systemFontOfSize:23.0f];
-    
-    self.likeButton = [[UIButton alloc]initWithFrame:CGRectMake(self.frame.size.width/2-14, self.frame.size.height-80, 60, 60)];
+    self.likeButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 60, 60)];
+    self.likeButton.center = CGPointMake(self.center.x, 520);
     self.likeButton.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6f];
     self.likeButton.layer.cornerRadius = 30;
     self.likeButton.clipsToBounds = YES;
     [self.likeButton addTarget:self action:@selector(likeAction:) forControlEvents:UIControlEventTouchUpInside];
-    if (![(PFUser *)((PFObject *)self.previewQueue.peek[@"author"]).objectId isEqual:[PFUser currentUser].objectId]) {
-        [self addSubview:self.likeButton];
-        [self setUpLike:[self.previewQueue peek]];
-    }
+    [self addSubview:self.likeButton];
+    self.currentUserPhoto = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 70, 70)];
+    self.currentUserPhoto.center = CGPointMake(self.center.x, 55);
+    self.currentUserPhoto.clipsToBounds= YES;
+    self.currentUserPhoto.layer.cornerRadius = 35;
+    self.currentUserPhoto.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.currentUserPhoto.layer.borderWidth = 5;
+    [self addSubview:self.currentUserPhoto];
     [self addSubview:self.previewText];
     [self addSubview:backButton];
     [self cycleThroughPost:self];
 }
 
-//work on this
 -(void)cycleThroughPost:(id)sender{
     if ([self.previewQueue isEmpty]){
         [self exitView:self];
     }else{
-        self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewQueue.storage.count];
-
+        if (![(PFUser *)((PFObject *)self.previewQueue.peek[@"author"]).objectId isEqual:[PFUser currentUser].objectId]) {
+            self.likeButton.hidden = NO;
+            [self setUpLike:[self.previewQueue peek]];
+        }else{
+            self.likeButton.hidden = YES;
+        }
         self.currentPost = [self.previewQueue dequeue];
         [self setUpImage:self.currentPost];
+
+        [self setUpLike:self.currentPost];
+        self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewQueue.storage.count+1];
         PFUser *author = self.currentPost[@"author"];
+        [author[@"profilePhoto"]getDataInBackgroundWithBlock:^(NSData *data, NSError *error){
+            self.currentUserPhoto.image = [[UIImage alloc]initWithData:data];
+        }];
+        
         NSMutableArray *authorUnseenPosts = [self.delegate.unseenPostCenter objectForKey:author.objectId];
         for (int i = 0 ; i<authorUnseenPosts.count; i++) {
             PFObject *unseenPost = [authorUnseenPosts objectAtIndex:i];
@@ -88,26 +103,23 @@
 }
 
 -(void)likeAction:(id)sender{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (![[defaults objectForKey:@"firstTimeLike"]isEqual:@NO]) {
-        [defaults setObject:@NO forKey:@"firstTimeLike"];
-        [defaults synchronize];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Join Your Friend!" message:@"Pressing this button will tell your friends that your coming to their location and increase their leadership points!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-        [alert show];
-    }
     
-    else if (![self.likeButton.currentTitle isEqual:@"liked"]) {
+     if (![self.likeButton.currentTitle isEqual:@"liked"]) {
         PFRelation *relation = [[PFUser currentUser]relationForKey:@"likedPosts"];
         [relation addObject:self.currentPost];
         [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL success, NSError *error){
             if (success) {
+                PFRelation *usersLiked = [self.currentPost relationForKey:@"usersLiked"];
+                [usersLiked addObject:[PFUser currentUser]];
+                [self.currentPost saveInBackground];
+                
                 [self.likeButton setImage:[UIImage imageNamed:@"likeFilled"] forState:UIControlStateNormal];
                 [self.likeButton setTitle:@"liked" forState:UIControlStateNormal];
-                PFObject *goThere = [PFObject objectWithClassName:@"goThere"];
-                goThere[@"mediaPost"] = self.currentPost;
-                goThere[@"goToUser"] = self.currentPost[@"author"];
-                goThere[@"userGoing"] = [PFUser currentUser];
-                [goThere saveInBackground];
+                PFObject *like = [PFObject objectWithClassName:@"likes"];
+                like[@"mediaPost"] = self.currentPost;
+                like[@"likeToUser"] = self.currentPost[@"author"];
+                like[@"likeFromUser"] = [PFUser currentUser];
+                [like saveInBackground];
             }
         }];
     }
@@ -121,6 +133,7 @@
         self.image = image;
         [hud hide:NO];
     }];
+
 }
 
 -(void)setUpLike:(PFObject *)post{

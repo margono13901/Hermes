@@ -49,6 +49,7 @@ install_resource()
 }
           install_resource "GPUberView/GPUberView/GPUberViewCell.xib"
                     install_resource "GPUberView/GPUberView/GPUberViewController.xib"
+                    install_resource "GPUberView/GPUberView/Driver-32.png"
                     install_resource "GPUberView/GPUberView/uber_logo_15.png"
                     install_resource "GPUberView/GPUberView/uber_logo_15@2x.png"
                     install_resource "GPUberView/GPUberView/uber_logo_15@3x.png"

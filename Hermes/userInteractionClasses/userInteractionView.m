@@ -11,8 +11,6 @@
 @interface userInteractionView ()
 @end
 
-typedef void(^zoomCompletion)(BOOL);
-
 @implementation userInteractionView
 
 - (void)viewDidLoad {
@@ -22,18 +20,10 @@ typedef void(^zoomCompletion)(BOOL);
     [self setUpNotificationCenter];
 }
 
--(void)viewDidAppear:(BOOL)animated{
-//    self.mapView.zoom = 15;
-//    self.mapView.showsUserLocation = YES;
-//    self.mapView.userTrackingMode = RMUserTrackingModeFollow;
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-
 #pragma refresh
 
 
@@ -90,12 +80,14 @@ typedef void(^zoomCompletion)(BOOL);
     NSString *incomingPostId = self.delegate.incomingPostId;
     NSLog(@"this is the incoming post id %@",incomingPostId);
     PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
+    [query includeKey:@"author"];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
         if (!error) {
+            [object[@"media"] getDataInBackground];
             PFUser *author = object[@"author"];
             if (![author.objectId isEqual:[PFUser currentUser].objectId]) {
                 [self addToUnseenPostCenter:object];
-                
             }
             for (PFUser *user in self.currentUserOnDisplay) {
                 if ([author.objectId isEqual:user.objectId]) {
@@ -103,7 +95,6 @@ typedef void(^zoomCompletion)(BOOL);
                     break;
                 }
             }
-            
             [self refreshView:self];
             NSLog(@"recieved post");
         }else{
@@ -133,10 +124,15 @@ typedef void(^zoomCompletion)(BOOL);
         //Background Thread
         //display user
         self.currentUserOnDisplay = [[NSMutableArray alloc]init];
-        [self.currentUserOnDisplay addObject:[PFUser currentUser]];
+        PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
+        PFQuery *query = [relation query];
+        query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+        [query findObjectsInBackgroundWithBlock:^(NSArray *array,NSError *error){
+            self.currentUserOnDisplay =[[NSMutableArray alloc]initWithArray:array];
+            //download posts
+            [self downloadUnseenPosts:YES];
+        }];
         [self setUpProfilePhoto:[PFUser currentUser]];
-        //download posts
-        [self downloadUnseenPosts:YES];
         dispatch_async(dispatch_get_main_queue(), ^(void){
             //Run UI Updates
             self.delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -157,7 +153,6 @@ typedef void(^zoomCompletion)(BOOL);
             self.profileView.layer.borderColor = [[UIColor whiteColor]CGColor];
             self.profileView.layer.borderWidth = 2.0f;
             //set up container View
-
             self.optionContainers.backgroundColor = [[projectColor returnColor]colorWithAlphaComponent:1.0];
             self.bottomOptionContainer.backgroundColor = [UIColor whiteColor];
             self.bottomOptionContainer.layer.borderWidth = 2;
@@ -172,7 +167,8 @@ typedef void(^zoomCompletion)(BOOL);
             //scrolll through label setup
             self.scrollThroughPicturesLabel.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
             //nameView
-            self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
+            self.currentUserNameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:10];
+            self.currentUserNameField.textColor = [projectColor returnColor];
             //self.currentUserNameField.text = self.currentUserOnDisplay.username;
             //set up location view
             self.locationView.font =[UIFont fontWithName:@"SackersGothicLightAT" size:10 ];
@@ -184,6 +180,7 @@ typedef void(^zoomCompletion)(BOOL);
         });
     });
 }
+
 
 
 -(void)setUpProfilePhoto:(id)sender{
@@ -200,9 +197,13 @@ typedef void(^zoomCompletion)(BOOL);
     PFQuery *query = [relation query];
     [query includeKey:@"author"];
     [query whereKey:@"createdAt" greaterThan:yesterday];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.delegate.unseenPostCenter = [NSMutableDictionary dictionary];
         for (PFObject *posts in objects) {
+            if (!posts.isDataAvailable) {
+                [posts[@"media"] getDataInBackground];
+            }
             [self addToUnseenPostCenter:posts];
         }
         if (firstSetUp) {
@@ -249,9 +250,13 @@ typedef void(^zoomCompletion)(BOOL);
     [query whereKey:@"author" containedIn:self.currentUserOnDisplay];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"author"];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     NSDate *oneDayAgo = [[NSDate date]dateByAddingTimeInterval:-60*60*24];
     [query whereKey:@"createdAt" greaterThan:oneDayAgo];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if(objects.count==0){
+            self.scrollThroughPicturesLabel.text = @"No Photos";
+        }
         self.currentUserPosts = [[NSMutableArray alloc]initWithArray:objects];
         [self setUpAnnotations];
     }];
@@ -309,7 +314,6 @@ typedef void(^zoomCompletion)(BOOL);
 
 -(BOOL)postIsUnseen:(PFObject *)post{
     for (PFUser *user in self.currentUserOnDisplay) {
-        NSLog(@"%@",user);
         NSMutableArray *unSeenPosts = [self.delegate.unseenPostCenter objectForKey:user.objectId];
         for (PFObject *objects in unSeenPosts) {
             if ([objects.objectId isEqual:post.objectId]) {
@@ -389,41 +393,45 @@ typedef void(^zoomCompletion)(BOOL);
 - (void)zoomToAnnotation:(id)sender{
     if (self.annotationLink.storage.count>0) {
         RMAnnotation *annotation = [self.annotationLink scrollThroughAnnotatotation];
-        [self selectAnnotation:annotation];
+        [self selectAnnotation:annotation zoom:YES];
     }
 }
 
 - (void)zoomToAnnotationBack:(id)sender {
     if (self.annotationLink.storage.count>0) {
         RMAnnotation *annotation = [self.annotationLink scrollBackThroughAnnotatotation];
-        [self selectAnnotation:annotation];
+        [self selectAnnotation:annotation zoom:YES];
     }
 }
 
 -(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
-    [self selectAnnotation:annotation];
+    [self selectAnnotation:annotation zoom:NO];
 }
 
--(void)selectAnnotation:(RMAnnotation *)annotation{
+-(void)selectAnnotation:(RMAnnotation *)annotation zoom:(BOOL)zoom{
     self.currentUserPhoto.hidden = NO;
     NSQueue *queue = annotation.userInfo;
     PFObject *object = queue.peek;
-    [self getCurrentUserProfilePhoto:object[@"author"]];
+    PFUser *author = object[@"author"];
+    NSLog(@"%@",author);
+    [self getCurrentUserProfilePhoto:author];
     self.currentUserNameField.text = ((PFUser *)object[@"author"]).username;
-
-    [self didZoomWithAnnotation:annotation withComp:^(BOOL finished) {
-        if (finished) {
-            self.currentAnnotation = annotation;
-            [self.mapView selectAnnotation:annotation animated:NO];
-            
-            CLLocationCoordinate2D coordinate = [annotation coordinate];
-            double lat = coordinate.latitude;
-            double lon = coordinate.longitude;
-            CLLocation *postLocation = [[CLLocation alloc]initWithLatitude:lat longitude:lon];
-            double distance = [postLocation distanceFromLocation:self.mapView.userLocation.location];
-            self.scrollThroughPicturesLabel.text = [self distanceString:distance];
-        }
-    }];
+    if (zoom) {
+        [self didZoomWithAnnotation:annotation];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.mapView selectAnnotation:annotation animated:YES];
+        });
+    }
+    self.currentAnnotation = annotation;
+    
+    CLLocationCoordinate2D coordinate = [annotation coordinate];
+    double lat = coordinate.latitude;
+    double lon = coordinate.longitude;
+    CLLocation *postLocation = [[CLLocation alloc]initWithLatitude:lat longitude:lon];
+    double distance = [postLocation distanceFromLocation:self.mapView.userLocation.location];
+    self.scrollThroughPicturesLabel.text = [self distanceString:distance];
+    [userInteractionViewUtils getGeoCodingInformationWithLat:coordinate.latitude withLon:coordinate.longitude withLocationView:self.locationView];
+     [userInteractionViewUtils getPlaceName:coordinate.latitude withLon:coordinate.longitude withUserView:self.currentUserNameField];
 }
 
 -(NSString *)distanceString:(double)distance{
@@ -451,23 +459,21 @@ typedef void(^zoomCompletion)(BOOL);
     }
 }
 
--(void)didZoomWithAnnotation:(RMAnnotation *)annotation withComp:(zoomCompletion)compblock{
+-(void)didZoomWithAnnotation:(RMAnnotation *)annotation{
     //do stuff
-    CLLocationCoordinate2D coordinate = [annotation coordinate];
-    [userInteractionViewUtils getGeoCodingInformationWithLat:coordinate.latitude withLon:coordinate.longitude withTextView:self.locationView];
-    //Find the southwest and northeast point
-    double northEastLatitude = coordinate.latitude;
-    double northEastLongitude = coordinate.longitude;
-    double southWestLatitude = coordinate.latitude;
-    double southWestLongitude = coordinate.longitude;
-    
-    
-    
-    
-    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(southWestLatitude, southWestLongitude)
-                                                 northEast:CLLocationCoordinate2DMake(northEastLatitude, northEastLongitude)
-                                                  animated:NO];
-    compblock(YES);
+//    CLLocationCoordinate2D coordinate = [annotation coordinate];
+//    //Find the southwest and northeast point
+//    double northEastLatitude = coordinate.latitude;
+//    double northEastLongitude = coordinate.longitude;
+//    double southWestLatitude = coordinate.latitude;
+//    double southWestLongitude = coordinate.longitude;
+//    
+//    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(southWestLatitude, southWestLongitude)
+//                                                 northEast:CLLocationCoordinate2DMake(northEastLatitude, northEastLongitude)
+//                                                  animated:YES
+//     ];
+    [self.mapView setZoom:15 atCoordinate:annotation.coordinate animated:YES];
+
 }
 
 @end

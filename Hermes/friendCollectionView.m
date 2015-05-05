@@ -90,6 +90,7 @@
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
     [query orderByAscending:@"createdAt"];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
         self.allUsers = objects;
         PFUser *allUsers = [[PFUser alloc]init];
@@ -122,31 +123,34 @@
 // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
-    
     [self.collectionView registerClass:[CollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
-    
     CollectionViewCell *cell=[collectionView dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
     if (indexPath.section==0&&indexPath.row==0) {
-        UIImage *image = [UIImage imageNamed:@"heart"];
+        UIImage *image = [UIImage imageNamed:@"icon"];
         cell.imageView.image=image;
         
     }else{
         PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
-        [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-            if (!error) {
-                UIImage *image = [UIImage imageWithData:data];
-                // image can now be set on a UIImageView
-                cell.imageView.image = image;
-                NSMutableArray *array = [self.delegate.unseenPostCenter objectForKey:user.objectId];
-                if (array.count>0) {
-                    cell.newPostField.hidden= NO;
-                    NSMutableArray *temp = [self.delegate.unseenPostCenter objectForKey:user.objectId];
-                    cell.newPostField.text = [NSString stringWithFormat:@"%lu",(unsigned long)temp.count];
-                }
-                
+        PFFile *file = user[@"profilePhoto"];
+        if (file) {
+            if (file.isDataAvailable) {
+                cell.imageView.image = [UIImage imageWithData:[file getData]];
+            }else{
+                [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+                    if (!error) {
+                        UIImage *image = [UIImage imageWithData:data];
+                        // image can now be set on a UIImageView
+                        cell.imageView.image = image;
+                    }
+                }];
             }
-        }];
-      
+        }
+        NSMutableArray *array = [self.delegate.unseenPostCenter objectForKey:user.objectId];
+        if (array.count>0) {
+            cell.newPostField.hidden= NO;
+            NSMutableArray *temp = [self.delegate.unseenPostCenter objectForKey:user.objectId];
+            cell.newPostField.text = [NSString stringWithFormat:@"%lu",(unsigned long)temp.count];
+        }
     }
     return cell;
 }

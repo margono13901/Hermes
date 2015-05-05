@@ -19,6 +19,7 @@
     // Override point for customization after application launch.
     [Parse setApplicationId:parseApplicationId
                   clientKey:parseClientId];
+
     //setup Push
     UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
                                                     UIUserNotificationTypeBadge |
@@ -76,6 +77,8 @@
             }
             else if([type isEqualToString:@"goThere"]){
                 [self recieveGoThere:payload];
+            }else if([type isEqualToString:@"like"]){
+                [self recieveLike:payload];
             }
             
         }
@@ -111,6 +114,10 @@
     }];
 }
 
+-(void)recieveLike:(NSDictionary *)payload{
+    [self displayBanner:[NSString stringWithFormat:@"%@ likes one of your posts!",[payload objectForKey:@"senderUsername"]]];
+}
+
 -(void)recievePost:(NSDictionary *)payload isUser:(BOOL)user{
     
     NSString *objectID = [payload objectForKey:@"postId"];
@@ -120,6 +127,11 @@
         NSString *sender = [payload objectForKey:@"sender"];
         [self displayBanner:[NSString stringWithFormat:@"New Post By %@",sender]];
     }else{
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        if (currentInstallation.badge != 0) {
+            currentInstallation.badge -=1;
+            [currentInstallation saveEventually];
+        }
         [self displayBanner:[NSString stringWithFormat:@"Post Uploaded"]];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:@"incomingPost" object:nil];

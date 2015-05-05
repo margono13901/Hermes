@@ -2,9 +2,7 @@
 # platform :ios, '6.0'
 
 platform :ios, '8.3'
-pod 'Parse', '~> 1.7'
-
-platform :ios, '7.0'
+pod 'Parse'
 pod "AFNetworking", "~> 2.0"
 
 source 'https://github.com/CocoaPods/Specs.git'
@@ -15,6 +13,7 @@ platform :ios, '7.1'
 pod "GPUberView"
 
 pod 'UberKit'
+
 
 target 'Hermes' do
 

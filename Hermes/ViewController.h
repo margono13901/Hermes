@@ -10,13 +10,10 @@
 #import <Parse/Parse.h>
 #import "registrationView.h"
 #import <UberKit/UberKit.h>
-
 @interface ViewController : UIViewController<UberKitDelegate>
-
-@property (strong, nonatomic) IBOutlet UITextField *usernameField;
-@property (strong, nonatomic) IBOutlet UITextField *passwordField;
+@property (strong, nonatomic) IBOutlet UITextField *username;
+@property (strong, nonatomic) IBOutlet UITextField *password;
 - (IBAction)login:(id)sender;
-- (IBAction)signup:(id)sender;
 
 @end
 

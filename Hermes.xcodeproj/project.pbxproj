@@ -23,6 +23,7 @@
 		223A18C21ABCC99F00D983D4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 223A18C11ABCC99F00D983D4 /* Images.xcassets */; };
 		223A18C51ABCC99F00D983D4 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 223A18C31ABCC99F00D983D4 /* LaunchScreen.xib */; };
 		223A18D11ABCC99F00D983D4 /* HermesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 223A18D01ABCC99F00D983D4 /* HermesTests.m */; };
+		2266D9111AF6CEEE00DF259B /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2266D9101AF6CEEE00DF259B /* Social.framework */; };
 		2290B0501ABE470C008317C3 /* profileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B04F1ABE470C008317C3 /* profileViewController.m */; };
 		2290B0851ABF675A008317C3 /* UIGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B07F1ABF675A008317C3 /* UIGridView.m */; };
 		2290B0861ABF675A008317C3 /* UIGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2290B0811ABF675A008317C3 /* UIGridViewCell.m */; };
@@ -35,6 +36,7 @@
 		229F59DB1AC8D13A00D557D2 /* NSStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F59DA1AC8D13A00D557D2 /* NSStack.m */; };
 		229F5A231ACB66C200D557D2 /* userPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A221ACB66C200D557D2 /* userPostView.m */; };
 		229F5A261ACB70F400D557D2 /* userInteractionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 229F5A251ACB70F400D557D2 /* userInteractionView.m */; };
+		22AAEEE11AF2914C00D3BF93 /* newfeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22AAEEE01AF2914C00D3BF93 /* newfeedCell.m */; };
 		22BCD8031ACB982600864FA2 /* mediaButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8021ACB982600864FA2 /* mediaButton.m */; };
 		22BCD8061ACC69A200864FA2 /* annotationsLinkedList.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8051ACC69A200864FA2 /* annotationsLinkedList.m */; };
 		22BCD8091ACDFAE700864FA2 /* projectColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BCD8081ACDFAE700864FA2 /* projectColor.m */; };
@@ -91,8 +93,9 @@
 		223A18CF1ABCC99F00D983D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		223A18D01ABCC99F00D983D4 /* HermesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HermesTests.m; sourceTree = "<group>"; };
 		223A18DA1ABCC9CA00D983D4 /* keys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = keys.h; path = ../../keys.h; sourceTree = "<group>"; };
-		2290B04E1ABE470C008317C3 /* profileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profileViewController.h; sourceTree = "<group>"; };
-		2290B04F1ABE470C008317C3 /* profileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = profileViewController.m; sourceTree = "<group>"; };
+		2266D9101AF6CEEE00DF259B /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		2290B04E1ABE470C008317C3 /* profileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = profileViewController.h; path = Hermes/profileViewController.h; sourceTree = SOURCE_ROOT; };
+		2290B04F1ABE470C008317C3 /* profileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = profileViewController.m; path = Hermes/profileViewController.m; sourceTree = SOURCE_ROOT; };
 		2290B07E1ABF675A008317C3 /* UIGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGridView.h; sourceTree = "<group>"; };
 		2290B07F1ABF675A008317C3 /* UIGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIGridView.m; sourceTree = "<group>"; };
 		2290B0801ABF675A008317C3 /* UIGridViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIGridViewCell.h; sourceTree = "<group>"; };
@@ -116,6 +119,8 @@
 		229F5A221ACB66C200D557D2 /* userPostView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = userPostView.m; sourceTree = "<group>"; };
 		229F5A241ACB70F400D557D2 /* userInteractionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = userInteractionView.h; sourceTree = "<group>"; };
 		229F5A251ACB70F400D557D2 /* userInteractionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = userInteractionView.m; sourceTree = "<group>"; };
+		22AAEEDF1AF2914C00D3BF93 /* newfeedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = newfeedCell.h; sourceTree = "<group>"; };
+		22AAEEE01AF2914C00D3BF93 /* newfeedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = newfeedCell.m; sourceTree = "<group>"; };
 		22BCD8011ACB982600864FA2 /* mediaButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mediaButton.h; sourceTree = "<group>"; };
 		22BCD8021ACB982600864FA2 /* mediaButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mediaButton.m; sourceTree = "<group>"; };
 		22BCD8041ACC69A200864FA2 /* annotationsLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = annotationsLinkedList.h; sourceTree = "<group>"; };
@@ -145,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2266D9111AF6CEEE00DF259B /* Social.framework in Frameworks */,
 				22BD24561ABE069600049159 /* MapKit.framework in Frameworks */,
 				9F1E3D8252728C33959DE1C5 /* libPods.a in Frameworks */,
 			);
@@ -163,6 +169,7 @@
 		11A3EC85F846F2A7CB3617D6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2266D9101AF6CEEE00DF259B /* Social.framework */,
 				22BD24551ABE069600049159 /* MapKit.framework */,
 				93053BC435A6913E07F4CE87 /* libPods.a */,
 			);
@@ -231,8 +238,7 @@
 				2290B0A61AC45F16008317C3 /* friendCell.m */,
 				2290B0A21AC45649008317C3 /* searchViewController.h */,
 				2290B0A31AC45649008317C3 /* searchViewController.m */,
-				2290B04E1ABE470C008317C3 /* profileViewController.h */,
-				2290B04F1ABE470C008317C3 /* profileViewController.m */,
+				22AAEEDE1AF2910300D3BF93 /* profile */,
 				22BCD80F1ACF6CC400864FA2 /* projectFiles */,
 				223A18C11ABCC99F00D983D4 /* Images.xcassets */,
 				223A18C31ABCC99F00D983D4 /* LaunchScreen.xib */,
@@ -307,6 +313,17 @@
 				22C9BA311AE98A25004C83D5 /* userInteractionViewUtils.m */,
 			);
 			path = userInteractionClasses;
+			sourceTree = "<group>";
+		};
+		22AAEEDE1AF2910300D3BF93 /* profile */ = {
+			isa = PBXGroup;
+			children = (
+				2290B04E1ABE470C008317C3 /* profileViewController.h */,
+				2290B04F1ABE470C008317C3 /* profileViewController.m */,
+				22AAEEDF1AF2914C00D3BF93 /* newfeedCell.h */,
+				22AAEEE01AF2914C00D3BF93 /* newfeedCell.m */,
+			);
+			path = profile;
 			sourceTree = "<group>";
 		};
 		22BCD80D1ACE2E7700864FA2 /* registration */ = {
@@ -505,6 +522,7 @@
 				223A18BD1ABCC99F00D983D4 /* ViewController.m in Sources */,
 				2228A21A1AD73B88002CED57 /* SBJsonParser.m in Sources */,
 				2290B0AD1AC4CD38008317C3 /* NSQueue.m in Sources */,
+				22AAEEE11AF2914C00D3BF93 /* newfeedCell.m in Sources */,
 				22217E1B1ADB8539001A4348 /* UIView+Glow.m in Sources */,
 				2228A20A1AD72E43002CED57 /* UberLoginViewController.m in Sources */,
 				22F427DB1ADF2C6300E25361 /* UINavigationBar+CustomHeight.m in Sources */,
@@ -657,6 +675,7 @@
 			baseConfigurationReference = 2985C95F7673E7D011223044 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -665,6 +684,7 @@
 					/Users/raylenmargono/Documents/Xcode/FacebookSDK,
 					/Users/raylenmargono/Documents/Xcode/FacebookSDK/FBAudienceNetwork,
 					"/Users/raylenmargono/Documents/Xcode/parse-library-1.7.1",
+					/Users/raylenmargono/Documents/FacebookSDK,
 				);
 				INFOPLIST_FILE = Hermes/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -678,6 +698,7 @@
 			baseConfigurationReference = 63A567DCAE9F9D7F2F7352D0 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -686,6 +707,7 @@
 					/Users/raylenmargono/Documents/Xcode/FacebookSDK,
 					/Users/raylenmargono/Documents/Xcode/FacebookSDK/FBAudienceNetwork,
 					"/Users/raylenmargono/Documents/Xcode/parse-library-1.7.1",
+					/Users/raylenmargono/Documents/FacebookSDK,
 				);
 				INFOPLIST_FILE = Hermes/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

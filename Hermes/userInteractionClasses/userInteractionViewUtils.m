@@ -11,7 +11,7 @@
 
 @implementation userInteractionViewUtils
 
-+(void)getGeoCodingInformationWithLat:(double)lat withLon:(double)lon withTextView:(UITextView *)locationView{
++(void)getGeoCodingInformationWithLat:(double)lat withLon:(double)lon withLocationView:(UITextField *)locationView{
     NSString *index= @"mapbox.places";
     NSString *url = [NSString stringWithFormat:@"http://api.tiles.mapbox.com/v4/geocode/%@/%f,%f.json?access_token=%@",index,lon,lat,mapAccessToken];
     AFSecurityPolicy *policy = [[AFSecurityPolicy alloc] init];
@@ -36,13 +36,69 @@
                 [text appendString:@" "];
             }
             locationView.text = [NSString stringWithFormat:@"%@",text];
-
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
 }
+
++(void)getPlaceName:(double)lat withLon:(double)lon withUserView:(UITextView *)textView{
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/radarsearch/json?"];
+    NSDictionary *params = @{@"key":googlePlaceAPIKey,
+                             @"location":[NSString stringWithFormat:@"%f,%f",lat,lon],
+                             @"radius": [NSString stringWithFormat:@"%i",100],
+                             @"sensor" :@"false",
+                             @"types":@"establishment"
+                             };
+    
+    AFSecurityPolicy *policy = [[AFSecurityPolicy alloc] init];
+    [policy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
+    [operationManager setSecurityPolicy:policy];
+    operationManager.requestSerializer = [AFJSONRequestSerializer serializer];
+    operationManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operationManager GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *json  = responseObject;
+        if (((NSArray *)[json objectForKey:@"results"]).count>0) {
+            NSDictionary *result =[json objectForKey:@"results"][0];
+            NSString *place_id = [result objectForKey:@"place_id"];
+            [self getPLaceName:lat withLon:lon placeId:place_id withUserTextView:textView];
+        }
+       
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
++(void)getPLaceName:(double)lat withLon:(double)lon placeId:(NSString *)placeId withUserTextView:(UITextView *)textView{
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?placeid=%@&key=%@",placeId,googlePlaceAPIKey];
+    AFSecurityPolicy *policy = [[AFSecurityPolicy alloc] init];
+    [policy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *operationManager = [AFHTTPRequestOperationManager manager];
+    [operationManager setSecurityPolicy:policy];
+    operationManager.requestSerializer = [AFJSONRequestSerializer serializer];
+    operationManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [operationManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *json  = responseObject;
+        NSDictionary *result= [json objectForKey:@"result"];
+        NSString *name = [result objectForKey:@"name"];
+        
+        NSString *string = textView.text;
+        textView.text = [NSString stringWithFormat:@"%@ is near %@",string,name];
+      
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+}
+
 
 +(UIImage *)getImageView:(UIView *)view{
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);

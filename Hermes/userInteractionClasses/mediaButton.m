@@ -20,8 +20,6 @@
 
 -(id)initWithQueue:(NSQueue *)queue{
     self = [super initWithFrame:CGRectMake(0, 0, 26, 26)];
-    
-    
     if (self){
         self.queue = queue;
         UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"glasses"]];
@@ -33,15 +31,14 @@
 }
 
 -(id)initUberButton:(NSQueue *)queue{
-    self = [super initWithFrame:CGRectMake(0, 0, 60, 26)];
+    self = [super initWithFrame:CGRectMake(0, 0, 26, 26)];
     
     
     if (self){
         self.queue = queue;
-        UILabel *view = [[UILabel alloc]init];
-        view.frame = self.frame;
-        view.text = @"uber";
-        [self addSubview:view];
+        UIImageView *imageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"uber"]];
+        imageView.frame = self.frame;
+        [self addSubview:imageView];
         
     }
     return self;

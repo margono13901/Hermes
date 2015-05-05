@@ -19,6 +19,6 @@
 @property(strong,nonatomic)AppDelegate *delegate;
 @property(strong,nonatomic)UIButton *likeButton;
 @property(strong,nonatomic)PFObject *currentPost;
+@property (strong,nonatomic) UIImageView *currentUserPhoto;
 -(id)initWithFrame:(CGRect)frame withQueue:(NSQueue *)queue;
-
 @end

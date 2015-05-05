@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2ECFBF12C94D133D9A5A9F26"
+               BlueprintIdentifier = "D56A1DFF3E8BDB70FF31E054"
                BuildableName = "libPods-Hermes-BlocksKit.a"
                BlueprintName = "Pods-Hermes-BlocksKit"
                ReferencedContainer = "container:Pods.xcodeproj">

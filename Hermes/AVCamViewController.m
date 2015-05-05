@@ -412,9 +412,24 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 			{
 				NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
 				UIImage *image = [[UIImage alloc] initWithData:imageData];
+                
+                AVCaptureDevice *currentVideoDevice = [[self videoDeviceInput] device];
+                AVCaptureDevicePosition currentPosition = [currentVideoDevice position];
+                switch (currentPosition){
+                    case AVCaptureDevicePositionFront:
+                        image = [UIImage imageWithCGImage:image.CGImage
+                                                                    scale:image.scale
+                                                              orientation:UIImageOrientationLeftMirrored];
+                        break;
+                    case AVCaptureDevicePositionUnspecified:
+                        break;
+                    case AVCaptureDevicePositionBack:
+                        break;
+                }
+               
                 self.mediaPreviewLayer.hidden = NO;
                 self.mediaPreview.image = image;
-                [[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
+//                [[[ALAssetsLibrary alloc] init] writeImageToSavedPhotosAlbum:[image CGImage] orientation:(ALAssetOrientation)[image imageOrientation] completionBlock:nil];
 			}
 		}];
 	});
@@ -654,6 +669,7 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     upload[@"media"] = media;
     upload[@"likes"] = num;
     upload[@"uber"] =num;
+    //upload[@"pictureData"] = [data base64EncodedDataWithOptions:NSDataBase64Encoding64CharacterLineLength];
     [upload saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             //save media post to user

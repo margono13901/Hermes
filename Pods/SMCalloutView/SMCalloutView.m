@@ -62,10 +62,10 @@ NSTimeInterval kSMCalloutViewRepositionDelayForUIScrollView = 1.0/3.0;
         self.dismissAnimation = SMCalloutAnimationFade;
         self.backgroundColor = [UIColor clearColor];
         self.containerView = [UIButton new];
-
         [self.containerView addTarget:self action:@selector(shouldHighlight) forControlEvents:UIControlEventTouchDown | UIControlEventTouchDragInside];
         [self.containerView addTarget:self action:@selector(shouldNotHighlight) forControlEvents:UIControlEventTouchDragOutside | UIControlEventTouchCancel | UIControlEventTouchUpOutside | UIControlEventTouchUpInside];
         [self.containerView addTarget:self action:@selector(calloutClicked) forControlEvents:UIControlEventTouchUpInside];
+        [self.containerView setBackgroundColor:[UIColor purpleColor]];
     }
     return self;
 }
@@ -88,9 +88,9 @@ NSTimeInterval kSMCalloutViewRepositionDelayForUIScrollView = 1.0/3.0;
             self.titleLabel = [UILabel new];
             self.titleLabel.$height = TITLE_HEIGHT;
             self.titleLabel.opaque = NO;
-            self.titleLabel.backgroundColor = [UIColor clearColor];
-            self.titleLabel.textColor = [UIColor blackColor];
-            self.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-UltraLight" size:20];
+            self.titleLabel.textColor = [UIColor whiteColor];
+            self.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:20];
+            [self.titleLabel setBackgroundColor:[UIColor clearColor]];
         }
         return self.titleLabel;
     }
@@ -106,9 +106,9 @@ NSTimeInterval kSMCalloutViewRepositionDelayForUIScrollView = 1.0/3.0;
             self.subtitleLabel = [UILabel new];
             self.subtitleLabel.$height = SUBTITLE_HEIGHT;
             self.subtitleLabel.opaque = NO;
-            self.subtitleLabel.backgroundColor = [UIColor clearColor];
-            self.subtitleLabel.font = [UIFont systemFontOfSize:12];
-            self.subtitleLabel.textColor = [UIColor blackColor];
+            self.subtitleLabel.textColor = [UIColor whiteColor];
+            self.subtitleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:15];
+            [self.subtitleLabel setBackgroundColor:[UIColor clearColor]];
         }
         return self.subtitleLabel;
     }

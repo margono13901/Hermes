@@ -59,7 +59,7 @@ PODS:
     - GRMustache (= 7.3.0)
     - SMCalloutView (= 2.0)
   - Masonry (0.6.1)
-  - Parse (1.7.1):
+  - Parse (1.7.2):
     - Bolts (~> 1.1)
   - PulsingHalo (0.0.1)
   - SMCalloutView (2.0)
@@ -69,7 +69,7 @@ DEPENDENCIES:
   - AFNetworking (~> 2.0)
   - GPUberView
   - Mapbox-iOS-SDK
-  - Parse (~> 1.7)
+  - Parse
   - UberKit
 
 SPEC CHECKSUMS:
@@ -84,7 +84,7 @@ SPEC CHECKSUMS:
   JSONModel: 6ffcb4ffa3659c9e9a2e5d45d6c7705bab187c03
   Mapbox-iOS-SDK: ee136ca5b7f853456b50dfd7a7f0e243288cf86f
   Masonry: 4972309f2f134de9dd312f4dc4a21359b50e6caa
-  Parse: fa8ec29de6d82035635986c11946299fb1b38316
+  Parse: e1959adb9fe2fcd4736dac20b3ac691d47a4f06c
   PulsingHalo: 1583823bd6c989fff3469bb417bc42f0d268f98e
   SMCalloutView: f758edd824b18bf4f42de00df1e299861a2d1950
   UberKit: 0c526b7f2bfdf40d4dad6a6aae46c5d187402816

@@ -16,6 +16,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.newsFeed.delegate = self;
+    self.newsFeed.dataSource = self;
+    [self getActivity];
+
     self.navigationController.navigationItem.title = @"Profile";
 
     // Do any additional setup after loading the view
@@ -34,7 +38,9 @@
     
     //clip
     self.imageView.clipsToBounds = YES;
-
+    self.imageView.userInteractionEnabled = YES;
+    UITapGestureRecognizer *changePhoto = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(changeProfile:)];
+    [self.imageView addGestureRecognizer:changePhoto];
     
     self.usernameField.text = [PFUser currentUser][@"username"];
     self.usernameField.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
@@ -51,7 +57,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = NO;
     [[PFUser currentUser]fetch];
-    self.points.text =[NSString stringWithFormat:@"%@/10 LP",[PFUser currentUser][@"points"]];
+    self.points.text =[NSString stringWithFormat:@"%@ likes",[PFUser currentUser][@"points"]];
     self.points.font = [UIFont fontWithName:@"SackersGothicLightAT" size:14 ];
     
     self.usertitle.text = @"Beginner";
@@ -69,6 +75,23 @@
     // Dispose of any resources that can be recreated.
 }
 
+-(void)getActivity{
+    PFQuery *query = [PFQuery queryWithClassName:@"likes"];
+    [query whereKey:@"likeToUser" equalTo:[PFUser currentUser]];
+    [query includeKey:@"mediaPost"];
+    [query includeKey:@"likeFromUser"];
+    [query orderByDescending:@"createdAt"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *results, NSError *error){
+        if (!error) {
+            self.news = results;
+            [self.newsFeed reloadData];
+        }
+        
+    }];
+}
+
+
+
 /*
 #pragma mark - Navigation
 
@@ -79,7 +102,9 @@
 }
 */
 
-- (IBAction)changeProfile:(id)sender {
+
+
+- (void)changeProfile:(id)sender {
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
     imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
@@ -229,6 +254,40 @@
     UIGraphicsEndImageContext();
     
     return newImage;
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.news.count;
+}
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 1;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSString *identifer = @"Cell";
+    newfeedCell *cell = [self.newsFeed dequeueReusableCellWithIdentifier:identifer];
+    if (cell == nil)
+    {
+        cell = [[newfeedCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                       reuseIdentifier:identifer];
+    }
+    PFObject *likeObject = self.news[indexPath.row];
+    PFUser *sender = likeObject[@"likeFromUser"];
+    PFObject *photoFile = likeObject[@"mediaPost"];
+    [sender[@"profilePhoto"]getDataInBackgroundWithBlock:^(NSData *data,NSError *error){
+        if(!error){
+            cell.userPicture.image = [UIImage imageWithData:data];
+        }
+    }];
+    [photoFile[@"media"]getDataInBackgroundWithBlock:^(NSData *data,NSError *error){
+        if(!error){
+            cell.photoActivity.image = [UIImage imageWithData:data];
+        }
+    }];
+    cell.activityText.text = [NSString stringWithFormat:@"%@\n likes your post!",sender.username];
+    
+    return cell;
 }
 
 @end

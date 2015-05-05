@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "NSQueue.h"
 #import "UIView+Glow.h"
+#import <Parse/Parse.h>
 
 @interface mediaButton : UIView
 @property(strong,nonatomic) NSQueue *queue;

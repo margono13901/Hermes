@@ -26,15 +26,12 @@
 @interface userInteractionView : UIViewController<RMMapViewDelegate,UIGestureRecognizerDelegate>
 
 #pragma view interface
-@property (strong, nonatomic) IBOutlet UIButton *zoomFoward;
-@property (strong, nonatomic) IBOutlet UIButton *zoomBackwards;
-
 @property (strong, nonatomic) IBOutlet UITextField *notifications;
 @property (strong, nonatomic) IBOutlet UIImageView *profileView;
 @property (strong, nonatomic) IBOutlet UIView *optionContainers;
 @property (strong, nonatomic) IBOutlet RMMapView *mapView;
 @property (strong, nonatomic) IBOutlet UIView *bottomOptionContainer;
-@property (strong, nonatomic) IBOutlet UITextField *currentUserNameField;
+@property (strong, nonatomic) IBOutlet UITextView *currentUserNameField;
 @property (strong, nonatomic) IBOutlet UITextView *locationView;
 @property (strong, nonatomic) IBOutlet UIImageView *currentUserPhoto;
 @property (strong, nonatomic) IBOutlet UILabel *scrollThroughPicturesLabel;

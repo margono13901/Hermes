@@ -16,21 +16,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self
                                    action:@selector(dismissKeyboard)];
     
     [self.view addGestureRecognizer:tap];
+    // Do any additional setup after loading the view, typically from a nib.
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor = [projectColor returnColor];
-}
-
--(void)dismissKeyboard {
-    [self.passwordField resignFirstResponder];
-    [self.usernameField resignFirstResponder];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -38,19 +31,15 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)loginSuccess:(id)sender{
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Uber Login Successful!" message:nil delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
-    [alert show];
+-(void)dismissKeyboard {
+    [self.password resignFirstResponder];
+    [self.username resignFirstResponder];
+    
 }
 
-
--(void)loginFailed:(id)sender{
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Uber Login Failed!" message:nil delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
-    [alert show];
-}
 
 - (IBAction)login:(id)sender {
-    [PFUser logInWithUsernameInBackground:self.usernameField.text password:self.passwordField.text block:
+    [PFUser logInWithUsernameInBackground:self.username.text password:self.password.text block:
      ^(PFUser *user, NSError *error) {
          if (user) {
              UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -59,17 +48,13 @@
              [self presentViewController:nav animated:YES completion:^{
                  NSLog(@"success");
              }];
-
+             
          }else{
              UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Ooops!" message:[NSString stringWithFormat:@"%@",error.userInfo[@"error"]]  delegate:self cancelButtonTitle:@"Ok!" otherButtonTitles:nil];
              [alert show];
          }
      }];
+    
 }
-- (IBAction)signup:(id)sender {
-    [self performSegueWithIdentifier:@"userLoginSegue" sender:self];
-}
-
-
 
 @end
