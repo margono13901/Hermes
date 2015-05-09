@@ -12,10 +12,11 @@
 #import "AppDelegate.h"
 #import "MBProgressHUD.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import "ImageCropView.h"
 
 static bool hasProfilePicture = NO;
 
-@interface registrationView : UIViewController<UINavigationControllerDelegate, UIImagePickerControllerDelegate,UIAlertViewDelegate,UITextFieldDelegate>
+@interface registrationView : UIViewController<UINavigationControllerDelegate, UIImagePickerControllerDelegate,UIAlertViewDelegate,UITextFieldDelegate,ImageCropViewControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *profilePickView;
 @property (strong, nonatomic) IBOutlet UITextField *usernameField;
 @property (strong, nonatomic) IBOutlet UITextField *passwordField;

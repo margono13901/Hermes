@@ -30,6 +30,7 @@
 }
 
 -(void)initialization{
+    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
@@ -90,22 +91,27 @@
     PFRelation *relation = [[PFUser currentUser] relationForKey:@"friends"];
     PFQuery *query = [relation query];
     [query orderByAscending:@"createdAt"];
-    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
-        self.allUsers = objects;
-        PFUser *allUsers = [[PFUser alloc]init];
-        self.users = [[NSMutableArray alloc]init];
-        NSMutableArray *userArray=[[NSMutableArray alloc]init];
-        [userArray addObject:allUsers];
-        for (PFUser *user in objects) {
-            if (userArray.count==3) {
-                [self.users addObject:userArray];
-                userArray=[[NSMutableArray alloc]init];
+        dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
+        dispatch_async(myQueue, ^{
+            // Perform long running process
+            self.allUsers = objects;
+            PFUser *allUsers = [[PFUser alloc]init];
+            self.users = [[NSMutableArray alloc]init];
+            NSMutableArray *userArray=[[NSMutableArray alloc]init];
+            [userArray addObject:allUsers];
+            for (PFUser *user in objects) {
+                if (userArray.count==3) {
+                    [self.users addObject:userArray];
+                    userArray=[[NSMutableArray alloc]init];
+                }
+                [userArray addObject:user];
             }
-            [userArray addObject:user];
-        }
-        [self.users addObject:userArray];
-        [self.collectionView reloadData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.users addObject:userArray];
+                [self.collectionView reloadData];
+            });
+        });
     }];
 }
 
@@ -128,22 +134,17 @@
     if (indexPath.section==0&&indexPath.row==0) {
         UIImage *image = [UIImage imageNamed:@"icon"];
         cell.imageView.image=image;
-        
     }else{
         PFUser *user = [self.users[indexPath.section] objectAtIndex:indexPath.row];
         PFFile *file = user[@"profilePhoto"];
         if (file) {
-            if (file.isDataAvailable) {
-                cell.imageView.image = [UIImage imageWithData:[file getData]];
-            }else{
-                [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-                    if (!error) {
-                        UIImage *image = [UIImage imageWithData:data];
-                        // image can now be set on a UIImageView
-                        cell.imageView.image = image;
-                    }
-                }];
-            }
+            [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+                if (!error) {
+                    UIImage *image = [UIImage imageWithData:data];
+                    // image can now be set on a UIImageView
+                    cell.imageView.image = image;
+                }
+            }];
         }
         NSMutableArray *array = [self.delegate.unseenPostCenter objectForKey:user.objectId];
         if (array.count>0) {

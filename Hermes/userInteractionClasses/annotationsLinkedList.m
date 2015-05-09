@@ -21,7 +21,6 @@
 
 -(void)addToLink:(id)object{
     [self.storage addObject:object];
-    placement = 0;
 }
 
 -(id)scrollThroughAnnotatotation{
@@ -47,10 +46,9 @@
     return placement < 0||placement >= self.storage.count;
 }
 
-
-
-
-
++(void)changeToFirstPlacement{
+    placement=1;
+}
 
 
 @end

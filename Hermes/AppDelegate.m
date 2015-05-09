@@ -210,6 +210,19 @@
 
 -(void)setUp{
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        spinner.center = CGPointMake(self.window.center.x,400);
+        
+        [self.window addSubview:spinner];
+        [self.window bringSubviewToFront:spinner];
+        [spinner startAnimating];
+        
+        // parsing code code
+       
+    }
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *viewController;
     if (![PFUser currentUser]) {

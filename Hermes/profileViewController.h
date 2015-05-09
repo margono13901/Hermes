@@ -10,7 +10,11 @@
 #import <Parse/Parse.h>
 #import "projectColor.h"
 #import "newfeedCell.h"
-@interface profileViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITableViewDelegate,UITableViewDataSource>
+#import "ImageCropView.h"
+#import "userPostView.h"
+#import "NSData+Compression.h"
+
+@interface profileViewController : UIViewController<UIImagePickerControllerDelegate,UINavigationControllerDelegate,UITableViewDelegate,UITableViewDataSource,ImageCropViewControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutlet UITextField *points;
 @property (strong, nonatomic) IBOutlet UITextField *usertitle;

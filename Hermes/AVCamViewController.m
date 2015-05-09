@@ -116,6 +116,7 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     self.backButton.tintColor = [UIColor blueColor];
     // Create the AVCaptureSession
 	AVCaptureSession *session = [[AVCaptureSession alloc] init];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 	[self setSession:session];
     [self registerForKeyboardNotifications];
 	
@@ -437,24 +438,33 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     UITouch *touch  = [[event allTouches] anyObject];
-    if ([touch view]==self.mediaPreviewLayer && ![self.mediaPreviewLayer.subviews containsObject:self.textLabel]) {
+    if ([touch view]==self.mediaPreviewLayer && self.informationText.isHidden ){
         self.position = [touch locationInView:self.mediaPreviewLayer];
-        self.textLabel = [ [UITextView alloc ] initWithFrame:CGRectMake(0, self.position.y, self.mediaPreviewLayer.bounds.size.width,35 ) ];
+        UIColor *color = [projectColor returnColor];
+        self.informationText.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"What are you seeing right now?" attributes:@{NSForegroundColorAttributeName: color}];
+        self.informationText.hidden = NO;
+        CGRect point;
+        if (self.position.y<=110) {
+            point = CGRectMake(0, 111, self.mediaPreviewLayer.bounds.size.width,self.informationText.frame.size.height) ;
+        }else if(self.position.y>=450){
+            point = CGRectMake(0, 449, self.mediaPreviewLayer.bounds.size.width,self.informationText.frame.size.height) ;
+        }else{
+            point = CGRectMake(0, self.position.y, self.mediaPreviewLayer.bounds.size.width,self.informationText.frame.size.height);
+        }
+        self.informationText.frame = point ;
         UIPanGestureRecognizer *singleFingerTap =
         [[UIPanGestureRecognizer alloc] initWithTarget:self
                                                 action:@selector(handlePan:)];
-        [self.textLabel addGestureRecognizer:singleFingerTap];
-        self.textLabel.textColor = [UIColor whiteColor];
-        self.textLabel.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6];
-        self.textLabel.textAlignment = NSTextAlignmentCenter;
-        self.textLabel.delegate= self;
-        self.textLabel.textContainer.maximumNumberOfLines = 1;
-        self.textLabel.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
-        [self.mediaPreviewLayer addSubview:self.textLabel];
+        [self.informationText addGestureRecognizer:singleFingerTap];
+        self.informationText.textColor = [UIColor whiteColor];
+        self.informationText.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6];
+        self.informationText.textAlignment = NSTextAlignmentCenter;
     }
-    else if([self.textLabel resignFirstResponder]&&self.textLabel.text.length==0){
-        [self.textLabel removeFromSuperview];
+    else if([self.informationText resignFirstResponder]&&self.informationText.text.length==0){
+        self.informationText.hidden = YES;
+        self.informationText.text = nil;
     }
+
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
@@ -471,9 +481,22 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 - (IBAction)handlePan:(UIPanGestureRecognizer *)recognizer {
     
     CGPoint translation = [recognizer translationInView:self.view];
-    recognizer.view.center = CGPointMake(recognizer.view.center.x,
-                                         recognizer.view.center.y + translation.y);
-    [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
+    if (recognizer.view.center.y>110&&recognizer.view.center.y<450) {
+        recognizer.view.center = CGPointMake(recognizer.view.center.x,
+                                             recognizer.view.center.y + translation.y);
+        [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
+    }else{
+        if (recognizer.view.center.y<=110) {
+            recognizer.view.center = CGPointMake(recognizer.view.center.x,
+                                                 111);
+            [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
+        }else{
+            recognizer.view.center = CGPointMake(recognizer.view.center.x,
+                                                 449);
+            [recognizer setTranslation:CGPointMake(0, 0) inView:self.view];
+        }
+    }
+    
     
 }
 
@@ -497,8 +520,8 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:0.2];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    self.textLabel.frame = CGRectMake(self.textLabel.frame.origin.x, (keyboardFrameBeginRect.size.height+15), self.textLabel.frame.size.width, self.textLabel.frame.size.height);
-    [self.textLabel setFont:[UIFont boldSystemFontOfSize:15]];
+    self.informationText.frame = CGRectMake(self.informationText.frame.origin.x, (keyboardFrameBeginRect.size.height+15), self.informationText.frame.size.width, self.informationText.frame.size.height);
+    [self.informationText setFont:[UIFont boldSystemFontOfSize:15]];
 
     [UIView commitAnimations];
 }
@@ -510,7 +533,7 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDuration:0.2];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    self.textLabel.frame = CGRectMake(self.textLabel.frame.origin.x, (self.position.y), self.textLabel.frame.size.width, self.textLabel.frame.size.height);
+    self.informationText.frame = CGRectMake(self.informationText.frame.origin.x, (self.position.y), self.informationText.frame.size.width, self.informationText.frame.size.height);
     [UIView commitAnimations];
 
 }
@@ -654,22 +677,21 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 	}];
 }
 
-
 -(void)send{
     PFUser *currentUser = [PFUser currentUser];
-    NSData *data = UIImagePNGRepresentation([self fixrotation:[self getImageView]]);
     NSNumber *num = [NSNumber numberWithInt:0];
-    PFFile *media = [PFFile fileWithName:@"picture" data:data];
+    NSData *data = UIImageJPEGRepresentation([self getImageView], 1.0);
+    
+    PFFile *media = [PFFile fileWithName:@"picture" data:[data zlibDeflate]];
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];;
     PFGeoPoint *location = [PFGeoPoint geoPointWithLocation:delegate.location];
-    
     PFObject *upload = [PFObject objectWithClassName:@"mediaPosts"];
     upload[@"author"] = [PFUser currentUser];
     upload[@"location"] = location;
     upload[@"media"] = media;
     upload[@"likes"] = num;
     upload[@"uber"] =num;
-    //upload[@"pictureData"] = [data base64EncodedDataWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    upload[@"message"] = self.informationText.text;
     [upload saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             //save media post to user
@@ -691,9 +713,10 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
                                         }];
             
         }else{
-            NSLog(@"%@",error);
+            NSLog(@"failed to upload post: %@",error.userInfo[@"error"]);
         }
     }];
+
     [self back:self];
 }
 
@@ -731,7 +754,9 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
 
 - (IBAction)mediaPreviewback:(id)sender {
     self.mediaPreviewLayer.hidden= YES;
-    [self.textLabel removeFromSuperview];
+    self.informationText.hidden = YES;
+    self.informationText.text = nil;
+    [self.informationText resignFirstResponder];
 }
 
 - (UIImage *)fixrotation:(UIImage *)image{
@@ -822,12 +847,12 @@ static void * SessionRunningAndDeviceAuthorizedContext = &SessionRunningAndDevic
     self.mediaBackButton.hidden = YES;
     UIGraphicsBeginImageContextWithOptions(self.mediaPreviewLayer.bounds.size, self.mediaPreviewLayer.opaque, 0.0);
     [self.mediaPreviewLayer.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
     UIImage * myImage = UIGraphicsGetImageFromCurrentImageContext();
-    
     UIGraphicsEndImageContext();
     self.mediaBackButton.hidden = NO;
 
     return myImage;
 }
+
+
 @end

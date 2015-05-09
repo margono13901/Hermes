@@ -9,9 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import <UberKit.h>
-
-
-static bool requestGet= NO;
+#import <Parse/Parse.h>
 
 @interface GPUberViewController : UIViewController<UIGestureRecognizerDelegate,UIAlertViewDelegate,UIWebViewDelegate> {
     NSString *_clientId;
@@ -33,6 +31,8 @@ static bool requestGet= NO;
 @property (nonatomic) NSString *mobilePhone;
 @property (nonatomic) NSString *zipcode;
 @property (nonatomic) NSString *request_id;
+@property (strong,nonatomic)NSString *requestGet;
+
 
 
 

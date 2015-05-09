@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3F14293C0E2CD0CE721A6508"
+               BlueprintIdentifier = "8B812D25F8378165DAB65D74"
                BuildableName = "libPods-Hermes-Mapbox-iOS-SDK.a"
                BlueprintName = "Pods-Hermes-Mapbox-iOS-SDK"
                ReferencedContainer = "container:Pods.xcodeproj">

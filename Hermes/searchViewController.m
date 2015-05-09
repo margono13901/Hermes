@@ -31,7 +31,8 @@
     self.definesPresentationContext = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshTable:) name:@"refreshTable" object:nil];
-    
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+
 }
 
 -(void)refreshTable:(id)sender{

@@ -358,14 +358,13 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 
 - (IBAction)cancelView {
     [[INTULocationManager sharedInstance] cancelLocationRequest:self.locationRequestId];
-    if (requestGet) {
+    if ([self.requestGet isEqual:@"processing"]||[self.requestGet isEqual:@"accepted"]) {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Cancel Uber?" message:@"Closing This Window Will Cancel Uber" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
         [alert show];
-        [self.timer invalidate];
     }else{
+        [self.timer invalidate];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
-    
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -380,6 +379,7 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
         [requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@",accessToken] forHTTPHeaderField:@"Authorization"];
         manager.requestSerializer = requestSerializer;
         [manager DELETE:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self.timer invalidate];
             [self dismissViewControllerAnimated:YES completion:nil];
             NSLog(@"success");
             
@@ -784,7 +784,6 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
                                                   @"token":accessToken,
                                                   }
                                         repeats:YES];
-        requestGet = YES;
         self.tableView.hidden = YES;
         self.driverInformation.frame = self.tableView.frame;
         self.driverInformation.hidden = NO;
@@ -814,7 +813,6 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
     manager.requestSerializer = requestSerializer;
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSDictionary *json = responseObject;
-        
         [self displayDriverInformation:json];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -823,6 +821,7 @@ typedef NS_ENUM(NSInteger, GPUberViewError) {
 
 -(void)displayDriverInformation:(NSDictionary *)json{
     NSString *status = [json objectForKey:@"status"];
+    self.requestGet = status;
     self.statusLabel.text = status;
     if ([status isEqual:@"accepted"]) {
         NSDictionary *driverInformation  = [json objectForKey:@"driver"];

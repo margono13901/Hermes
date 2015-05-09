@@ -11,6 +11,7 @@
 #import <Parse/Parse.h>
 #import "AppDelegate.h"
 #import "MBProgressHUD.h"
+#import "NSData+Compression.h"
 
 @interface userPostView : UIImageView
 

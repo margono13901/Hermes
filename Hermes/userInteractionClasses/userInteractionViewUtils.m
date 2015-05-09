@@ -85,14 +85,14 @@
     operationManager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     [operationManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
         NSDictionary *json  = responseObject;
         NSDictionary *result= [json objectForKey:@"result"];
         NSString *name = [result objectForKey:@"name"];
-        
         NSString *string = textView.text;
-        textView.text = [NSString stringWithFormat:@"%@ is near %@",string,name];
-      
-        
+        if (![string containsString:@"near"]) {
+            textView.text = [NSString stringWithFormat:@"%@ is near %@",string,name];
+        }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
@@ -103,9 +103,7 @@
 +(UIImage *)getImageView:(UIView *)view{
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
     UIImage * myImage = UIGraphicsGetImageFromCurrentImageContext();
-    
     UIGraphicsEndImageContext();
     return myImage;
 }

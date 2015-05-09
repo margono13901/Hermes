@@ -22,6 +22,7 @@
     [self reassignResponders];
     self.usernameField.delegate = self;
     self.passwordField.delegate = self;
+
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(keyboardOnScreen:) name:UIKeyboardDidShowNotification object:nil];
 
@@ -46,29 +47,18 @@
     NSLog(@"keyboardFrame: %@", NSStringFromCGRect(keyboardFrame));
 }
 
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    CGFloat y = textField.frame.origin.y;
-    if (y >= 350) //not 380
-    {
-        CGRect frame = self.view.frame;
-        frame.origin.y = 190 - textField.frame.origin.y;
-        [UIView animateWithDuration:0.3 animations:^{self.view.frame = frame;}];
-    }
-}
-
 -(void)textFieldDidEndEditing:(UITextField *)textField
 {
-    CGRect returnframe =self.view.frame;
-    returnframe.origin.y = 0;
-    [UIView animateWithDuration:0.3 animations:^{self.view.frame = returnframe;}];
+    if ([textField.text containsString:@" "]) {
+        textField.text =  [textField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    }
 }
 
 -(void)setUpPicture{
     self.profilePickView.userInteractionEnabled = YES;
     UITapGestureRecognizer *segue = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(openPictureCollection:)];
     [self.profilePickView addGestureRecognizer:segue];
-    self.profilePickView.layer.cornerRadius = 40;
+    self.profilePickView.layer.cornerRadius = 10;
     self.profilePickView.clipsToBounds = YES;
     UIColor *color = [projectColor returnColor];
     self.profilePickView.layer.borderColor = color.CGColor;
@@ -93,8 +83,7 @@
         PFUser *user = [PFUser user];
         user.username = self.usernameField.text;
         user.password = self.passwordField.text;
-    
-        NSData *data = UIImagePNGRepresentation([self fixrotation:self.profilePickView.image]);
+        NSData *data = UIImageJPEGRepresentation([self fixrotation:self.profilePickView.image],0.7f);
         PFFile *media = [PFFile fileWithName:@"picture" data:data];
         user[@"profilePhoto"] = media;
         user[@"points"] = @0;
@@ -151,15 +140,28 @@
     
     UIImage *image = [[UIImage alloc]init];
     image = [info valueForKey:UIImagePickerControllerOriginalImage];
+    [self cropImage:image];
     [self dismissViewControllerAnimated:YES completion:^{
-        hasProfilePicture = YES;
-        self.profilePickView.image = image;
     }];
 }
 
+- (void)cropImage:(UIImage *)image{
+    ImageCropViewController *controller = [[ImageCropViewController alloc] initWithImage:image];
+    controller.delegate = self;
+    [[self navigationController] pushViewController:controller animated:YES];
+}
+
+- (void)ImageCropViewController:(ImageCropViewController *)controller didFinishCroppingImage:(UIImage *)croppedImage{
+    hasProfilePicture = YES;
+    self.profilePickView.image = croppedImage;
+    [[self navigationController] popViewControllerAnimated:YES];
+}
+
+- (void)ImageCropViewControllerDidCancel:(ImageCropViewController *)controller{
+    [[self navigationController] popViewControllerAnimated:YES];
+}
+
 - (UIImage *)fixrotation:(UIImage *)image{
-    
-    
     if (image.imageOrientation == UIImageOrientationUp) return image;
     CGAffineTransform transform = CGAffineTransformIdentity;
     

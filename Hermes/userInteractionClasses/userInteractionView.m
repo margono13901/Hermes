@@ -13,6 +13,7 @@
 
 @implementation userInteractionView
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -24,6 +25,13 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(void)viewWillAppear:(BOOL)animated{
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    self.navigationController.navigationBarHidden = YES;
+}
+
 #pragma refresh
 
 
@@ -34,6 +42,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView:) name:@"refresh" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setUpProfilePhoto:) name:@"changeProfilePhoto" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reopenApp:) name:@"reopenApp" object:nil];
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchKeyWord:) name:@"searchKeyWord" object:nil];
 }
 
 -(void)changeCurrentUser:(id)sender{
@@ -48,7 +57,7 @@
 }
 
 -(void)reopenApp:(id)sender{
-    [self downloadUnseenPosts:NO];
+    [self downloadUnseenPosts];
     [self.friendPane getFriends];
 }
 
@@ -61,18 +70,22 @@
 
 -(void)getCurrentUserProfilePhoto:(PFUser *)user{
     [user[@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        UIImage *image = [UIImage imageWithData:data];
-        CGSize scaleSize = CGSizeMake(100, 100);
-        UIGraphicsBeginImageContextWithOptions(scaleSize, NO, 0.0);
-        [image drawInRect:CGRectMake(0, 0, scaleSize.width, scaleSize.height)];
-        UIImage * resized = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        self.currentUserPhoto.image = resized;
-        self.currentUserPhoto.layer.cornerRadius = 45;
-        self.currentUserPhoto.clipsToBounds = YES;
-        self.currentUserPhoto.layer.borderColor = [UIColor whiteColor].CGColor;
-        self.currentUserPhoto.layer.borderWidth = 5;
-
+        if (data) {
+            UIImage *image = [UIImage imageWithData:data];
+            CGSize scaleSize = CGSizeMake(100, 100);
+            UIGraphicsBeginImageContextWithOptions(scaleSize, NO, 0.0);
+            [image drawInRect:CGRectMake(0, 0, scaleSize.width, scaleSize.height)];
+            UIImage * resized = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            self.currentUserPhoto.image = resized;
+            self.currentUserPhoto.layer.cornerRadius = 45;
+            self.currentUserPhoto.clipsToBounds = YES;
+            self.currentUserPhoto.layer.borderColor = [UIColor whiteColor].CGColor;
+            self.currentUserPhoto.layer.borderWidth = 5;
+        }else{
+            NSLog(@"%@",error);
+        }
+        
     }];
 }
 
@@ -84,7 +97,6 @@
     query.cachePolicy = kPFCachePolicyCacheThenNetwork;
     [query getObjectInBackgroundWithId:incomingPostId block:^(PFObject *object, NSError *error) {
         if (!error) {
-            [object[@"media"] getDataInBackground];
             PFUser *author = object[@"author"];
             if (![author.objectId isEqual:[PFUser currentUser].objectId]) {
                 [self addToUnseenPostCenter:object];
@@ -100,8 +112,6 @@
         }else{
             NSLog(@"%@",error);
         }
-        
-
     }];
 }
 
@@ -130,7 +140,7 @@
         [query findObjectsInBackgroundWithBlock:^(NSArray *array,NSError *error){
             self.currentUserOnDisplay =[[NSMutableArray alloc]initWithArray:array];
             //download posts
-            [self downloadUnseenPosts:YES];
+            [self downloadUnseenPosts];
         }];
         [self setUpProfilePhoto:[PFUser currentUser]];
         dispatch_async(dispatch_get_main_queue(), ^(void){
@@ -181,8 +191,6 @@
     });
 }
 
-
-
 -(void)setUpProfilePhoto:(id)sender{
     [[PFUser currentUser][@"profilePhoto"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         if(data) self.profileView.image = [UIImage imageWithData:data];
@@ -190,9 +198,8 @@
     }];
 }
 
--(void)downloadUnseenPosts:(BOOL)firstSetUp{
+-(void)downloadUnseenPosts{
     NSDate *yesterday = [[NSDate date] dateByAddingTimeInterval:60*60*24*-1];
-
     PFRelation *relation= [[PFUser currentUser]relationForKey:@"unseenPosts"];
     PFQuery *query = [relation query];
     [query includeKey:@"author"];
@@ -201,17 +208,11 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.delegate.unseenPostCenter = [NSMutableDictionary dictionary];
         for (PFObject *posts in objects) {
-            if (!posts.isDataAvailable) {
-                [posts[@"media"] getDataInBackground];
-            }
+            [posts[@"media"] getDataInBackground];
             [self addToUnseenPostCenter:posts];
         }
-        if (firstSetUp) {
-            [self setUpNotificationCounter];
-            [self getCurrentuserPosts];
-        }else{
-            [self refreshView:(self)];
-        }
+        [self setUpNotificationCounter];
+        [self getCurrentuserPosts];
     }];
 }
 
@@ -230,7 +231,6 @@
         self.notifications.hidden = YES;
         [self.notifications stopGlowing];
     }
-    NSLog(@"%i",counter);
 }
 
 -(void)addToUnseenPostCenter:(PFObject *)post{
@@ -300,6 +300,7 @@
             dispatch_async(dispatch_get_main_queue(), ^(void)
                            {
                                [self.mapView addAnnotation:annotation];
+                               [self zoomToFirstAnnotation];
                            });
         }
     });
@@ -309,7 +310,6 @@
     if (!annotatoin.isUserLocationAnnotation) {
         [self.annotationLink addToLink:annotatoin];
     }
-
 }
 
 -(BOOL)postIsUnseen:(PFObject *)post{
@@ -320,7 +320,6 @@
                 return YES;
             }
         }
-
     }
     return NO;
 }
@@ -376,9 +375,7 @@
     [self performSegueWithIdentifier:@"camera" sender:self];
 }
 
-
 - (IBAction)findFriends:(id)sender{
-    
     dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
     dispatch_async(myQueue, ^{
         // Perform long running process
@@ -404,6 +401,14 @@
     }
 }
 
+- (void)zoomToFirstAnnotation{
+    if (self.annotationLink.storage.count>0) {
+        RMAnnotation *annotation = [self.annotationLink.storage objectAtIndex:0];
+        [annotationsLinkedList changeToFirstPlacement];
+        [self selectAnnotation:annotation zoom:YES];
+    }
+}
+
 -(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     [self selectAnnotation:annotation zoom:NO];
 }
@@ -413,7 +418,6 @@
     NSQueue *queue = annotation.userInfo;
     PFObject *object = queue.peek;
     PFUser *author = object[@"author"];
-    NSLog(@"%@",author);
     [self getCurrentUserProfilePhoto:author];
     self.currentUserNameField.text = ((PFUser *)object[@"author"]).username;
     if (zoom) {
@@ -457,23 +461,78 @@
         uber.endLocation = [l1 coordinate];
         [uber showInViewController:self];
     }
+    NSMutableArray *temp = [[NSMutableArray alloc]init];
+    for (int i = 0 ; i < button.queue.storage.count; i++) {
+        PFObject *post =[button.queue.storage objectAtIndex:0];
+        if (![temp containsObject:((PFUser *)post[@"author"]).objectId] && ![((PFUser *)post[@"author"]).objectId isEqual:[PFUser currentUser].objectId]) {
+            [temp addObject:post];
+        }
+    }
+    for (PFObject *post in temp) {
+        [self sendGoThere:post];
+    }
+}
+
+-(void)sendGoThere:(PFObject *)post{
+    PFObject *goThere = [PFObject objectWithClassName:@"goThere"];
+    goThere[@"goToUser"] = post[@"author"];
+    goThere[@"userGoing"] = [PFUser currentUser];
+    goThere[@"mediaPost"] = post;
+    [goThere saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSDictionary *data = @{
+                                   @"alert" : [NSString stringWithFormat:@"%@ is going to one of your posts!",[PFUser currentUser].username],
+                                   @"custom" : @{@"type":@"goThere",
+                                                 @"sender":[PFUser currentUser].username,
+                                                 @"senderId":[PFUser currentUser].objectId,
+                                                 @"postId":post.objectId
+                                                 }
+                                   };
+            PFQuery *pushQuery = [PFInstallation query];
+            
+            // if you would like to send a notification to one user
+            [pushQuery whereKey: @"owner" equalTo: post[@"author"]];
+            PFPush *push = [PFPush new];
+            [push setQuery: pushQuery];
+            [push setData:data];
+            [push setQuery:pushQuery];
+            [push sendPushInBackground];
+        }else{
+            NSLog(@"%@",error.description);
+        }
+    }];
 }
 
 -(void)didZoomWithAnnotation:(RMAnnotation *)annotation{
     //do stuff
-//    CLLocationCoordinate2D coordinate = [annotation coordinate];
-//    //Find the southwest and northeast point
-//    double northEastLatitude = coordinate.latitude;
-//    double northEastLongitude = coordinate.longitude;
-//    double southWestLatitude = coordinate.latitude;
-//    double southWestLongitude = coordinate.longitude;
-//    
-//    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(southWestLatitude, southWestLongitude)
-//                                                 northEast:CLLocationCoordinate2DMake(northEastLatitude, northEastLongitude)
-//                                                  animated:YES
-//     ];
     [self.mapView setZoom:15 atCoordinate:annotation.coordinate animated:YES];
 
 }
+
+- (void)searchKeyWord:(NSNotification *)sender {
+    NSString *result = sender.object;
+    [self searchForKeyWordPosts:result];
+}
+
+-(void)searchForKeyWordPosts:(NSString *)search{
+    PFGeoPoint *userLocation = [PFGeoPoint geoPointWithLocation:self.mapView.userLocation.location];
+    PFQuery *query = [PFQuery queryWithClassName:@"mediaPosts"];
+    [query orderByDescending:@"createdAt"];
+    [query includeKey:@"author"];
+    [query whereKey:@"message" matchesRegex:search modifiers:@"i"];
+    [query whereKey:@"location" nearGeoPoint:userLocation withinMiles:20];
+    query.cachePolicy = kPFCachePolicyCacheThenNetwork;
+    NSDate *oneDayAgo = [[NSDate date]dateByAddingTimeInterval:-60*60*24];
+    [query whereKey:@"createdAt" greaterThan:oneDayAgo];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if(objects.count==0){
+            self.scrollThroughPicturesLabel.text = @"No Photos";
+        }
+        self.currentUserPosts = [[NSMutableArray alloc]initWithArray:objects];
+        [self setUpAnnotations];
+    }];
+}
+
+
 
 @end

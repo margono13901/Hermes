@@ -48,6 +48,8 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 #import "AppDelegate.h"
+#import "projectColor.h"
+#import "NSData+Compression.h"
 
 @interface AVCamViewController : UIViewController<CLLocationManagerDelegate,UITextViewDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *mediaPreview;
@@ -55,12 +57,13 @@
 - (IBAction)back:(id)sender;
 - (IBAction)mediaPreviewback:(id)sender;
 @property (strong, nonatomic) IBOutlet UIView *mediaPreviewLayer;
-@property(strong,nonatomic)UITextView *textLabel;
+//@property(strong,nonatomic)UITextView *textLabel;
 @property(nonatomic)CGPoint position;
 - (IBAction)uploadMedia:(id)sender;
 @property (strong, nonatomic) IBOutlet UIButton *mediaBackButton;
 @property (strong, nonatomic) IBOutlet UIButton *sendbutton;
 @property (strong, nonatomic) IBOutlet UIButton *backButton;
+@property (strong, nonatomic) IBOutlet UITextField *informationText;
 
 
 @end

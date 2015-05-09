@@ -42,6 +42,8 @@
     UITapGestureRecognizer *singleFingerTap =
     [[UITapGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(cycleThroughPost:)];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+
     [self addGestureRecognizer:singleFingerTap];
     UIButton *backButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 30, 50, 50)];
     [backButton setTitle:@"X" forState:UIControlStateNormal];
@@ -49,7 +51,7 @@
     [backButton addTarget:self action:@selector(exitView:) forControlEvents:UIControlEventTouchUpInside];
     backButton.titleLabel.font = [UIFont systemFontOfSize:23.0f];
     self.likeButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 60, 60)];
-    self.likeButton.center = CGPointMake(self.center.x, 520);
+    self.likeButton.center = CGPointMake(self.center.x, self.frame.size.height-80);
     self.likeButton.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6f];
     self.likeButton.layer.cornerRadius = 30;
     self.likeButton.clipsToBounds = YES;
@@ -71,6 +73,7 @@
     if ([self.previewQueue isEmpty]){
         [self exitView:self];
     }else{
+        
         if (![(PFUser *)((PFObject *)self.previewQueue.peek[@"author"]).objectId isEqual:[PFUser currentUser].objectId]) {
             self.likeButton.hidden = NO;
             [self setUpLike:[self.previewQueue peek]];
@@ -79,8 +82,6 @@
         }
         self.currentPost = [self.previewQueue dequeue];
         [self setUpImage:self.currentPost];
-
-        [self setUpLike:self.currentPost];
         self.previewText.text = [NSString stringWithFormat:@"%lu",(unsigned long)self.previewQueue.storage.count+1];
         PFUser *author = self.currentPost[@"author"];
         [author[@"profilePhoto"]getDataInBackgroundWithBlock:^(NSData *data, NSError *error){
@@ -98,12 +99,12 @@
 }
 
 -(void)exitView:(id)sender{
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"refresh" object:nil];
     [self removeFromSuperview];
 }
 
 -(void)likeAction:(id)sender{
-    
      if (![self.likeButton.currentTitle isEqual:@"liked"]) {
         PFRelation *relation = [[PFUser currentUser]relationForKey:@"likedPosts"];
         [relation addObject:self.currentPost];
@@ -112,7 +113,6 @@
                 PFRelation *usersLiked = [self.currentPost relationForKey:@"usersLiked"];
                 [usersLiked addObject:[PFUser currentUser]];
                 [self.currentPost saveInBackground];
-                
                 [self.likeButton setImage:[UIImage imageNamed:@"likeFilled"] forState:UIControlStateNormal];
                 [self.likeButton setTitle:@"liked" forState:UIControlStateNormal];
                 PFObject *like = [PFObject objectWithClassName:@"likes"];
@@ -128,12 +128,15 @@
 -(void)setUpImage:(PFObject *)post{
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
     hud.labelText = @"Loading";
-    [post[@"media"] getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        UIImage *image = [UIImage imageWithData:data];
-        self.image = image;
-        [hud hide:NO];
+    PFFile *mediaFile = post[@"media"];
+    [mediaFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+        if (data) {
+            self.image = [UIImage imageWithData:[data zlibInflate]];
+        }else{
+            NSLog(@"%@",error);
+        }
     }];
-
+    [hud hide:NO];
 }
 
 -(void)setUpLike:(PFObject *)post{
@@ -141,30 +144,27 @@
     PFQuery *query = [relation query];
     [query whereKey:@"objectId" equalTo:post.objectId];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error){
-        if (object) {
-            [self.likeButton setImage:[UIImage imageNamed:@"likeFilled"] forState:UIControlStateNormal];
-            [self.likeButton setTitle:@"liked" forState:UIControlStateNormal];
+        if (!error) {
+            if (object) {
+                [self.likeButton setImage:[UIImage imageNamed:@"likeFilled"] forState:UIControlStateNormal];
+                [self.likeButton setTitle:@"liked" forState:UIControlStateNormal];
+            }else{
+                [self.likeButton setImage:[UIImage imageNamed:@"likeEmpty"] forState:UIControlStateNormal];
+                [self.likeButton setTitle:@"empty" forState:UIControlStateNormal];
+            }
         }else{
-            [self.likeButton setImage:[UIImage imageNamed:@"likeEmpty"] forState:UIControlStateNormal];
-            [self.likeButton setTitle:@"empty" forState:UIControlStateNormal];
+            NSLog(@"%@",error);
         }
     }];
 }
 
 -(void)removeUnSeenPost:(PFObject *)unseenpost withCompareTo:(PFObject *)post :(NSMutableArray *)authorUnseenPosts{
     if ([unseenpost.objectId isEqual:post.objectId]) {
-        [self decrementBadge];
         [authorUnseenPosts removeObject:unseenpost];
         PFRelation *relation = [[PFUser currentUser]relationForKey:@"unseenPosts"];
         [relation removeObject:unseenpost];
         [[PFUser currentUser]saveInBackground];
     }
-}
-
--(void)decrementBadge{
-        NSInteger numberOfBadges = [UIApplication sharedApplication].applicationIconBadgeNumber;
-        numberOfBadges -=1;
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:numberOfBadges];
 }
 
 @end

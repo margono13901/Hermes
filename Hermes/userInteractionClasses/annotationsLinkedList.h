@@ -10,7 +10,7 @@
 #import "keys.h"
 #import "AppDelegate.h"
 
-static int placement;
+static int placement = 0;
 
 @interface annotationsLinkedList : NSObject
 @property(strong,nonatomic)NSMutableArray *storage;
@@ -18,6 +18,7 @@ static int placement;
 -(id)scrollThroughAnnotatotation;
 -(void)addToLink:(id)object;
 -(id)scrollBackThroughAnnotatotation;
++(void)changeToFirstPlacement;
 @end
 
 
